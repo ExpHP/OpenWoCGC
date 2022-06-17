@@ -1,6 +1,9 @@
 #include "nufpar.h"
 #include "nufile.h"
 
+#define LF 0xA;
+#define CR 0xD;
+
 u32 old_line_pos;
 
 char NuGetChar(FPar* fPar)
@@ -148,4 +151,54 @@ FPar* NuFParCreate(char* filename)
         NuFileClose(handle);
     }
     return NULL;
+}
+
+s32 NuFParGetLine(FPar* fPar) {
+    s32 i;
+    s32 var_r30_2;
+    char ch;
+    s8 temp_r3_2;
+    char* textBuffer_ptr;
+
+    i = 0;
+    fPar->linePos = 0;
+    
+    char inc_f2_flag = 1;
+    while ((ch = NuGetChar(fPar)) != 0) {
+        if(inc_f2_flag) {
+            fPar->f2 += 1;
+            inc_f2_flag = 0;
+        }
+        
+        if ((ch == CR) || (ch == LF)) {
+            if(ch == CR) {
+                ch = NuGetChar(fPar);
+            }
+            if (i == 0) {
+                inc_f2_flag = 1;
+            } else {
+                break;
+            }
+                
+        } else {
+            if (ch == 0x3B) {
+                if (i == 0) {
+                    do {
+                        ch = NuGetChar(fPar);
+                    } while(!((ch == LF) || (ch == CR) || (ch == 0)));
+                    if(ch == CR) {
+                        ch = NuGetChar(fPar);
+                    }
+                    i = 0;
+                    fPar->linePos = 0;
+                    inc_f2_flag = 1;
+                    continue;
+                }
+            }
+            fPar->textBuffer[i] = ch;
+            i += 1;
+        }
+    }
+    fPar->textBuffer[i] = 0;
+    return i;
 }
