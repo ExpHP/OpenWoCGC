@@ -1,0 +1,67 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CrashWOC Files
+ats
+carddemo
+chars
+Debug
+bin
+Gfx
+levels
+sfx
+stuff
+apploader.img
+banner.tpl
+boot.dol
+client_pad.bin
+crashoot.bin
+crashwoc.elf
+icon.tpl
+joytest_050702.bin
+opening.bnr
+
+# CMake
+CMakeFiles
+CMakeCache.txt
+Makefile
+build
+
+OpenCrashWOC.code-workspace
+
+cmake_install.cmake
+
+# Visual Studio (Code), IDEA
+.idea
+.vs
+.vscode
