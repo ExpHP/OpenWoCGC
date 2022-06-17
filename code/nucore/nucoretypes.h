@@ -8,6 +8,13 @@ enum FileMode {
 	WriteBinary
 };
 
+//External Memory
+struct {
+    void** start;
+    void** end;
+} ExternalMemory;
+
+
 // Memory file.
 typedef struct
 {
