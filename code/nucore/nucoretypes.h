@@ -50,6 +50,12 @@ typedef struct
 
 typedef struct
 {
+	u32 x0_unk;
+	void (*x4_unk_cb)(FPar*);
+} unkFParStruct;
+
+typedef struct
+{
 	fileHandle handle;
 	u8 buffer[0x1000];
 	char textBuffer[0x100];
@@ -60,7 +66,7 @@ typedef struct
 	s32 bufferPos;
 	s32 bufferEndPos;
 	u32 f7;
-	s32 commandStack[8]; // The last entry is the index of the last entry, where -1 is null.
+	unkFParStruct* commandStack[8]; // The last entry is the index of the last entry, where -1 is null.
 	u32 fileLength;
 } FPar;
 

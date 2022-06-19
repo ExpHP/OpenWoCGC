@@ -155,9 +155,7 @@ FPar* NuFParCreate(char* filename)
 
 s32 NuFParGetLine(FPar* fPar) {
     s32 i;
-    s32 var_r30_2;
     char ch;
-    s8 temp_r3_2;
     char* textBuffer_ptr;
 
     i = 0;
@@ -202,3 +200,61 @@ s32 NuFParGetLine(FPar* fPar) {
     fPar->textBuffer[i] = 0;
     return i;
 }
+
+
+/*
+// ppc2c output
+
+s32 gcc2_compiled__N132(s32, void*);
+
+? NuFParInterpretWord(void* arg0) {
+    s32 temp_r10;
+    s32 var_r30;
+    void* temp_r11;
+
+    //fileLength
+    temp_r10 = arg0->unk123C;
+    if (temp_r10 >= 0) {
+        temp_r11 = arg0 + 0x121C;
+        if ((s32) **(temp_r11 + (temp_r10 * 4)) != 0) {
+            var_r30 = 0;
+loop_3:
+            if (gcc2_compiled__N132(*(var_r30 + *(temp_r11 + (arg0->unk123C * 4))), arg0 + 0x1105) == 0) {
+                (var_r30 + *(temp_r11 + (arg0->unk123C * 4)))->unk4(arg0);
+                return 1;
+            }
+            var_r30 += 8;
+            if ((s32) *(var_r30 + *(temp_r11 + (arg0->unk123C * 4))) == 0) {
+                goto block_6;
+            }
+            goto loop_3;
+        }
+    }
+block_6:
+    return 0;
+}
+*/
+
+/*
+// I think commandStack might be an array of pointers to arrays of unkFParStruct? Refer to line 251 for comment
+ NuFParInterpretWord(FPar* fPar) {
+    s32 i;
+    if (fPar->fileLength >= 0) {
+        //if ((s32) **(temp_r11 + (fileLength * 4)) != 0) {
+		if ((fPar->commandStack[fPar->fileLength])[0].x0_unk != 0) {
+            i = 0;
+			do {
+				//if (gcc2_compiled__N132(*(var_r30 + *(commandStack + (fPar->fileLength * 4))), fPar + 0x1105) == 0) {
+				if (gcc2_compiled__N132((fPar->commandStack[fPar->fileLength])[0].x0_unk, fPar.wordBuffer+1) == 0) {
+					//(var_r30 + *(commandStack + (fPar->fileLength * 4)))->unk4(fPar);
+					// It seems like the second entry in the struct is a function pointer?
+					(fPar->commandStack[fPar->fileLength])[i].x4_unk_cb(fPar);
+					return 1;
+				}
+				i += 1;
+			} while(fPar->commandStack[fPar->fileLength])[i].x0_unk != 0);
+        }
+    }
+	return 0;
+}
+*/
