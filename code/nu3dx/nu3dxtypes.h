@@ -3,6 +3,8 @@
 
 #include "../types.h"
 #include "numath.h"
+#include "../numath/numathtypes.h"
+
 
 // Texture format
 enum NuTexFormat
@@ -73,11 +75,54 @@ typedef struct
 	u8 tmp;
 } NuMtl; // 0x6C.
 
+typedef struct NuGobj {
+	struct NuGobj* next;
+	struct NuGobj* prev;
+	u8 padding[0x60 - 0x8];
+	s32 x60;
+} NuGobj; // 0x64
+
+typedef struct
+{
+	char UNK;
+} NuAnimData; // 0x10
+
 // Scene.
 typedef struct
 {
-	u8 tmp;
+	char UNK_0x0[0x48];
+	NuAnimData** animData; // 0x48
+	s32 numAnim; // 0x4C
 } NuScene; // 0x80. This might be something else, I'm seeing 0x3C for scenes.
+
+// !!Speculative name!!
+typedef struct
+{
+    char UNK_0x0[0x1C];
+    u32 WORD_0x1C;
+    s32 gobjCount; // 0x20
+    NuGobj** gobjSet; // 0x24
+} NuSceneMtl; // 0x3C
+
+typedef struct
+{
+    char UNK_0x0[0x10];
+    s32 WORD_0x10;
+    char UNK_0x14[0x4];
+    void* vb; // 0x18
+} NuGeom; // 0x30
+
+// Could be NuGeom, not sure
+/*typedef struct
+{
+    
+} NuFaceOnGeom; // 0x30 */
+
+typedef struct
+{
+    char UNK_0x0[0x14];
+    void* PTR_0x14;
+} NuPrim; // 0x3C
 
 // Render data.
 typedef struct

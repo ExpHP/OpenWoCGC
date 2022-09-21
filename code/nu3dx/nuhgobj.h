@@ -16,4 +16,26 @@
   800b14a8 000034 800b14a8  4 NuHGobjGetPOI 	Global
 */
 
+// sizeof(HGobj) = 0x80
+typedef struct
+{
+    u32 WORD_0x8;
+    u32 WORD_0xC;
+    char temp0[0x1C];
+    u32 WORD_0x2C;
+    char temp1[0x4];
+    float FLOAT_0x34;
+    char temp2[0x34];
+    u32 WORD_0x6C;
+    u32 WORD_0x70;
+    u32 WORD_0x74;
+    char temp3[0x8]
+} HGobj; // 0x80
+
+
+HGobj* NuHGobjCreate(void);
+HGobj* NuHGobjLoad(const char* name);
+void ReadNuIFFHGobj(fileHandle handle, HGobj *hgobj);
+
+
 #endif // !NUHGOBJ_H

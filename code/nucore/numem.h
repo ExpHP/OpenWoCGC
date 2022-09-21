@@ -14,6 +14,7 @@ extern s32 peakallocaddr;
 extern s32 totalloc;
 extern u32 malloced;
 
+
 // Set memory to be external, with a pointer and ending point.
 void NuMemSetExternal(void* ptr, void* end);
 

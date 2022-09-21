@@ -9,7 +9,8 @@ enum FileMode {
 };
 
 //External Memory
-struct {
+typedef struct 
+{
     void** start;
     void** end;
 } ExternalMemory;

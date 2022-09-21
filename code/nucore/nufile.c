@@ -49,7 +49,8 @@ u32 NuFileExists(char* filename)
 	{
 		fclose(file);
 	}
-	return file != NULL;
+	//return file != NULL;
+	return 1;
 }
 
 s32 checkmemfile()
@@ -87,18 +88,23 @@ fileHandle NuFileOpen(char* filename, u32 mode)
 			error_func e = NuErrorProlog("OpenCrashWOC/code/nucore/nufile.c", 75);
 			e("assert");
 		}
+
 		for (s32 i = 0; i < MAX_FILES; i++)
 		{
 			if (fpointers[i] == NULL)
 			{
 				FILE* f = fopen(namebuf, mode == ReadBinary ? "rb" : "wb");
+				printf("Prova");
 				if (f == NULL)
 				{
 					return NULL;
 				}
+				printf("Prova2");
 				bytesleft = (u32)fpointers[i];
 				fpointers[i] = f;
+
 				return i + 1;
+
 			}
 		}
 	}
@@ -313,22 +319,27 @@ size_t NuFileLoadBuffer(char* fileName, void* dest, s32 maxSize)
 	size_t size = NuFileSize(fileName);
 	if (size == 0)
 	{
+		printf("%d", size);
 		error_func e = NuErrorProlog("OpenCrashWOC/code/nucore/nufile.c", 306);
 		e("File %s does not exist!", fileName);
 	}
 	if (size > maxSize)
 	{
+		printf("%d", size);
 		error_func e = NuErrorProlog("OpenCrashWOC/code/nucore/nufile.c", 309);
 		e("Super Buffer out of space!");
+
 	}
 	else if (size != 0)
 	{
 		fileHandle handle = NuFileOpen(fileName, ReadBinary);
 		if (handle != NULL)
 		{
+			printf("done");
 			NuFileRead(handle, &dest, size);
 			NuFileClose(handle);
 			return size;
+
 		}
 	}
 	return 0;

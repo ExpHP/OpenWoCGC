@@ -1,5 +1,6 @@
 #include "numem.h"
 #include "nuerror.h"
+#include "nucoretypes.h";
 
 //void* memexternal = NULL;
 void* memext[2];
