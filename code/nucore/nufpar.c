@@ -1,6 +1,9 @@
 #include "nufpar.h"
 #include "nufile.h"
 
+#define LF 0xA;
+#define CR 0xD;
+
 u32 old_line_pos;
 
 char NuGetChar(FPar* fPar)
@@ -51,27 +54,27 @@ u32 NuFParGetWord(FPar* fPar)
         char currChar = fPar->textBuffer[fPar->linePos];
         switch (currChar)
         {
-            case ' ':
-            case ',':
-            case '\t':
-                if (inQuotation)
-                {
-                    (fPar->wordBuffer + 1)[len & 0xff] = currChar;
-                    len++;
-                }
-                else if (len != 0)
-                {
-                    (fPar->wordBuffer + 1)[len & 0xFF] = 0;
-                    return len;
-                }
-                break;
-            case '"':
-                inQuotation = 1 - inQuotation;
-                break;
-            default:
+        case ' ':
+        case ',':
+        case '\t':
+            if (inQuotation)
+            {
                 (fPar->wordBuffer + 1)[len & 0xff] = currChar;
                 len++;
-                break;
+            }
+            else if (len != 0)
+            {
+                (fPar->wordBuffer + 1)[len & 0xFF] = 0;
+                return len;
+            }
+            break;
+        case '"':
+            inQuotation = 1 - inQuotation;
+            break;
+        default:
+            (fPar->wordBuffer + 1)[len & 0xff] = currChar;
+            len++;
+            break;
         }
         currLinePos = fPar->linePos + 1;
         fPar->linePos = currLinePos;
@@ -79,6 +82,7 @@ u32 NuFParGetWord(FPar* fPar)
     fPar->wordBuffer[(len & 0xFF) + 1] = 0;
     return len;
 }
+
 
 s32 NuFParGetInt(FPar* fPar)
 {
@@ -111,7 +115,7 @@ void NuFParClose(FPar* fPar)
 FPar* NuFParOpen(fileHandle handle)
 {
     FPar* fPar = NuMemAlloc(sizeof(FPar));
-    if(fPar != NULL)
+    if (fPar != NULL)
     {
         memset(fPar, 0, sizeof(FPar));
         fPar->handle = handle;
@@ -148,4 +152,69 @@ FPar* NuFParCreate(char* filename)
         NuFileClose(handle);
     }
     return NULL;
+}
+
+s32 NuFParGetLine(FPar* fPar) {
+    s32 i;
+    char ch;
+    char* textBuffer_ptr;
+
+    i = 0;
+    fPar->linePos = 0;
+
+    char inc_f2_flag = 1;
+    while ((ch = NuGetChar(fPar)) != 0) {
+        if (inc_f2_flag) {
+            fPar->f2 += 1;
+            inc_f2_flag = 0;
+        }
+
+        if ((ch == CR) || (ch == LF)) {
+            if (ch == CR) {
+                ch = NuGetChar(fPar);
+            }
+            if (i == 0) {
+                inc_f2_flag = 1;
+            }
+            else {
+                break;
+            }
+
+        }
+        else {
+            if (ch == 0x3B) {
+                if (i == 0) {
+                    do {
+                        ch = NuGetChar(fPar);
+                    } while (!((ch == LF) || (ch == CR) || (ch == 0)));
+                    if (ch == CR) {
+                        ch = NuGetChar(fPar);
+                    }
+                    i = 0;
+                    fPar->linePos = 0;
+                    inc_f2_flag = 1;
+                    continue;
+                }
+            }
+            fPar->textBuffer[i] = ch;
+            i += 1;
+        }
+    }
+    fPar->textBuffer[i] = 0;
+    return i;
+}
+
+// Something like this - I cannot fully confirmed this is 100% correct
+u8 NuFParInterpretWord(FPar* fPar) {
+    s32 i = 0;
+    if (fPar->fpCmd[0].str != NULL) {
+        do {
+            if (strcasecmp(fPar->fpCmd[i].str, fPar->wordBuffer + 1) != 0) {
+                fPar->fpCmd[i].cb(fPar);
+                return 1;
+            }
+            i += 1;
+        } while (fPar->fpCmd[i].str != NULL);
+    }
+    return 0;
 }

@@ -37,5 +37,4 @@ void NuFParDestroy(FPar* fPar);
 
 // Create a text file from a file.
 FPar* NuFParCreate(char* filename);
-
 #endif // !NUFPAR_H

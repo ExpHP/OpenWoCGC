@@ -25,6 +25,26 @@
   800b0204 0000a8 800b0204  4 NuVtxStride 	Global
   800b02ac 000070 800b02ac  4 NuAnimUV 	Global
 */
+/**********************************************************/
+// Prototypes
+/**********************************************************/
+void NuMtlUVAnimation(struct NuGobj *gobj);
+void memset(void*, int, int, ...); // the crclr at 24 means memset takes varargs. why would a memset take varargs? no idea.
+//void* NuMemAlloc(int); in NuMem (nucore folder)
+void NuGobjAddGeom(NuGobj* gobj, NuGeom* geom);
+//void NuGeomCreateVB(NuGeom* geom, s32 param_2, s32 vtxType, s32 param_4);
+
+/**********************************************************/
+// Variables
+/**********************************************************/
+extern s32 sysinit; //nugobjinit
+extern f32 lbl_8011CD34; //nugobjinit
+extern int _timer; // Not sure how it got the name "_timer.210"
+extern BOOL Paused;
+extern BOOL sysinit;
+NuGobj* sysgobj;
+--------------------------------------------------------------------
+
 
 typedef struct NuFaceOnGeom {
     struct NuFaceOnGeom* next;
@@ -32,6 +52,7 @@ typedef struct NuFaceOnGeom {
     struct NuVtx51* __vertices;
     char _padding_14[0x1C];
 }; // 0x30
+
 
 typedef struct NuGeom
 {
@@ -41,10 +62,10 @@ typedef struct NuGeom
     enum NU_VERTEX_TYPE vertex_type;
     int32_t __count_2__mebbe_count_actually_in_use;
     int32_t __count_1__mebbe_count_in_allocation;
-    void* vertex_buffer;
+    void* vertex_buffer;	// GS_Buffer*
     char _padding_1C[0x4];
     struct NuPrim* prims;
-    char _padding_24[0xC];
+    char _padding_24[0xC];	//struct NuSkin* skins
 }; // 0x30
 
 typedef struct NuGobj {
@@ -88,15 +109,21 @@ typedef struct NuMtl
 
 typedef struct NuPrim
 {
-    struct NuPrim* next; \\0x20?
-    int32_t __word_4;
-    int16_t __short_8;
-    int16_t __short_a;
-    void* __another_ptr;
+    struct NuPrim* next;
+    int32_t type;
+    int16_t amount;
+    int16_t amount2Maybe;
+    void* data;
     char _padding_10[0x4];
-    void* __ptr;
+    byte* buffer;            //GS_Buffer
     char _padding_18[0x24];
 }; // 0x3c
+
+typedef struct GS_Buffer
+{
+    uint size;
+    uint type;
+}; // 0x8
 
 typedef struct NuVec {
     float x;
@@ -140,11 +167,6 @@ typedef struct NuVtx5d {
     struct NuVec pos;
     char _padding_C[0x2C];
 }; // 0x38
-
-
-
-
-void NuGeomCreateVB(NuGeom* geom, s32 param_2, s32 vtxType, s32 param_4);
 
 
 #endif // !NUGOBJ_H
