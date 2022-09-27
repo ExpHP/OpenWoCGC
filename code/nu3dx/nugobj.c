@@ -75,7 +75,7 @@ void NuGobjDestroy(NuGobj *obj)
 }
 
 NuGobj* NuGobjCreate() {
-  NuGobj* gobj = (NuGobj*)NuMemAlloc(sizeof(NuGobj)); \\0x64
+  NuGobj* gobj = (NuGobj*)NuMemAlloc(sizeof(NuGobj)); //0x64
   memset(gobj, 0, sizeof(NuGobj));
 
   if (sysgobj != NULL) {
@@ -247,53 +247,58 @@ void NuGeomDestroy(NuGeom *geom)
 	return;
 }
 
-/*NuGeomCreateVB -TODO
+/*NuGeomCreateVB -TBTESTED
 
-	//void NuGeomCreateVB(NuGeom* geom, s32 param_2, s32 vtxType, s32 param_4);
-  void NuGeomCreateVB(NuGeom *geom,int param_2,NU_VERTEX_TYPE vtxType) //PARAM2 MAXCLOUDSIZE FLOAT to INT? //4th parameter?
-{
-  GS_Buffer *v_buffer;
-  
-  //SWITCH?
-  if (vtxType == 0x53) {
-    v_buffer = (GS_Buffer*) (param_2 * 0x1c);
-    goto LAB_800b001c;
-  }
-  if (vtxType < 0x54) {
-    if (vtxType == 0x11) {
-      v_buffer = (GS_Buffer*) (param_2 << 4);
-      goto LAB_800b001c;
+// Create geometry vertex buffer
+void NuGeomCreateVB(struct NuGeom* geom, u32 vtxCount, NU_VERTEX_TYPE vtxType, BOOL param_4) {
+        // Boolean argument is unused
+    #pragma unused(param_4);
+    
+    u32 vtxSize;
+    GS_Buffer* vtxBuffer;
+	
+    switch(vtxType) {
+		
+			//determining the vertex buffer size (vertex count * sizeof(buffer_type_element)
+		
+    case 0x59:
+        vtxSize = vtxCount * 0x24;
+        break;
+    case 0x51:
+        vtxSize = vtxCount * 0x18;
+        break;
+    case 0x5D:
+        vtxSize = vtxCount * 0x38;
+        break;
+    case 0x53:
+        vtxSize = vtxCount * 0x1C;
+        break;
+    case 0x11:
+        vtxSize = vtxCount * 0x10;
+        break;        
+    default:
+        NuError("NuGeomCreateVB : Unknown vertex type!");
     }
-    if (vtxType == 0x51) {
-      v_buffer = (GS_Buffer*)(param_2 * 0x18);
-      goto LAB_800b001c;
-    }
-  }
-  else {
-    if (vtxType == 0x59) {
-      v_buffer = (GS_Buffer*)(param_2 * 0x24);
-      goto LAB_800b001c;
-    }
-    if (vtxType == 0x5d) {
-      v_buffer = (GS_Buffer*)(param_2 * 0x38);
-      goto LAB_800b001c;
-    }
-  }
-    //END
-error_func e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nugobj.c",0x270);
-		e("NuGeomCreateVB : Unknown vertex type!");
-LAB_800b001c:
-  if (geom->vertex_buffer != (GS_Buffer *)0x0) {
-    error_func e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nugobj.c",0x274); 
-		e("NuGeomCreateVB : geom already has VB");
-  }
-  v_buffer = GS_CreateBuffer((int *)v_buffer,1);
-  geom->__count_1__mebbe_count_in_allocation = param_2;
-  geom->vertex_buffer = v_buffer;
-  geom->vertex_type = vtxType;
-  geom->__count_2__mebbe_count_actually_in_use = param_2;
-  return;
+    
+    NuAssert(geom->vertex_buffer == NULL, "NuGeomCreateVB : geom already has VB");
+    
+    // Second argument is some vertex type
+    vtxBuffer = GS_CreateBuffer(vtxSize, 1);
+    
+    geom->count_1 = vtxCount;
+    geom->vertex_buffer = vtxBuffer;
+    geom->vertex_type = vtxType;
+    geom->count_2 = vtxCount;
+	
+	/*	why the vertex count is stored twice inside the NuGeom?
+        maybe is:
+		geom->vertex_buffer_size = vtxSize;
+		geom->vertex_buffer = vtxBuffer;
+		geom->vertex_type = vtxType;
+		geom->vertex_count = vtxCount;
+	*/----/*
 }
+
 */
 
 void NuGeomDestroyVB(NuGeom *geom)
@@ -363,34 +368,45 @@ void NuGeomAddSkin(struct NuGeom *geom, struct NuSkin *skin)
     geom->skins = skin;
 }
 
-NuPrim * NuPrimCreate(int amount,uint type)
-{
-  NuPrim *ret;
-  uint data;
-  byte *buffer;
-  
-  ret = (NuPrim *)NuMemAlloc(0x3c);
-  memset(ret,0,0x3c);
-  ret->type = type;
-  ret->amount = (short)amount;
-  ret->amount2Maybe = (short)amount;
-  if (2 < type) {
-    data = NuMemAlloc(amount * 2);
-    ret->data = data;
-    buffer = (byte *)GS_CreateBuffer(amount * 2,2);
-    ret->buffer = buffer;
-  }
-  return ret;
+NuPrim* NuPrimCreate(s16 amount, u32 type) {
+    s32* data;
+    struct NuPrim *prim;
+
+    prim = NuMemAlloc(0x3C);
+    memset(prim,0,0x3C);
+    prim->type = type;
+    prim->amount = amount;
+    prim->amount2Maybe = amount;
+    if (type > 2U) {
+        data = (s32*)(amount * 2);
+        prim->data = NuMemAlloc((s32)data);
+        prim->buffer = (byte*)GS_CreateBuffer((s32)data, 2);
+    }
+    return prim;
 }
 
-void NuPrimDestroy(NuPrim *prim)
-{
-  if ((prim != (NuPrim *)0x0) && (prim->buffer != (byte *)0x0)) {
-    GS_DeleteBuffer((uint)prim->buffer);
-    prim->buffer = (byte *)0x0;
-  }
-  return;
+
+void NuPrimDestroy(NuPrim* prim) {
+    if ((prim != NULL) && ((s32) prim->buffer != 0)) {
+        GS_DeleteBuffer((s32)prim->buffer);
+        prim->buffer = 0;
+    }
+	return;
 }
+
+
+//BufferTypes is uint[4], GS_BufferSize is uint 
+void* GS_CreateBuffer (uint bufSize, uint bufferType){
+	GS_Buffer *buf;
+	
+	buf = (GS_Buffer*)malloc(bufsize + 8);
+	GS_BufferSize = GS_BufferSize + bufsize;
+	BufferTypes[bufferType] = BufferTypes[bufferType] + bufsize;
+	buf->size = bufsize;
+	buf->type = bufferType;
+	return buf + 1;
+}
+
 
 // Vertex stride = size of 1 vertex element
 void NuVtxStride(NU_VERTEX_TYPE type)

@@ -60,9 +60,9 @@ typedef struct NuGeom
     struct NuMtl* mtls;
     char _padding_8[0x4];
     enum NU_VERTEX_TYPE vertex_type;
-    int32_t __count_2__mebbe_count_actually_in_use;
-    int32_t __count_1__mebbe_count_in_allocation;
-    void* vertex_buffer;	// GS_Buffer*
+    int32_t count_2;
+    int32_t count_1;
+    GS_Buffer* vtxBuffer;
     char _padding_1C[0x4];
     struct NuPrim* prims;
     char _padding_24[0xC];	//struct NuSkin* skins
