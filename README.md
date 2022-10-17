@@ -6,3 +6,10 @@ We love Crash Bandicoot! If you plan to play this, you must legally dump assets 
 
 ## Other Notice
 This README will be more complete and detailed with instructions to contribute, build, and play once they exist!
+
+Special thanks to:
+
+- NeoKesha, BetaM, Smartkin
+- Gota7, nicolasrmerz, ExpHP, kiwi
+
+for the immensive help
