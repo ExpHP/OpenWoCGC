@@ -86,3 +86,9 @@ void ReadNuIFFHGobj(fileHandle handle, HGobj *hgobj)
     
     NuSceneMtlUpdate(&scene);
 }
+
+void ReadNuIFFGeomCntrl(filehandle handle, NuGeom geom)
+{
+  NuFileReadInt(handle);
+  return;
+}

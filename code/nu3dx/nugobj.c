@@ -1,38 +1,20 @@
 #include "nugobj.h"
 
-//void memset(void*, int, int, ...); // the crclr at 24 means memset takes varargs. why would a memset take varargs? no idea.
-//void* NuMemAlloc(int);
 
 void NuGobjInit(void) {
-    f32 temp_f1;
 
     if ((s32) sysinit != 0) {
         NuGobjClose();
     }
-    temp_f1 = lbl_8011CD34;
-    sysgobj = 0;
-    sysinit = 1;
-    NuLightFog(0, 0, 0, temp_f1, temp_f1);
+    sysgobj = 0; //may be a pointer or counter
+    sysinit = 1; //sysinit is a bool
+
+
+    NuLightFog(0, 0, 0);
     //GHIDRA:NuLightFog(0x3ff0000000000000,0x3ff0000000000000,0,0,0);
 
     return;
 }
-
-
-/*///////////////////////////////////////NULIGHTFOG CALLED BY MAIN
-          if ((Level == 2) && (VEHICLECONTROL != 1)) {
-            NuLightFog(0,0,0x40000000,BLUR,0);
-          }
-          else {
-            NuLightFog((double)*(float *)(LDATA + 0x44),(double)*(float *)(LDATA + 0x48),
-                       level_fogcolour,BLUR,
-                       (uint)*(byte *)(LDATA + 0x53) << 0x18 | (uint)*(byte *)(LDATA + 0x52) << 0x 10
-                       | (uint)*(byte *)(LDATA + 0x51) << 8 | (uint)*(byte *)(LDATA + 0x50));
-          }
-////////////////////////////////*/
-
-
-
 
 void NuGobjClose(void)
 {
@@ -48,6 +30,7 @@ void NuGobjClose(void)
   return;
 }
 
+//TBREV
 void NuGobjDestroy(NuGobj *obj)
 
 {
@@ -55,7 +38,7 @@ void NuGobjDestroy(NuGobj *obj)
   NuGeom *next;
   NuGeom *prev;
   
-  child_maybe = *(NuGobj **)&obj->field_0x4c;
+  child_maybe = obj->__another_spooky_gobj; //field_0x4c
   prev = obj->geoms;
   while (prev != NULL) {
     next = prev->next;
@@ -73,6 +56,8 @@ void NuGobjDestroy(NuGobj *obj)
   }
   return;
 }
+
+
 
 NuGobj* NuGobjCreate() {
   NuGobj* gobj = (NuGobj*)NuMemAlloc(sizeof(NuGobj)); //0x64
@@ -122,7 +107,7 @@ void NuGobjAddFaceOnGeom(NuGobj *gobj, NuFaceOnGeom *geom) {
 
 /*NuGobjCalcFaceOnDims(...)
 {
-	TODO
+	WIP
 }
 */
 
@@ -205,7 +190,7 @@ void NuGobjCalcDims(NuGobj *gobj) {
 
 
 
-/*//////////////////////////////////////NUGEOM STUFF//////////////////////////////////////////////////////////////*/
+/**********************************************NUGEOM STUFF*************************************/
 
 NuGeom* NuGeomCreate(void) 
 {
@@ -224,30 +209,29 @@ NuFaceOnGeom* NuFaceOnGeomCreate(void)
   return ret;
 }
 
+
+
 void NuGeomDestroy(NuGeom *geom)
 {
-
-  uint buffer;
-  NuPrim *currPrim;
-  NuPrim *nextPrim;
-  
-  currPrim = geom->primLinkedList;
   NuGeomDestroyVB(geom);
-	while(currPrim != (NuPrim *)0x0){
-		nextPrim = currPrim->next;
-		NuPrimDestroy(currPrim);
-		currPrim = nextPrim;
-		}
-		
-		\\field_0x2c pointer to a unk struct
-	if ((*(int *)(geom->_padding_28 + 4) != 0) &&
-		(buffer = *(uint *)(*(int *)(geom->_padding_28 + 4) + 0x14), buffer != 0)) {
-		GS_DeleteBuffer(buffer);
-	}
-	return;
+  for (NuPrim* prim = geom->primLinkedList; prim != NULL; prim = prim->next) {
+    NuPrimDestroy(prim);
+  }
+
+  NuBlendShape* blendShape;
+  if (blendShape = geom->blendShape) {
+    void* buffer;
+    if (buffer = blendShape->vertexBuffer) {
+      GS_DeleteBuffer(buffer);
+    }
+  }
+
+  return;
 }
 
-/*NuGeomCreateVB -TBTESTED
+
+
+//TBTESTED
 
 // Create geometry vertex buffer
 void NuGeomCreateVB(struct NuGeom* geom, u32 vtxCount, NU_VERTEX_TYPE vtxType, BOOL param_4) {
@@ -296,10 +280,8 @@ void NuGeomCreateVB(struct NuGeom* geom, u32 vtxCount, NU_VERTEX_TYPE vtxType, B
 		geom->vertex_buffer = vtxBuffer;
 		geom->vertex_type = vtxType;
 		geom->vertex_count = vtxCount;
-	*/----/*
+	*/
 }
-
-*/
 
 void NuGeomDestroyVB(NuGeom *geom)
 

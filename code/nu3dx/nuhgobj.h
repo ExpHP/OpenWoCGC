@@ -21,8 +21,10 @@ typedef struct
 {
     u32 WORD_0x8;
     u32 WORD_0xC;
-    char temp0[0x1C];
-    u32 WORD_0x2C;
+    char temp0[0x20]; //char temp0[0x1C];
+    char maybe_Gobj[0x4];
+	char padding_1[0x4];
+	u32 WORD_0x2C;
     char temp1[0x4];
     float FLOAT_0x34;
     char temp2[0x34];

@@ -51,12 +51,6 @@ typedef struct
 
 typedef struct
 {
-	char* str;
-	void (*cb)(FPar*);
-} FParCommand;
-
-typedef struct
-{
 	fileHandle handle;
 	u8 buffer[0x1000];
 	char textBuffer[0x100];
@@ -71,5 +65,11 @@ typedef struct
 	FParCommand* fpCmd;
 	u32 fileLength;
 } FPar;
+
+typedef struct
+{
+	char* str;
+	void (*cb)(FPar*);
+} FParCommand;
 
 #endif // !NUCORETYPES_H

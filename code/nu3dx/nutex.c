@@ -31,11 +31,22 @@ s32 GetTPID()
 	return tpid;
 }
 
-NuTex* NuTexCreate(NuTexData* dat)
+NuTex * NuTexCreate(NuTexData *texdat)		// TODO!!!
+
 {
-	//tinfo[tpid].surface = NudxTx_Create(dat, dat->format > 0xd);
-	tinfo[tpid].tex.data = NULL;
-	// TODO!!!
+  
+  tinfo[tpid].surface = NudxTx_Create(texdat,0xd < texdat->format);
+  tinfo[tpid].tex.data = (uint32_t *)0x0;
+  tinfo[tpid].tex.format = texdat->format;
+  tinfo[tpid].tex.decal = texdat->decal;
+  tinfo[tpid].tex.unk_1 = texdat->unk_1;
+  tinfo[tpid].tex.width = texdat->width;
+  tinfo[tpid].tex.height = texdat->height;
+  if (force_decal != 0) {
+    tinfo[tpid].tex.decal = 1;
+  }
+  tpid = tpid + 1;
+  return (NuTex *)tpid;
 }
 
 s32 NuTexCreateFromSurface(NuTexData* tex, NuSurface* surface)

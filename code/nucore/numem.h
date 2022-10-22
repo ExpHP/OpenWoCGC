@@ -15,6 +15,9 @@ extern s32 totalloc;
 extern u32 malloced;
 
 
+
+//void memset(void*, int, int, ...); // the crclr at 24 means memset takes varargs
+
 // Set memory to be external, with a pointer and ending point.
 void NuMemSetExternal(void* ptr, void* end);
 

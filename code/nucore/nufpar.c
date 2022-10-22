@@ -1,8 +1,8 @@
 #include "nufpar.h"
 #include "nufile.h"
 
-#define LF 0xA;
-#define CR 0xD;
+#define LF 0xA
+#define CR 0xD
 
 u32 old_line_pos;
 

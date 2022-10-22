@@ -3,6 +3,7 @@
 
 #include "../types.h"
 #include "nu3dxtypes.h"
+#include <nu3dx/nugobj.h>
 
 /*
   800af700 000058 800af700  4 NuGobjInit 	Global
@@ -25,26 +26,26 @@
   800b0204 0000a8 800b0204  4 NuVtxStride 	Global
   800b02ac 000070 800b02ac  4 NuAnimUV 	Global
 */
+
 /**********************************************************/
 // Prototypes
 /**********************************************************/
-void NuMtlUVAnimation(struct NuGobj *gobj);
-void memset(void*, int, int, ...); // the crclr at 24 means memset takes varargs. why would a memset take varargs? no idea.
-//void* NuMemAlloc(int); in NuMem (nucore folder)
+//void NuMtlUVAnimation(struct NuGobj* gobj);
 void NuGobjAddGeom(NuGobj* gobj, NuGeom* geom);
-//void NuGeomCreateVB(NuGeom* geom, s32 param_2, s32 vtxType, s32 param_4);
-
+void NuGeomCreateVB(NuGeom* geom, s32 param_2, s32 vtxType, s32 param_4);
 /**********************************************************/
 // Variables
 /**********************************************************/
 extern s32 sysinit; //nugobjinit
-extern f32 lbl_8011CD34; //nugobjinit
-extern int _timer; // Not sure how it got the name "_timer.210"
-extern BOOL Paused;
-extern BOOL sysinit;
+extern int _timer; // named in ghidra "_timer.210"
+extern bool Paused;
+extern bool sysinit;
 NuGobj* sysgobj;
---------------------------------------------------------------------
-
+/**************************************************************/
+typedef struct GS_Buffer {
+    u32 size;
+    u32 type;
+}; // 0x8
 
 typedef struct NuFaceOnGeom {
     struct NuFaceOnGeom* next;
@@ -54,31 +55,45 @@ typedef struct NuFaceOnGeom {
 }; // 0x30
 
 
+typedef struct NuBlendShape {
+    char padding_0[20];
+    GS_Buffer* vertexBuffer;
+	char padding_18[8];
+}; //0x20 placeholder
+
+typedef struct NuSkin
+{
+	struct NuSkin* next;
+	char padding_4[0x14];
+}; // 0x18?
+
 typedef struct NuGeom
 {
     struct NuGeom* next;
     struct NuMtl* mtls;
     char _padding_8[0x4];
     enum NU_VERTEX_TYPE vertex_type;
-    int32_t count_2;
-    int32_t count_1;
+    s32 count_2;	//vertex_count?
+    s32 count_1;
     GS_Buffer* vtxBuffer;
     char _padding_1C[0x4];
     struct NuPrim* prims;
-    char _padding_24[0xC];	//struct NuSkin* skins
+    struct NuSkin* skins;
+    char _padding_28[0x4];
+	struct NuBlendShape* blendShape;
 }; // 0x30
 
 typedef struct NuGobj {
     struct NuGobj* next;
     struct NuGobj* prev;
-    int32_t __causes_calc_face_on_dims;
+    s32 __causes_calc_face_on_dims;
     struct NuGeom* geoms;
     struct NuFaceOnGeom* face_ons;
     float bounding_radius_from_origin;
     float bounding_rsq_from_origin;
-    struct NuVec bounding_box_min;
-    struct NuVec bounding_box_max;
-    struct NuVec bounding_box_center;
+    struct NuVec bounding_box_min;	//0xC
+    struct NuVec bounding_box_max;	//0xC
+    struct NuVec bounding_box_center;	//0xC
     float bounding_radius_from_center;
     float bounding_rsq_from_center;
     char _padding_48[0x4];
@@ -86,44 +101,18 @@ typedef struct NuGobj {
     char _padding_50[0x14];
 }; // 0x64
 
-typedef struct NuMtl
-{
-    char _padding_0[0x4];
-    uint32_t __funny_flags_or_float;
-    int32_t __word_08;
-    char _padding_C[0x8];
-    float __float_14;
-    float __float_18;
-    float __float_1c;
-    char _padding_20[0x14];
-    float __float_34;
-    struct NuMtl* __possibly_a_list_ptr;
-    int16_t __short_16;
-    char _padding_3E[0xA];
-    int32_t __word_48;
-    char _padding_4C[0x14];
-    struct NuMtl* __another_list_ptr;
-    struct NuMtl* __another_list_ptr_2;
-    char _padding_68[0x4];
-}; // 0x6c
 
 typedef struct NuPrim
 {
     struct NuPrim* next;
-    int32_t type;
-    int16_t amount;
-    int16_t amount2Maybe;
+    s32 type;
+    short amount;
+    short amount2Maybe;
     void* data;
     char _padding_10[0x4];
-    byte* buffer;            //GS_Buffer
+    GS_Buffer* buffer;    //GS_Buffer
     char _padding_18[0x24];
 }; // 0x3c
-
-typedef struct GS_Buffer
-{
-    uint size;
-    uint type;
-}; // 0x8
 
 typedef struct NuVec {
     float x;
@@ -134,7 +123,7 @@ typedef struct NuVec {
 //---------------------------
 // WIP NAMES
 
-enum NU_VERTEX_TYPE : uint32_t
+enum NU_VERTEX_TYPE : s32
 {
     VERTEX_TYPE_11 = 0x11,
     VERTEX_TYPE_51 = 0x51,

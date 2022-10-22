@@ -70,10 +70,27 @@ typedef struct
 	u32 d10;
 } NuTex; // 0x28.
 
+
 typedef struct
 {
-	u8 tmp;
-} NuMtl; // 0x6C.
+    char _padding_0[0x4];
+    u32 __funny_flags_or_float;
+    s32 __word_08;
+    char _padding_C[0x8];
+    float __float_14;
+    float __float_18;
+    float __float_1c;
+    char _padding_20[0x14];
+    float __float_34;
+    struct NuMtl* __possibly_a_list_ptr;
+    short __short_16;
+    char _padding_3E[0xA];
+	s32 __word_48;
+    char _padding_4C[0x14];
+    struct NuMtl* __another_list_ptr;
+    struct NuMtl* __another_list_ptr_2;
+    char _padding_68[0x4];
+} NuMtl; // 0x6c
 
 
 typedef struct
@@ -95,7 +112,7 @@ typedef struct
     char UNK_0x0[0x1C];
     u32 WORD_0x1C;
     s32 gobjCount; // 0x20
-    NuGobj** gobjSet; // 0x24
+    //NuGobj** gobjSet; // 0x24
 } NuSceneMtl; // 0x3C
 
 // Render data.
