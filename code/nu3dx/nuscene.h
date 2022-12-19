@@ -5,28 +5,6 @@
 #include <stdlib.h>
 #include "nu3dxtypes.h"
 
-/********** For data types that I don't know yet **********/
-// unknown word data type
-typedef int UNKWORD;
-// unknown pointer data type
-typedef void UNKTYPE;
-/* unknown structures */
-
-
-//Nuscene.h?
-typedef struct
-{
-    char temp0[0x8];
-    u32 WORD_0x8;
-    u32 WORD_0xC;
-    char temp1[0x24];
-    u32 WORD_0x34;
-    char temp2[0x2C];
-    u32 WORD_0x64;
-    u32 WORD_0x68;
-    u32 WORD_0x6C;
-    char temp3[0x4];
-} Struct2; // 0x74
 
 /**********************************************************/
 

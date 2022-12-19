@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include "elf_systypes.h"
+#include "numath/numathtypes.h"
 #define NULL 0
 
 // Unsigned byte.

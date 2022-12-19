@@ -1,11 +1,12 @@
 #include "nutex.h"
 #include "../system.h"
 
-NuTex tinfo[0x400];
+nusystex_s tinfo[0x400];
 
 //u32 initialised = 0;
 s32 tpid = 0;
 u32 ntex = 0;
+struct nutex_s tex;
 
 void NuTexInit()
 {
@@ -31,36 +32,53 @@ s32 GetTPID()
 	return tpid;
 }
 
-NuTex * NuTexCreate(NuTexData *texdat)		// TODO!!!
+s32 NuTexCreate(struct nutex_s *nutex)
 
 {
+  struct D3DTexture *surface;
   
-  tinfo[tpid].surface = NudxTx_Create(texdat,0xd < texdat->format);
-  tinfo[tpid].tex.data = (uint32_t *)0x0;
-  tinfo[tpid].tex.format = texdat->format;
-  tinfo[tpid].tex.decal = texdat->decal;
-  tinfo[tpid].tex.unk_1 = texdat->unk_1;
-  tinfo[tpid].tex.width = texdat->width;
-  tinfo[tpid].tex.height = texdat->height;
+  surface = NudxTx_Create(nutex,(uint)(NUTEX_BB < nutex->type));
+  tinfo[tpid].dds = surface;
+  tinfo[tpid].tex.bits = NULL;
+  tinfo[tpid].tex.type = nutex->type;
+  tinfo[tpid].tex.decal = nutex->decal;
+  tinfo[tpid].tex.linear = nutex->linear;
+  tinfo[tpid].tex.width = nutex->width;
+  tinfo[tpid].tex.height = nutex->height;
   if (force_decal != 0) {
     tinfo[tpid].tex.decal = 1;
   }
-  tpid = tpid + 1;
-  return (NuTex *)tpid;
+  tpid++;
+  return tpid;
 }
 
-s32 NuTexCreateFromSurface(NuTexData* tex, NuSurface* surface)
+s32 NuTexCreateFromSurface(nutex_s *tex,D3DTexture *surface)
+
 {
-	tinfo[tpid].tex.format = tex->format;
-	tinfo[tpid].tex.width = tex->width;
-	tinfo[tpid].tex.height = tex->height;
-	tinfo[tpid].tex.mode = tex->mode;
-	tinfo[tpid].tex.data = tex->data;
-	tinfo[tpid].tex.palette = tex->palette;
-	tinfo[tpid].tex.decal = tex->decal;
-	tinfo[tpid].tex.data = NULL;
-	tinfo[tpid].surface = surface;
-	return tpid++;
+  int width;
+  int tpid_temp;
+  int mode;
+  int *pal;
+  int height;
+  void *bits;
+  
+  width = tex->width;
+  height = tex->height;
+  mode = tex->mmcnt;
+  tpid_temp = tpid + 1;
+  tinfo[tpid].tex.type = tex->type;
+  tinfo[tpid].tex.width = width;
+  tinfo[tpid].tex.height = height;
+  tinfo[tpid].tex.mmcnt = mode;
+  bits = tex->bits;
+  pal = tex->pal;
+  *(undefined4 *)&tinfo[tpid].tex.decal = *(undefined4 *)&tex->decal;
+  tinfo[tpid].tex.bits = bits;
+  tinfo[tpid].tex.pal = pal;
+  tinfo[tpid].tex.bits = (void *)0x0;
+  tinfo[tpid].dds = surface;
+  tpid = tpid_temp;
+  return tpid_temp;
 }
 
 void NuTexDestroy(s32 id)
@@ -86,24 +104,27 @@ u32 NuTexUnRef(s32 id)
 	return --tinfo[id].refCount;
 }
 
-u32 NuTexPixelSize(u32 format)
-{
-	switch (format)
-	{
-	case UNKNOWN:
-	case BPP16:
-		return 16;
-	case BPP24:
-		return 24;
-	case BPP32:
-		return 32;
-	case BPP4:
-		return 4;
-	case RGB8MAYBE:
-		return 8;
-	default:
-		return 0;
-	}
+s32 NuTexPixelSize(enum nutextype_e type) {
+  if (type == NUTEX_RGB24) {
+    return 0x18;
+  }
+  if (type < NUTEX_RGBA32) {
+    if ((type == NUTEX_RGB16) || (type == NUTEX_RGBA16)) {
+      return 0x10;
+    }
+  }
+  else {
+    if (type == NUTEX_PAL4) {
+      return 4;
+    }
+    if (type < NUTEX_PAL4) {
+      return 0x20;
+    }
+    if (type == NUTEX_PAL8) {
+      return 8;
+    }
+  }
+  return 0;
 }
 
 u32 NuTexImgSize(u32 format, u32 width, u32 height)
@@ -116,17 +137,16 @@ u32 NuTexImgSize(u32 format, u32 width, u32 height)
 	return size >> 3;
 }
 
-u32 NuTexPalSize(u32 format)
+s32 NuTexPalSize(enum nutextype_e type)
+
 {
-	switch (format)
-	{
-	case BPP4:
-		return 0x40;
-	case RGB8MAYBE:
-		return 0x400;
-	default:
-		return 0;
-	}
+  if (type == NUTEX_PAL4) {
+    return 0x40;
+  }
+  if (type == NUTEX_PAL8) {
+    return 0x400;
+  }
+  return 0;
 }
 
 s32 NuTexReadBitmapMM(char* fileName, u32 mode, NuTexData* tex)

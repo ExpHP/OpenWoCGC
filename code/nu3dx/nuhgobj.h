@@ -16,23 +16,43 @@
   800b14a8 000034 800b14a8  4 NuHGobjGetPOI 	Global
 */
 
-// sizeof(HGobj) = 0x80
-typedef struct
+// Size: 0x80
+struct NUHGOBJ_s
 {
-    u32 WORD_0x8;
-    u32 WORD_0xC;
-    char temp0[0x20]; //char temp0[0x1C];
-    char maybe_Gobj[0x4];
-	char padding_1[0x4];
-	u32 WORD_0x2C;
-    char temp1[0x4];
-    float FLOAT_0x34;
-    char temp2[0x34];
-    u32 WORD_0x6C;
-    u32 WORD_0x70;
-    u32 WORD_0x74;
-    char temp3[0x8]
-} HGobj; // 0x80
+    short* tids;
+    int numtid;
+    struct numtl_s** mtls;
+    int nummtl;
+    struct NUJOINTDATA_s* joints;
+    struct numtx_s* T;
+    struct numtx_s* INV_WT;
+    unsigned char* joint_ixs;
+    struct NULAYERDATA_s* layers;
+    struct NUPOINTOFINTEREST_s* points_of_interest;
+    unsigned char* poi_ixs;
+    char* string_table;
+    int string_table_size;
+    float tbrdist;
+    struct NUSHADOWDATA_s* shadow_data;
+    float sphere_radius;
+    float sphere_yoff;
+    struct nuvec_s min;
+    struct nuvec_s max;
+    float cylinder_yoff;
+    float cylinder_height;
+    float cylinder_radius;
+    struct NUCOLLISIONDATA_s* collision_data;
+    int numtexanims;
+    struct nutexanim_s* texanims;
+    short* texanim_tids;
+    unsigned char num_joints;
+    unsigned char num_joint_ixs;
+    unsigned char num_layers;
+    unsigned char num_points_of_interest;
+    unsigned char num_poi_ixs;
+    unsigned char shadowoff;
+    char pad[2];
+};
 
 
 HGobj* NuHGobjCreate(void);

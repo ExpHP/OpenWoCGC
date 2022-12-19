@@ -2,160 +2,213 @@
 #define NUGOBJ_H
 
 #include "../types.h"
+#include "numath/numathtypes.h"
 #include "nu3dxtypes.h"
 #include <nu3dx/nugobj.h>
-
-/*
-  800af700 000058 800af700  4 NuGobjInit 	Global
-  800af758 000058 800af758  4 NuGobjClose 	Global
-  800af7b0 000070 800af7b0  4 NuGobjCreate 	Global
-  800af820 000084 800af820  4 NuGobjDestroy 	Global
-  800af8a4 000038 800af8a4  4 NuGobjAddGeom 	Global
-  800af8dc 000038 800af8dc  4 NuGobjAddFaceOnGeom 	Global
-  800af914 0002c8 800af914  4 NuGobjCalcFaceOnDims 	Global
-  800afbdc 0002a8 800afbdc  4 NuGobjCalcDims 	Global
-  800afe84 000044 800afe84  4 NuGeomCreate 	Global
-  800afec8 000044 800afec8  4 NuFaceOnGeomCreate 	Global
-  800aff0c 00006c 800aff0c  4 NuGeomDestroy 	Global
-  800aff78 00010c 800aff78  4 NuGeomCreateVB 	Global
-  800b0084 000044 800b0084  4 NuGeomDestroyVB 	Global
-  800b00c8 000038 800b00c8  4 NuGeomAddPrim 	Global
-  800b0100 000038 800b0100  4 NuGeomAddSkin 	Global
-  800b0138 000084 800b0138  4 NuPrimCreate 	Global
-  800b01bc 000048 800b01bc  4 NuPrimDestroy 	Global
-  800b0204 0000a8 800b0204  4 NuVtxStride 	Global
-  800b02ac 000070 800b02ac  4 NuAnimUV 	Global
-*/
 
 /**********************************************************/
 // Prototypes
 /**********************************************************/
-//void NuMtlUVAnimation(struct NuGobj* gobj);
-void NuGobjAddGeom(NuGobj* gobj, NuGeom* geom);
-void NuGeomCreateVB(NuGeom* geom, s32 param_2, s32 vtxType, s32 param_4);
+//void NuMtlUVAnimation(struct nugobj_s* gobj);
+void NuGobjInit(void);
+void NuGobjClose(void);
+struct nugobj_s* NuGobjCreate(void);
+void NuGobjDestroy(struct nugobj_s* obj);
+void NuGobjAddGeom(struct nugobj_s* gobj, struct nugeom_s* geom);
+void NuGobjAddFaceOnGeom(struct nugobj_s* gobj, struct nufaceongeom_s* Fgeom);
+struct nugeom_s* NuGeomCreate(void);
+struct nufaceongeom_s* NuFaceOnGeomCreate(void);
+void NuGeomDestroy(struct nugeom_s* geom);
+void NuGeomCreateVB(struct nugeom_s* geom, u32 vtxCount, enum nuvtxtype_e vtxType, s32 dynamic);
+void NuGeomDestroyVB(struct nugeom_s* geom);
+void NuGeomAddPrim(struct nugeom_s* geom, struct nuprim_s* prim);
+void NuGeomAddSkin(struct nugeom_s* geom, struct nuskin_s* skin);
+struct nuprim_s* NuPrimCreate(int amount, enum nuprimtype_e type);
+void NuPrimDestroy(struct nuprim_s* prim);
+void* GS_CreateBuffer(u32 bufsize, s32 bufferType);
+void GS_DeleteBuffer(void* ptr);
+int NuVtxStride(enum nuvtxtype_e type);
+void NuAnimUV(void);
 /**********************************************************/
 // Variables
 /**********************************************************/
-extern s32 sysinit; //nugobjinit
-extern int _timer; // named in ghidra "_timer.210"
-extern bool Paused;
-extern bool sysinit;
-NuGobj* sysgobj;
+static s32 sysinit;
+extern int _timer;
+extern s32 Paused;
+extern u32 GS_BufferSize;
+extern u32 BufferTypes[4];
+static struct nugobj_s* sysgobj;
 /**************************************************************/
 typedef struct GS_Buffer {
     u32 size;
     u32 type;
 }; // 0x8
 
-typedef struct NuFaceOnGeom {
-    struct NuFaceOnGeom* next;
-    char _padding_4[0xC];
-    struct NuVtx51* __vertices;
-    char _padding_14[0x1C];
-}; // 0x30
-
-
-typedef struct NuBlendShape {
-    char padding_0[20];
-    GS_Buffer* vertexBuffer;
-	char padding_18[8];
-}; //0x20 placeholder
-
-typedef struct NuSkin
+// Size: 0x1C, defined as 0x30.. why?
+typedef struct nufaceongeom_s
 {
-	struct NuSkin* next;
-	char padding_4[0x14];
-}; // 0x18?
-
-typedef struct NuGeom
-{
-    struct NuGeom* next;
-    struct NuMtl* mtls;
-    char _padding_8[0x4];
-    enum NU_VERTEX_TYPE vertex_type;
-    s32 count_2;	//vertex_count?
-    s32 count_1;
-    GS_Buffer* vtxBuffer;
-    char _padding_1C[0x4];
-    struct NuPrim* prims;
-    struct NuSkin* skins;
-    char _padding_28[0x4];
-	struct NuBlendShape* blendShape;
-}; // 0x30
-
-typedef struct NuGobj {
-    struct NuGobj* next;
-    struct NuGobj* prev;
-    s32 __causes_calc_face_on_dims;
-    struct NuGeom* geoms;
-    struct NuFaceOnGeom* face_ons;
-    float bounding_radius_from_origin;
-    float bounding_rsq_from_origin;
-    struct NuVec bounding_box_min;	//0xC
-    struct NuVec bounding_box_max;	//0xC
-    struct NuVec bounding_box_center;	//0xC
-    float bounding_radius_from_center;
-    float bounding_rsq_from_center;
-    char _padding_48[0x4];
-    struct NuGobj* __another_spooky_gobj;
-    char _padding_50[0x14];
-}; // 0x64
-
-
-typedef struct NuPrim
-{
-    struct NuPrim* next;
-    s32 type;
-    short amount;
-    short amount2Maybe;
-    void* data;
-    char _padding_10[0x4];
-    GS_Buffer* buffer;    //GS_Buffer
-    char _padding_18[0x24];
-}; // 0x3c
-
-typedef struct NuVec {
-    float x;
-    float y;
-    float z;
-}; // 0xC
-
-//---------------------------
-// WIP NAMES
-
-enum NU_VERTEX_TYPE : s32
-{
-    VERTEX_TYPE_11 = 0x11,
-    VERTEX_TYPE_51 = 0x51,
-    VERTEX_TYPE_53 = 0x53,
-    VERTEX_TYPE_59 = 0x59,
-    VERTEX_TYPE_5D = 0x5d
+    struct nufaceongeom_s* next;
+    struct numtl_s* mtl;
+    int mtl_id;
+    enum nufaceontype_s faceon_type;
+    struct nufaceon_s* faceons;
+    int nfaceons;
+    float faceon_radius;
 };
 
-typedef struct NuVtx11 {
-    struct NuVec pos;
-    char _padding_C[4];
-}; // 0x10
+// Size: 0x24
+struct nugeomitem_s
+{
+    struct nurndritem_s hdr;
+    struct numtx_s* mtx;
+    struct nugeom_s* geom;
+    f32** blendvals;
+    u16 instancelights_index[3];
+    u16 hShader;
+};
 
-typedef struct NuVtx51 {
-    struct NuVec pos;
-    char _padding_C[0xC];
-}; // 0x18
+// Size: 0x18
+struct nufaceon_s
+{
+    struct nuvec_s point;
+    float width;
+    float height;
+    int colour;
+};
 
-typedef struct NuVtx53 {
-    struct NuVec pos;
-    char _padding_C[0x10];
-}; // 0x1C
+// Size: 0x40
+struct NUBLENDGEOM_s
+{
+    int nblends;
+    struct nuvec_s** blend_offsets;
+    int* ix;
+    struct nuvec_s* offsets;
+    struct nuvec_s* ooffsets;
+    int hVB; //VertexBuffer, GS_Buffer * ?
+    int blendindex[10];
+};
 
-typedef struct NuVtx59 {
-    struct NuVec pos;
-    char _padding_C[0x18];
-}; // 0x24
+// Size: 0x18
+struct nuskin_s
+{
+    struct nuskin_s* next;
+    int vtxoffset;
+    int vtxcnt;
+    int mtxcnt;
+    int* mtxid;
+    float* weights;
+};
 
-typedef struct NuVtx5d {
-    struct NuVec pos;
-    char _padding_C[0x2C];
-}; // 0x38
 
+// Size: 0x10
+struct NUVTXSKININFO_s
+{
+    float wts[3];
+    unsigned char joint_ixs[3];
+    unsigned char pad;
+};
+
+
+
+// Size: 0x30
+struct nugeom_s
+{
+    struct nugeom_s* next;
+    struct numtl_s* mtl;
+    s32 mtl_id;
+    enum nuvtxtype_e vtxtype; //Size: 0x4
+    s32 vtxcnt;
+    s32 vtxmax;
+    s32 hVB;  //GS_Buffer*
+    void* basisvbptr;
+    struct nuprim_s* prim;
+    struct nuskin_s* skin;
+    struct NUVTXSKININFO_s* vtxskininfo;
+    struct NUBLENDGEOM_s* blendgeom;
+};
+
+// Size: 0x64
+struct nugobj_s
+{
+    struct nugobj_s* sysnext;
+    struct nugobj_s* syslast;
+    enum gobjtype_s type; //Size: 0x4
+    struct nugeom_s* geom;
+    struct nufaceongeom_s* faceon_geom;
+    float bounding_radius_from_origin;
+    float bounding_rsq_from_origin;
+    struct nuvec_s bounding_box_min;
+    struct nuvec_s bounding_box_max;
+    struct nuvec_s bounding_box_center;
+    float bounding_radius_from_center;
+    float bounding_rsq_from_center;
+    int ngobjs;
+    struct nugobj_s* next_gobj;
+    struct nuvec_s origin;
+    int ignore;
+    int culltype;
+};
+
+
+// Size: 0x3C
+struct nuprim_s
+{
+    struct nuprim_s* next;
+    enum nuprimtype_e type; //Size: 0x4
+    unsigned short vertexCount;
+    unsigned short max;
+    unsigned short* vid;
+    struct nuplane_s* pln;
+    int idxbuff;  //GS_Buffer
+    int cached;
+    short skinmtxlookup[16];
+};
+
+// Size: 0x10
+struct nuplane_s
+{
+    float a;
+    float b;
+    float c;
+    float d;
+};
+
+
+enum nuvtxtype_e //s32
+{
+    NUVT_PS = 0x11,
+    NUVT_LC1 = 0x51,
+    NUVT_TLTC1 = 0x53,
+    NUVT_SK3TC1 = 0x5d,
+    NUVT_TC1 = 0x59
+};
+
+enum nufaceontype_s
+{
+    NUFACEON_FACEY = 0x1,
+    NUFACEON_FACEON = 0x0
+};
+
+enum gobjtype_s
+{
+    NUGOBJ_FACEON = 0x1,
+    NUGOBJ_MESH = 0x0
+};
+
+
+enum nuprimtype_e
+{
+    NUPT_QUADLIST = 0xa,
+    NUPT_FACEON = 0x9,
+    NUPT_BEZTRI = 0x8,
+    NUPT_BEZPATCH = 0x7,
+    NUPT_NDXTRISTRIP = 0x6,
+    NUPT_NDXTRI = 0x5,
+    NUPT_NDXLINE = 0x4,
+    NUPT_TRISTRIP = 0x3,
+    NUPT_TRI = 0x2,
+    NUPT_LINE = 0x1,
+    NUPT_POINT = 0x0
+};
 
 #endif // !NUGOBJ_H

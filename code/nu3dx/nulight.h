@@ -32,10 +32,122 @@ extern u32 maxlights;
 // Number of lights currently.
 extern u32 numlights;
 
+static int freelight;
+
+static int alloclight;
+
+static s32 current_lights_stored;
+static s32 num_stored_lights;
+
+struct nusyslight_s light[3];
+struct nulights_s StoredLights[1000];
+struct nulight_s* currentlight1;
+struct nulight_s* currentlight2;
+struct nulight_s* currentlight3;
+float buglight_distance;
+struct numtl_s* NuLightAddMat;
+
+
+
+extern s32 HazeValue;
+extern f32 NuRndrFogNear;
+extern f32 NuRndrFogFar;
+extern u32 NuRndrFogBlur;
+extern u32 NuRndrFogCol;
+
+// Size: 0x58
+struct nulight_s
+{
+    struct nucolour3_s ambient;
+    struct nucolour3_s diffuse;
+    struct numtx_s mtx;
+};
+
+// Size: 0x64
+struct nusyslight_s
+{
+    struct nulight_s light;
+    s32 index;
+    s32 next;
+    s32 last;
+};
+
+// Size: 0x108
+struct nulights_s
+{
+    struct nulight_s light[3];
+};
+
+
+/**********************************************************/
+// D3D and GS var
+/**********************************************************/
+
+struct _LIGHTLIST GS_LightList[3];
+
+// Size: 0x6C, DWARF: 0xCBC49B
+struct _LIGHTLIST
+{
+    int EnableLight;
+    struct _D3DLIGHT8 Light;
+};
+
+// Size: 0x10
+struct _D3DCOLORVALUE
+{
+    f32 r;
+    f32 g;
+    f32 b;
+    f32 a;
+};
+
+
+// Size: 0x4
+enum _D3DLIGHTTYPE
+{
+    D3DLIGHT_FORCE_DWORD = 2147483647,
+    D3DLIGHT_DIRECTIONAL = 3,
+    D3DLIGHT_SPOT = 2,
+    D3DLIGHT_POINT = 1
+};
+
+struct _D3DVECTOR
+{
+    f32 x;
+    f32 y;
+    f32 z;
+};
+
+// Size: 0x68
+struct _D3DLIGHT8
+{
+    enum _D3DLIGHTTYPE Type;
+    struct _D3DCOLORVALUE Diffuse;
+    struct _D3DCOLORVALUE Specular;
+    struct _D3DCOLORVALUE Ambient;
+    struct _D3DVECTOR Position;
+    struct _D3DVECTOR Direction;
+    f32 range;
+    f32 falloff;
+    f32 attenuation0;
+    f32 attenuation1;
+    f32 attenuation2;
+    f32 Theta;
+    f32 Phi;
+};
+
+/**********************************************************/
+// END D3D\GS Var
+/**********************************************************/
+
+
 // NuLightInit
 
 // Close the lights.
 void NuLightClose();
+
+void GS_SetupFog(int type, float startz, float endz, u32 colour);
+
 
 // NuLightCreate
 
@@ -53,7 +165,7 @@ void NuLightClose();
 
 // NuLightClearStoredLights
 
-// NuLightFog
+void NuLightFog(f32 pnear, f32 pfar, u32 colour, s32 blur, s32 haze);
 
 // NuLightAddSpotXSpanFade
 

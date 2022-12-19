@@ -4,24 +4,25 @@
 u32 clip_enable = 1;
 Vec cam_axes = { 1.0f, 1.0f, 1.0f };
 
-NuCamera global_camera;
+nucamera_s global_camera;
 Mtx* vmtx;
 Mtx pmtx;
 Mtx vpcsmtx;
 
-NuCamera* NuCameraCreate()
+nucamera_s * NuCameraCreate(void)
+
 {
-    NuCamera* cam = (NuCamera*)NuMemAlloc(sizeof(NuCamera));
-    NuMtxSetIdentity(&cam->mtx);
-    cam->v19 = 0.3;
-    cam->v21 = 0;
-    cam->v20 = 1000.0;
-    cam->v18 = 0.75;
-    cam->v22 = 1.0;
-    cam->v17 = 0.75;
-    cam->v24 = 1.0;
-    cam->v23 = 1.0;
-    return cam;
+  nucamera_s *cam = (nucamera_s *)NuMemAlloc(sizeof(nucamera_s));
+  NuMtxSetIdentity(&cam->mtx);
+  cam->nearclip = 0.3;
+  cam->portalnearclip = 0;
+  cam->farclip = 1000.0;
+  cam->aspect = 0.75;
+  (cam->scale).x = 1.0;
+  cam->fov = 0.75;
+  (cam->scale).z = 1.0;
+  (cam->scale).y = 1.0;
+  return cam;
 }
 
 Mtx* NuCameraGetMtx()

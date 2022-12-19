@@ -1,4 +1,8 @@
 #include "nugobj.h"
+#include "../nucore/nuerror.h"
+#include <nu.h>
+
+error_func e;
 
 
 void NuGobjInit(void) {
@@ -6,112 +10,288 @@ void NuGobjInit(void) {
     if ((s32) sysinit != 0) {
         NuGobjClose();
     }
-    sysgobj = 0; //may be a pointer or counter
+    sysgobj = NULL;
     sysinit = 1; //sysinit is a bool
 
 
-    NuLightFog(0, 0, 0);
-    //GHIDRA:NuLightFog(0x3ff0000000000000,0x3ff0000000000000,0,0,0);
+    NuLightFog(1.0, 1.0, 0, 0, 0);
 
     return;
 }
 
-void NuGobjClose(void)
+void NuGobjClose(void) {
+    
+    struct nugobj_s* nextobj;
+
+    if ((sysinit != 0) && (sysgobj != NULL)) 
+    {
+        do {
+            nextobj = sysgobj->sysnext;
+            NuGobjDestroy(sysgobj);
+            sysgobj = nextobj;
+        } while (nextobj != NULL);
+    }
+    return;
+}
+
+
+struct nugobj_s* NuGobjCreate(void)
 {
-  NuGobj* nextobj;
-  
-  if (sysinit && sysgobj) {
-    do {
-      nextobj = sysgobj->next;
-      NuGobjDestroy(sysgobj);
-      sysgobj = nextobj;
-    } while (nextobj);
+    struct nugobj_s* gobj = (struct nugobj_s*)NuMemAlloc(sizeof(struct nugobj_s)); //0x64;
+    memset(gobj, 0, sizeof(struct nugobj_s));
+
+
+    if (sysgobj != NULL) {
+        sysgobj->syslast = gobj;
+    }
+    gobj->syslast = NULL;
+    gobj->sysnext = sysgobj;
+    gobj->culltype = 1;
+    sysgobj = gobj;
+    return gobj;
+}
+
+
+void NuGobjDestroy(struct nugobj_s* obj)
+
+{
+    struct nugobj_s* next_gobj;
+    struct nugeom_s* next;
+    struct nugeom_s* prev;
+
+    next_gobj = obj->next_gobj;
+    prev = obj->geom;
+    while (prev != NULL) {
+        next = prev->next;
+        NuGeomDestroy(prev);
+        prev = next;
+    }
+    if (obj->syslast != NULL) {
+        obj->syslast->sysnext = obj->sysnext;
+    }
+    if (obj->sysnext != NULL) {
+        obj->sysnext->syslast = obj->syslast;
+    }
+    if (next_gobj != NULL) {
+        NuGobjDestroy(next_gobj);
+    }
+    return;
+}
+
+
+
+void NuGobjAddGeom(struct nugobj_s* gobj, struct nugeom_s* geom) {
+  if (gobj->geom == NULL) {
+    gobj->geom = geom;
+    return;
   }
+
+  struct nugeom_s* last = gobj->geom;
+  while (last->next != NULL) {
+    last = last->next;
+  }
+  last->next = geom;
   return;
 }
 
-//TBREV
-void NuGobjDestroy(NuGobj *obj)
+/*void NuGobjAddGeom(struct nugobj_s* gobj, struct nugeom_s* geom) {
+    struct nugeom_s* g = gobj->geoms;
+    struct nugeom_s* last = NULL;
 
-{
-  NuGobj *child_maybe;
-  NuGeom *next;
-  NuGeom *prev;
-  
-  child_maybe = obj->__another_spooky_gobj; //field_0x4c
-  prev = obj->geoms;
-  while (prev != NULL) {
-    next = prev->next;
-    NuGeomDestroy(prev);
-    prev = next;
-  }
-  if (obj->prev != NULL) {
-    obj->prev->next = obj->next;
-  }
-  if (obj->next != NULL) {
-    obj->next->prev = obj->prev;
-  }
-  if (child_maybe != NULL) {
-    NuGobjDestroy(child_maybe);
-  }
-  return;
-}
-
-
-
-NuGobj* NuGobjCreate() {
-  NuGobj* gobj = (NuGobj*)NuMemAlloc(sizeof(NuGobj)); //0x64
-  memset(gobj, 0, sizeof(NuGobj));
-
-  if (sysgobj != NULL) {
-    sysgobj->prev = gobj;
-  }
-  gobj->prev = NULL;
-  gobj->next = sysgobj;
-  gobj->__word_60 = 1;
-  sysgobj = gobj;
-  return gobj;
-}
-
-
-
-void NuGobjAddGeom(NuGobj *gobj, NuGeom *geom) {
-  if (gobj->geoms == NULL) {
+    if (g != NULL) {
+        do {
+            last = g;
+            g = last->next;
+        } while (g != NULL);
+    }
+    if (last != NULL) {
+        last->next = geom;
+        return;
+    }
     gobj->geoms = geom;
+}
+}*/
+
+
+
+/*void NuGobjAddFaceOnGeom(struct nugobj_s* gobj, struct nufaceongeom_s* geom) {
+  if (gobj->faceon_geom == NULL) {
+    gobj->faceon_geom = geom;
     return;
   }
 
-  NuGeom* last = gobj->geoms;
+  struct nufaceongeom_s* last = gobj->faceon_geom;
   while (last->next != NULL) {
     last = last->next;
   }
   last->next = geom;
   return;
+}*/
+
+void NuGobjAddFaceOnGeom(struct nugobj_s* gobj, struct nufaceongeom_s* Fgeom) {
+    struct nufaceongeom_s* face = gobj->faceon_geom;
+    struct nufaceongeom_s* last = NULL;
+
+    while (face != NULL) {
+         last = face;
+         face = last->next;
+    }
+    if (last != NULL) {
+        last->next = Fgeom;
+        return;
+    }
+    gobj->faceon_geom = Fgeom;
 }
 
+/*
+extern f32 lbl_8011CD38;
+extern f32 lbl_8011CD3C;
+extern f32 lbl_8011CD40;
+extern f32 lbl_8011CD44;
 
+void NuGobjCalcFaceOnDims(struct NuGobj* gobj) {
+    f32 sp10;
+    f32 spC;
+    f32 sp8;
+    f32 temp_f0;
+    f32 temp_f0_10;
+    f32 temp_f0_11;
+    f32 temp_f0_12;
+    f32 temp_f0_2;
+    f32 temp_f0_3;
+    f32 temp_f0_4;
+    f32 temp_f0_5;
+    f32 temp_f0_6;
+    f32 temp_f0_7;
+    f32 temp_f0_8;
+    f32 temp_f0_9;
+    f32 temp_f12;
+    f32 temp_f12_2;
+    f32 temp_f13;
+    f32 temp_f13_2;
+    f32 temp_f13_3;
+    f32 var_f31;
+    f32 var_f31_2;
+    s32 var_r11;
+    s32 var_r28;
+    s32 var_r29;
+    s32 var_r29_2;
+    struct NuFaceOnGeom* var_r30;
+    struct NuFaceOnGeom* var_r30_2;
+    struct nufaceon_s* temp_r9;
+    void* temp_r4;
+    void* temp_r4_2;
 
-void NuGobjAddFaceOnGeom(NuGobj *gobj, NuFaceOnGeom *geom) {
-  if (gobj->face_ons == NULL) {
-    gobj->face_ons = geom;
-    return;
-  }
+    var_r30 = gobj->faceon_geom;
+    gobj->bounding_box_min.z = lbl_8011CD38;
+    gobj->bounding_box_max.z = lbl_8011CD3C;
+    gobj->bounding_rsq_from_origin = lbl_8011CD40;
+    gobj->bounding_box_min.x = lbl_8011CD38;
+    gobj->bounding_box_min.y = lbl_8011CD38;
+    gobj->bounding_box_max.x = lbl_8011CD3C;
+    gobj->bounding_box_max.y = lbl_8011CD3C;
+    if (var_r30 != NULL) {
+        do {
+            var_r29 = 0;
+            if ((s32)var_r30->nfaceons > 0) {
+                var_r11 = 0;
+                do {
+                    temp_r9 = var_r30->faceons;
+                    temp_r4 = temp_r9 + var_r11;
+                    temp_f0 = temp_r4->unk10;
+                    var_f31 = temp_r4->unkC;
+                    if (temp_f0 > var_f31) {
+                        var_f31 = temp_f0;
+                    }
+                    temp_f0_2 = *(temp_r9 + var_r11) - var_f31;
+                    if (temp_f0_2 < gobj->bounding_box_min.x) {
+                        gobj->bounding_box_min.x = temp_f0_2;
+                    }
+                    temp_f0_3 = temp_r4->unk4 - var_f31;
+                    if (temp_f0_3 < gobj->bounding_box_min.y) {
+                        gobj->bounding_box_min.y = temp_f0_3;
+                    }
+                    temp_f0_4 = temp_r4->unk8 - var_f31;
+                    if (temp_f0_4 < gobj->bounding_box_min.z) {
+                        gobj->bounding_box_min.z = temp_f0_4;
+                    }
+                    temp_f0_5 = *(temp_r9 + var_r11) + var_f31;
+                    if (temp_f0_5 > gobj->bounding_box_max.x) {
+                        gobj->bounding_box_max.x = temp_f0_5;
+                    }
+                    temp_f0_6 = temp_r4->unk4 + var_f31;
+                    if (temp_f0_6 > gobj->bounding_box_max.y) {
+                        gobj->bounding_box_max.y = temp_f0_6;
+                    }
+                    temp_f0_7 = temp_r4->unk8 + var_f31;
+                    if (temp_f0_7 > gobj->bounding_box_max.z) {
+                        gobj->bounding_box_max.z = temp_f0_7;
+                    }
+                    temp_f0_8 = temp_r4->unk4;
+                    temp_f13 = *(temp_r9 + var_r11);
+                    temp_f12 = temp_r4->unk8;
+                    temp_f0_9 = (temp_f12 * temp_f12) + ((temp_f13 * temp_f13) + (temp_f0_8 * temp_f0_8));
+                    if (temp_f0_9 > gobj->bounding_rsq_from_origin) {
+                        gobj->bounding_rsq_from_origin = temp_f0_9;
+                    }
+                    var_r29 += 1;
+                    var_r11 += 0x18;
+                } while (var_r29 < (s32)var_r30->nfaceons);
+            }
+            var_r30 = var_r30->next;
+        } while (var_r30 != NULL);
+    }
+    var_r30_2 = gobj->faceon_geom;
+    gobj->bounding_radius_from_origin = (f32)gcc2_compiled__N104(gobj->bounding_rsq_from_origin);
+    gobj->bounding_box_center.x = (gobj->bounding_box_min.x + gobj->bounding_box_max.x) * lbl_8011CD44;
+    gobj->bounding_box_center.y = (gobj->bounding_box_min.y + gobj->bounding_box_max.y) * lbl_8011CD44;
+    gobj->bounding_box_center.z = (gobj->bounding_box_min.z + gobj->bounding_box_max.z) * lbl_8011CD44;
+    gobj->bounding_rsq_from_center = lbl_8011CD40;
+    if (var_r30_2 != NULL) {
+        do {
+            var_r29_2 = 0;
+            if ((s32)var_r30_2->nfaceons > 0) {
+                var_r28 = 0;
+                do {
+                    temp_r4_2 = var_r30_2->faceons + var_r28;
+                    temp_f0_10 = temp_r4_2->unk10;
+                    var_f31_2 = temp_r4_2->unkC;
+                    if (temp_f0_10 > var_f31_2) {
+                        var_f31_2 = temp_f0_10;
+                    }
+                    NuVecSub(&sp8, &gobj->bounding_box_center);
+                    temp_f13_2 = *(f32*)0x8011CD40;
+                    if (sp8 < temp_f13_2) {
+                        sp8 = -sp8;
+                    }
+                    if (spC < temp_f13_2) {
+                        spC = -spC;
+                    }
+                    if (sp10 < temp_f13_2) {
+                        sp10 = -sp10;
+                    }
+                    temp_f0_11 = spC + var_f31_2;
+                    temp_f13_3 = sp8 + var_f31_2;
+                    temp_f12_2 = sp10 + var_f31_2;
+                    temp_f0_12 = (temp_f12_2 * temp_f12_2) + ((temp_f13_3 * temp_f13_3) + (temp_f0_11 * temp_f0_11));
+                    if (temp_f0_12 > gobj->bounding_rsq_from_center) {
+                        gobj->bounding_rsq_from_center = temp_f0_12;
+                    }
+                    var_r29_2 += 1;
+                    var_r28 += 0x18;
+                } while (var_r29_2 < (s32)var_r30_2->nfaceons);
+            }
+            var_r30_2 = var_r30_2->next;
+        } while (var_r30_2 != NULL);
+    }
+    gobj->bounding_radius_from_center = (f32)gcc2_compiled__N104(gobj->bounding_rsq_from_center);
 
-  NuFaceOnGeom* last = gobj->face_ons;
-  while (last->next != NULL) {
-    last = last->next;
-  }
-  last->next = geom;
-  return;
-}
-
-/*NuGobjCalcFaceOnDims(...)
-{
-	WIP
 }
 */
 
-void NuGobjCalcDims(NuGobj *gobj) {
+
+
+/*void NuGobjCalcDims(struct NuGobj* gobj) {
   if (gobj->__causes_calc_face_on_dims == 1) {
     NuGobjCalcFaceOnDims(gobj);
     return;
@@ -123,7 +303,7 @@ void NuGobjCalcDims(NuGobj *gobj) {
   gobj->bounding_box_max.y = FLT_MIN;
   gobj->bounding_box_max.z = FLT_MIN;
   gobj->bounding_radius_sq = 0.0;
-  for (NuGeom* geom = gobj->geom; geom != NULL; geom = geom->next) {
+  for (struct NuGeom* geom = gobj->geom; geom != NULL; geom = geom->next) {
     int stride = NuVtxStride(geom->vertex_type);
     char* vertex_raw = geom->vertex_buffer;
     if (vertex_raw == NULL) {
@@ -133,7 +313,7 @@ void NuGobjCalcDims(NuGobj *gobj) {
     }
     char* end = vertex_raw + stride * geom->__count_2__mebbe_count_actually_in_use;
     for (; vertex_raw < end; vertex_raw += stride) {
-      NuVec* vertex = (NuVec*)vertex_raw;
+      struct NuVec* vertex = (struct NuVec*)vertex_raw;
       if (vertex->x < gobj->bounding_box_min.x) {
         gobj->bounding_box_min.x = vertex->x;
       }
@@ -165,7 +345,7 @@ void NuGobjCalcDims(NuGobj *gobj) {
   gobj->bounding_box_center.z = (gobj->bounding_box_min.z + gobj->bounding_box_max.z) * 0.5;
 
   gobj->bounding_rsq_from_center = 0.0;
-  for (NuGeom* geom = gobj->geom; geom != NULL; geom = geom->next) {
+  for (struct NuGeom* geom = gobj->geom; geom != NULL; geom = geom->next) {
     int stride = NuVtxStride(geom->vertex_type);
     char* vertex_raw = geom->vertex_buffer;
     if (vertex_raw == NULL) {
@@ -175,8 +355,8 @@ void NuGobjCalcDims(NuGobj *gobj) {
     }
     char* end = vertex_raw + stride * geom->__count_2__mebbe_count_actually_in_use;
     for (; vertex_raw < end; vertex_raw += stride) {
-      NuVec* vertex = (NuVec*)vertex_raw;
-      NuVec diff;
+      struct NuVec* vertex = (struct NuVec*)vertex_raw;
+      struct NuVec diff;
       NuVecSub(&diff, vertex, gobj->bounding_box_center);
       float rsq = diff.z * diff.z + diff.x * diff.x + diff.y * diff.y;
       if (gobj->bounding_rsq_from_center < rsq) {
@@ -186,42 +366,41 @@ void NuGobjCalcDims(NuGobj *gobj) {
   }
   gobj->bounding_radius_from_center = (float)sqrt((double)gobj->bounding_rsq_from_center);
   return;
-}
+}*/
 
 
 
 /**********************************************NUGEOM STUFF*************************************/
 
-NuGeom* NuGeomCreate(void) 
+struct nugeom_s* NuGeomCreate(void)
 {
-    NuGeom* geom;
+    struct nugeom_s* geom;
 
-    geom = (NuGeom *)NuMemAlloc(0x30);
+    geom = (struct nugeom_s*)NuMemAlloc(0x30);
     memset(geom,0, 0x30);
     return geom;
 }
 
-
-NuFaceOnGeom* NuFaceOnGeomCreate(void)
+struct nufaceongeom_s* NuFaceOnGeomCreate(void)
 {
-  NuFaceOnGeom* ret = (NuFaceOnGeom*)NuMemAlloc(sizeof(NuFaceOnGeom)); \\0x30
-  memset(ret, 0, sizeof(NuFaceOnGeom));
+  struct nufaceongeom_s* ret = (struct nufaceongeom_s*)NuMemAlloc(sizeof(struct nufaceongeom_s)); //0x30
+  memset(ret, 0, sizeof(struct nufaceongeom_s));
   return ret;
 }
 
 
 
-void NuGeomDestroy(NuGeom *geom)
+void NuGeomDestroy(struct nugeom_s *geom)
 {
   NuGeomDestroyVB(geom);
-  for (NuPrim* prim = geom->primLinkedList; prim != NULL; prim = prim->next) {
+  for (struct NuPrim* prim = geom->prim; prim != NULL; prim = prim->next) {
     NuPrimDestroy(prim);
   }
 
-  NuBlendShape* blendShape;
-  if (blendShape = geom->blendShape) {
-    void* buffer;
-    if (buffer = blendShape->vertexBuffer) {
+
+  if (geom->blendgeom != NULL) {
+    int buffer;
+    if (buffer = geom->blendgeom->hVB, buffer != 0) {
       GS_DeleteBuffer(buffer);
     }
   }
@@ -230,78 +409,76 @@ void NuGeomDestroy(NuGeom *geom)
 }
 
 
-
-//TBTESTED
-
 // Create geometry vertex buffer
-void NuGeomCreateVB(struct NuGeom* geom, u32 vtxCount, NU_VERTEX_TYPE vtxType, BOOL param_4) {
+void NuGeomCreateVB(struct nugeom_s* geom, u32 vtxCount, enum nuvtxtype_e vtxType, s32 dynamic)
+{
         // Boolean argument is unused
-    #pragma unused(param_4);
+    #pragma unused(dynamic);
     
     u32 vtxSize;
-    GS_Buffer* vtxBuffer;
+    struct GS_Buffer* vtxBuffer;
 	
     switch(vtxType) {
 		
 			//determining the vertex buffer size (vertex count * sizeof(buffer_type_element)
-		
-    case 0x59:
+    case NUVT_PS:
+        vtxSize = vtxCount * 0x10;
+        break;
+    case NUVT_TC1:
         vtxSize = vtxCount * 0x24;
         break;
-    case 0x51:
+    case NUVT_LC1:
         vtxSize = vtxCount * 0x18;
         break;
-    case 0x5D:
-        vtxSize = vtxCount * 0x38;
-        break;
-    case 0x53:
+    case NUVT_TLTC1:
         vtxSize = vtxCount * 0x1C;
         break;
-    case 0x11:
-        vtxSize = vtxCount * 0x10;
-        break;        
+    case NUVT_SK3TC1:
+        vtxSize = vtxCount * 0x38;
+        break;      
     default:
-        NuError("NuGeomCreateVB : Unknown vertex type!");
+        //"NuGeomCreateVB : Unknown vertex type!"
+        e = NuErrorProlog("OpenCrashWOC/code/nu3dx/nugobj.c", 441);
+        e("assert");
     }
     
-    NuAssert(geom->vertex_buffer == NULL, "NuGeomCreateVB : geom already has VB");
+    if (geom->hVB != 0)
+    {
+        //NuAssert(geom->vertex_buffer == NULL, "NuGeomCreateVB : geom already has VB");
+        e = NuErrorProlog("OpenCrashWOC/code/nu3dx/nugobj.c", 448);
+        e("assert");
+    }
+    
     
     // Second argument is some vertex type
     vtxBuffer = GS_CreateBuffer(vtxSize, 1);
-    
-    geom->count_1 = vtxCount;
-    geom->vertex_buffer = vtxBuffer;
-    geom->vertex_type = vtxType;
-    geom->count_2 = vtxCount;
-	
-	/*	why the vertex count is stored twice inside the NuGeom?
-        maybe is:
-		geom->vertex_buffer_size = vtxSize;
-		geom->vertex_buffer = vtxBuffer;
-		geom->vertex_type = vtxType;
-		geom->vertex_count = vtxCount;
-	*/
+   
+
+    geom->vtxmax = vtxCount;
+    geom->hVB = (int)vtxBuffer;
+    geom->vtxtype = vtxType;
+    geom->vtxcnt = vtxCount;
+    return;
 }
 
-void NuGeomDestroyVB(NuGeom *geom)
+void NuGeomDestroyVB(struct nugeom_s *geom)
 
 {
-	if(geom->buffer != (GS_Buffer *)0x0){
-		GS_DeleteBuffer(geom->buffer);
-		geom->buffer = (GS_Buffer *)0x0;
+	if(geom->hVB != NULL){
+		GS_DeleteBuffer(geom->hVB);
+        geom->hVB = 0;
 		}
 	return;
 }
 
-
 // Append prim to geom
-void NuGeomAddPrim(struct NuGeom *geom, struct NuPrim *prim)
+void NuGeomAddPrim(struct nugeom_s* geom, struct nuprim_s* prim)
 {
     struct NuPrim *head;
     struct NuPrim *tail;
     struct NuPrim *iter;
 
-    head = geom->prims;
+    head = geom->prim;
     tail = NULL;
 
     // When iter is NULL, tail will be the last non-NULL prim (list tail)
@@ -310,27 +487,27 @@ void NuGeomAddPrim(struct NuGeom *geom, struct NuPrim *prim)
         tail = iter;
     }
 
-    // Append prim (NULL tail = empty list)
-    if (tail != NULL)
-    {
-        tail->next = prim;
-    }
-
     // I thought prims was the list head???
     // Not sure what's going on here
-    geom->prims = prim;
+    if (tail == NULL) {
+        geom->prim = prim;
+        return;
+    }
+
+    // Append prim (NULL tail = empty list)
+    tail->next = prim;
+    return;
 }
 
 
-
 // Append skin to geom
-void NuGeomAddSkin(struct NuGeom *geom, struct NuSkin *skin)
+void NuGeomAddSkin(struct nugeom_s* geom, struct nuskin_s* skin)
 {
-    struct NuSkin *head;
-    struct NuSkin *tail;
-    struct NuSkin *iter;
+    struct nuskin_s *head;
+    struct nuskin_s *tail;
+    struct nuskin_s *iter;
 
-    head = geom->skins;
+    head = geom->skin;
     tail = NULL;
 
     // When iter is NULL, tail will be the last non-NULL skin (list tail)
@@ -339,72 +516,86 @@ void NuGeomAddSkin(struct NuGeom *geom, struct NuSkin *skin)
         tail = iter;
     }
 
-    // Append skin (NULL tail = empty list)
-    if (tail != NULL)
+
+     // I thought skins was the list head???
+    // Not sure what's going on here
+    if (tail == NULL)
     {
-        tail->next = skin;
+        geom->skin = skin;
+        return;
+
     }
 
-    // I thought skins was the list head???
-    // Not sure what's going on here
-    geom->skins = skin;
+    // Append skin (NULL tail = empty list)
+     tail->next = skin;
+     return;
 }
 
-NuPrim* NuPrimCreate(s16 amount, u32 type) {
-    s32* data;
-    struct NuPrim *prim;
+
+/**********************************************NUPRIM STUFF*************************************/
+
+struct nuprim_s* NuPrimCreate(int amount, enum nuprimtype_e type) {
+    u16* data;
+    struct nuprim_s *prim;
 
     prim = NuMemAlloc(0x3C);
     memset(prim,0,0x3C);
     prim->type = type;
-    prim->amount = amount;
-    prim->amount2Maybe = amount;
-    if (type > 2U) {
-        data = (s32*)(amount * 2);
-        prim->data = NuMemAlloc((s32)data);
-        prim->buffer = (byte*)GS_CreateBuffer((s32)data, 2);
+    prim->vertexCount = (u16)amount;
+    prim->max = (u16)amount;
+    if (type > NUPT_TRI) {
+        data = (u16*)(amount * 2);
+        prim->vid = NuMemAlloc((s32)data);
+        prim->idxbuff = (int)GS_CreateBuffer((u32)data, 2);
     }
     return prim;
 }
 
 
-void NuPrimDestroy(NuPrim* prim) {
-    if ((prim != NULL) && ((s32) prim->buffer != 0)) {
-        GS_DeleteBuffer((s32)prim->buffer);
-        prim->buffer = 0;
+void NuPrimDestroy(struct nuprim_s* prim) {
+    if ((prim != NULL) && ((s32)prim->idxbuff != 0)) {
+        GS_DeleteBuffer((void*)prim->idxbuff);
+        prim->idxbuff = 0;
     }
 	return;
 }
 
-
-//BufferTypes is uint[4], GS_BufferSize is uint 
-void* GS_CreateBuffer (uint bufSize, uint bufferType){
-	GS_Buffer *buf;
+//BufferTypes is int[4], GS_BufferSize is int 
+void* GS_CreateBuffer (u32 bufsize, s32 bufferType){
+    struct GS_Buffer *bufptr;
 	
-	buf = (GS_Buffer*)malloc(bufsize + 8);
+    bufptr = (struct GS_Buffer*)malloc(bufsize + 8);
 	GS_BufferSize = GS_BufferSize + bufsize;
 	BufferTypes[bufferType] = BufferTypes[bufferType] + bufsize;
-	buf->size = bufsize;
-	buf->type = bufferType;
-	return buf + 1;
+    bufptr->size = bufsize;
+    bufptr->type = bufferType;
+	return bufptr + 1;
+}
+
+void GS_DeleteBuffer(void* ptr)
+{
+    struct GS_Buffer* bufptr = (struct GS_Buffer*)((int)ptr - 2);
+    GS_BufferSize -= bufptr->size;
+    BufferTypes[bufptr->type] -= bufptr->size;
+    free(bufptr);
 }
 
 
 // Vertex stride = size of 1 vertex element
-void NuVtxStride(NU_VERTEX_TYPE type)
+int NuVtxStride(enum nuvtxtype_e type)
 {
     switch (type)
     {
-    case 0x59:
-        return 0x24;
-    case 0x5D:
-        return 0x38;
-    case 0x53:
-        return 0x1C;
-    case 0x51:
-        return 0x18;
-    case 0x11:
+    case NUVT_PS:
         return 0x10;
+    case NUVT_LC1:
+        return 0x18;
+    case NUVT_TLTC1:
+        return 0x1C;
+    case NUVT_SK3TC1:
+        return 0x38;
+    case NUVT_TC1:
+        return 0x24;
     }
 
     NuError("NuVtxStride: Unknown vertex type");
@@ -413,31 +604,22 @@ void NuVtxStride(NU_VERTEX_TYPE type)
 // UV animation for all gobjs
 void NuAnimUV(void)
 {
-    struct NuGobj *gobj;
+    struct nugobj_s* current;
 
     _timer++;
 
     // Equivalent to (timer % 2 == 0). 30 fps animation?
-    if ((timer & 1) == 0)
+    if ((_timer & 1) == 0)
     {
         if (!Paused && sysinit)
         {
             // Animate all gobjs
-            for (gobj = sysgobj; gobj != NULL; gobj = gobj->next)
+            for (current = sysgobj; current != NULL; current = current->sysnext)
             {
-                NuMtlUVAnimation(gobj);
+                NuMtlUVAnimation(current);
             }
         }
     }
-}
-
-
-//BufferTypes is uint[4], GS_BufferSize is uint 
-void GS_DeleteBuffer(u8* buffer)
-{
-  GS_Buffer* buf = (GS_Buffer*)(buffer - 2);
-  GS_BufferSize -= buf->size;
-  BufferTypes[buf->type] -= buf->size;
-  free(buf);
+    return;
 }
 
