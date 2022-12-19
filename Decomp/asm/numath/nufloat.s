@@ -1,0 +1,45 @@
+.include "macros.inc"
+
+.section .text, "ax"  # 0x800032A0 - 0x80104920
+
+.global NuFabs
+NuFabs:
+/* 800BE864 000BB864  94 21 FF F0 */	stwu r1, -0x10(r1)
+/* 800BE868 000BB868  D0 21 00 08 */	stfs f1, 8(r1)
+/* 800BE86C 000BB86C  81 21 00 08 */	lwz r9, 8(r1)
+/* 800BE870 000BB870  7D 20 4B 78 */	mr r0, r9
+/* 800BE874 000BB874  54 09 00 7E */	clrlwi r9, r0, 1
+/* 800BE878 000BB878  91 21 00 08 */	stw r9, 8(r1)
+/* 800BE87C 000BB87C  C0 21 00 08 */	lfs f1, 8(r1)
+/* 800BE880 000BB880  38 21 00 10 */	addi r1, r1, 0x10
+/* 800BE884 000BB884  4E 80 00 20 */	blr 
+
+.global NuFsign
+NuFsign:
+/* 800BE888 000BB888  94 21 FF F0 */	stwu r1, -0x10(r1)
+/* 800BE88C 000BB88C  D0 21 00 08 */	stfs f1, 8(r1)
+/* 800BE890 000BB890  81 21 00 08 */	lwz r9, 8(r1)
+/* 800BE894 000BB894  7D 20 4B 78 */	mr r0, r9
+/* 800BE898 000BB898  2C 00 00 00 */	cmpwi r0, 0
+/* 800BE89C 000BB89C  40 80 00 10 */	bge lbl_800BE8AC
+/* 800BE8A0 000BB8A0  3D 20 80 12 */	lis r9, lbl_8011FE28@ha
+/* 800BE8A4 000BB8A4  C0 29 FE 28 */	lfs f1, lbl_8011FE28@l(r9)
+/* 800BE8A8 000BB8A8  48 00 00 0C */	b lbl_800BE8B4
+lbl_800BE8AC:
+/* 800BE8AC 000BB8AC  3D 20 80 12 */	lis r9, lbl_8011FE2C@ha
+/* 800BE8B0 000BB8B0  C0 29 FE 2C */	lfs f1, lbl_8011FE2C@l(r9)
+lbl_800BE8B4:
+/* 800BE8B4 000BB8B4  38 21 00 10 */	addi r1, r1, 0x10
+/* 800BE8B8 000BB8B8  4E 80 00 20 */	blr 
+
+.global NuFpDiv
+NuFpDiv:
+/* 800BE8BC 000BB8BC  3D 20 80 12 */	lis r9, lbl_8011FE30@ha
+/* 800BE8C0 000BB8C0  C0 09 FE 30 */	lfs f0, lbl_8011FE30@l(r9)
+/* 800BE8C4 000BB8C4  FC 02 00 00 */	fcmpu cr0, f2, f0
+/* 800BE8C8 000BB8C8  41 82 00 0C */	beq lbl_800BE8D4
+/* 800BE8CC 000BB8CC  EC 21 10 24 */	fdivs f1, f1, f2
+/* 800BE8D0 000BB8D0  4E 80 00 20 */	blr 
+lbl_800BE8D4:
+/* 800BE8D4 000BB8D4  FC 20 00 90 */	fmr f1, f0
+/* 800BE8D8 000BB8D8  4E 80 00 20 */	blr 
