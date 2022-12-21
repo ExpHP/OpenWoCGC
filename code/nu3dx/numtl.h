@@ -54,6 +54,18 @@ struct nuotitem_s dynamic_glass_items[64];
 struct nuwateritem_s wateritem[512];
 extern f32 sinetime.246;
 
+
+
+// Size: 0x44
+struct _D3DMATERIAL8
+{
+    _D3DCOLORVALUE Diffuse;
+    _D3DCOLORVALUE Ambient;
+    _D3DCOLORVALUE Specular;
+    _D3DCOLORVALUE Emissive;
+    float Power;
+};
+
 // Size: 0x10
 struct nuotitem_s
 {

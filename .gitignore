@@ -31,6 +31,8 @@
 *.out
 *.app
 
+Decomp/
+
 # CrashWOC Files
 ats
 carddemo
