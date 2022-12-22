@@ -10,7 +10,7 @@ struct nutex_s tex;
 
 void NuTexInit()
 {
-    static u32 initialised = 0;
+    static s32 initialised = 0;
 	if (initialised)
 	{
 		NuTexClose();
