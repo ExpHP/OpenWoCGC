@@ -504,6 +504,83 @@ void NuLightMatInit(void)
     return;
 }
 
+int NuLgtRand(void)
+
+{
+  NuLgtSeed = NuLgtSeed * 0x24cd + 1U & 0xffff;
+  return NuLgtSeed;
+}
+
+void NuLgtArcLaser(s32 type,struct nuvec_s *start,struct nuvec_s *target,struct nuvec_s *lasdir,f32 sizew,f32 size l,
+                  f32 sizewob,f32 arcsize,s32 col)
+
+{
+  u32 uVar1;
+  f32 fVar2;
+  s32 seed;
+  u32 uVar3;
+  f32 fVar4;
+  s32 laserframe;
+  
+  laserframe = NuLgtArcLaserFrame;
+  seed = NuLgtArcLaserCnt;
+  uVar3 = (uint)col >> 0x17 & 0x1fe;
+  if (0xff < uVar3) {
+    uVar3 = 0xff;
+  }
+  uVar1 = (col & 0xffU) << 1;
+  if (0xff < uVar1) {
+    uVar1 = 0xff;
+  }
+  if (NuLgtArcLaserCnt < 0x10) {
+    NuLgtArcLaserData[NuLgtArcLaserCnt].type = (uchar)type;
+    fVar4 = start->z;
+    fVar2 = start->y;
+    NuLgtArcLaserData[seed].start.x = start->x;
+    NuLgtArcLaserData[seed].start.y = fVar2;
+    NuLgtArcLaserData[seed].start.z = fVar4;
+    fVar4 = target->z;
+    fVar2 = target->y;
+    NuLgtArcLaserData[seed].target.x = target->x;
+    NuLgtArcLaserData[seed].target.z = fVar4;
+    NuLgtArcLaserData[seed].target.y = fVar2;
+    fVar4 = lasdir->z;
+    fVar2 = lasdir->y;
+    NuLgtArcLaserData[seed].lasdir.x = lasdir->x;
+    NuLgtArcLaserData[seed].lasdir.z = fVar4;
+    NuLgtArcLaserData[seed].lasdir.y = fVar2;
+    NuLgtArcLaserData[seed].sizew = sizew;
+    NuLgtArcLaserData[seed].sizel = sizel;
+    NuLgtArcLaserData[seed].sizewob = sizewob;
+    NuLgtArcLaserData[seed].arcsize = arcsize;
+    NuLgtArcLaserData[seed].col = uVar3 << 0x18 | 0xffff | uVar1 << 0x10;
+    if (((laserframe & 1U) == 0) || (NuLgtArcLaserData[seed].seed == 0)) {
+      seed = NuLgtRand();
+      NuLgtArcLaserData[NuLgtArcLaserCnt].seed = seed;
+    }
+    seed = 6;
+    do {
+      NuLgtRand();
+      seed = seed + -1;
+    } while (seed != 0);
+    NuLgtArcLaserCnt = NuLgtArcLaserCnt + 1;
+    return;
+  }
+  return;
+}
+
+
+void NuLgtSetArcMat(struct numtl_s *mtl,f32 u0,f32 v0,f32 u1,f32 v1)
+
+{
+  NuLgtArcMtl = mtl;
+  NuLgtArcU0 = u0;
+  NuLgtArcV0 = v0;
+  NuLgtArcU1 = u1;
+  NuLgtArcV1 = v1;
+  return;
+}
+
 
 s32 GS_LightEnable(s32 Index, s32 Enable)
 
@@ -516,3 +593,314 @@ void GS_SetupFog(int type, float startz, float endz, u32 colour)
 {
     return 0;
 }
+
+/*void NuLgtArcLaserDraw(int paused)	//TODO
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float *pfVar4;
+  numtx_s *b;
+  int iVar5;
+  uint uVar6;
+  nuvec4_s *dest;
+  nuvec4_s *dest_00;
+  double dVar7;
+  double dVar8;
+  double dVar9;
+  double dVar10;
+  double dVar11;
+  double dVar12;
+  double dVar13;
+  double dVar14;
+  double dVar15;
+  double dVar16;
+  double dVar17;
+  float fVar18;
+  nuvec_s local_1a8;
+  float local_198;
+  float local_194;
+  float local_188;
+  float local_184;
+  float local_180;
+  float local_17c;
+  float v0_2;
+  float v0;
+  float v1_2;
+  float v1;
+  Nearest_Light_s light;
+  double local_b0;
+  
+  v0 = NuLgtArcV0;
+  v1 = NuLgtArcV1;
+  v0_2 = NuLgtArcV0;
+  v1_2 = NuLgtArcV1;
+  if (paused != 0) {
+    NuLgtArcLaserCnt = NuLgtArcLaserOldCnt;
+  }
+  if ((NuLgtArcMtl == (numtl_s *)0x0) || (NuLgtArcLaserCnt == 0)) {
+    NuLgtArcLaserOldCnt = 0;
+  }
+  else {
+    pfVar4 = (float *)NuScratchAlloc32(0xc0);
+    b = NuCameraGetVPCSMtx();
+    iVar5 = NuRndrBeginScene(1);
+    if (iVar5 != 0) {
+      iVar5 = 0;
+      if (0 < NuLgtArcLaserCnt) {
+        dVar9 = 240.0;
+        dVar12 = 4503601774854144.0;
+        dVar8 = 150.0;
+        dVar11 = 1.0;
+        dVar10 = 0.5;
+        dest_00 = (nuvec4_s *)(pfVar4 + 0x10);
+        dest = (nuvec4_s *)(pfVar4 + 0x14);
+        do {
+          pfVar4[0x10] = NuLgtArcLaserData[iVar5].start.x;
+          pfVar4[0x11] = NuLgtArcLaserData[iVar5].start.y;
+          fVar18 = NuLgtArcLaserData[iVar5].start.z;
+          pfVar4[0x13] = (float)dVar11;
+          pfVar4[0x12] = fVar18;
+          NuVec4MtxTransformVU0(dest_00,dest_00,b);
+          pfVar4[0x14] = NuLgtArcLaserData[iVar5].target.x;
+          pfVar4[0x15] = NuLgtArcLaserData[iVar5].target.y;
+          fVar18 = NuLgtArcLaserData[iVar5].target.z;
+          pfVar4[0x17] = (float)dVar11;
+          pfVar4[0x16] = fVar18;
+          NuVec4MtxTransformVU0(dest,dest,b);
+          dVar7 = (double)pfVar4[0x13];
+          if (dVar10 <= dVar7) {
+LAB_800b22a4:
+            pfVar4[0x18] = NuLgtArcLaserData[iVar5].start.x;
+            pfVar4[0x19] = NuLgtArcLaserData[iVar5].start.y;
+            fVar18 = NuLgtArcLaserData[iVar5].start.z;
+            pfVar4[0x1b] = (float)dVar11;
+            pfVar4[0x1a] = fVar18;
+LAB_800b22c0:
+            fVar18 = pfVar4[0x19] - NuLgtArcLaserData[iVar5].target.y;
+            fVar1 = pfVar4[0x18] - NuLgtArcLaserData[iVar5].target.x;
+            fVar2 = pfVar4[0x1a] - NuLgtArcLaserData[iVar5].target.z;
+            sqrt(fVar2 * fVar2 + fVar1 * fVar1 + fVar18 * fVar18);
+            if (0.5 <= pfVar4[0x17]) {
+              pfVar4[0x1c] = NuLgtArcLaserData[iVar5].target.x;
+              pfVar4[0x1d] = NuLgtArcLaserData[iVar5].target.y;
+              fVar18 = NuLgtArcLaserData[iVar5].target.z;
+              pfVar4[0x1f] = (float)dVar11;
+              pfVar4[0x1e] = fVar18;
+            }
+            else {
+              fVar18 = NuLgtArcLaserData[iVar5].start.x;
+              fVar3 = pfVar4[0x13] - 0.5;
+              fVar2 = pfVar4[0x13] - pfVar4[0x17];
+              pfVar4[0x1c] = fVar18 + ((NuLgtArcLaserData[iVar5].target.x - fVar18) * fVar3) / fVa r2
+              ;
+              fVar18 = NuLgtArcLaserData[iVar5].start.y;
+              pfVar4[0x1d] = fVar18 + ((NuLgtArcLaserData[iVar5].target.y - fVar18) * fVar3) / fVa r2
+              ;
+              fVar18 = NuLgtArcLaserData[iVar5].start.z;
+              fVar1 = NuLgtArcLaserData[iVar5].target.z;
+              pfVar4[0x1f] = (float)dVar11;
+              pfVar4[0x1e] = fVar18 + ((fVar1 - fVar18) * fVar3) / fVar2;
+            }
+            NuVec4MtxTransformVU0(dest_00,(nuvec4_s *)(pfVar4 + 0x18),b);
+            dVar14 = 1.0;
+            NuVec4Scale(1.0 / pfVar4[0x13],dest_00,dest_00);
+            NuVec4MtxTransformVU0(dest,(nuvec4_s *)(pfVar4 + 0x1c),b);
+            NuVec4Scale((float)(dVar14 / (double)pfVar4[0x17]),dest,dest);
+            dVar7 = 0.0;
+            local_b0 = (double)CONCAT44(0x43300000,SWIDTH ^ 0x80000000);
+            local_1a8.x = (pfVar4[0x15] - pfVar4[0x11]) *
+                          (float)((double)(float)(local_b0 - dVar12) / dVar9);
+            local_1a8.z = 0.0;
+            local_1a8.y = pfVar4[0x10] - pfVar4[0x14];
+            NuVecNorm(&local_1a8,&local_1a8);
+            local_b0 = (double)CONCAT44(0x43300000,SWIDTH ^ 0x80000000);
+            local_1a8.y = local_1a8.y * (float)((double)NuLgtArcLaserData[iVar5].sizew * dVar8);
+            local_1a8.x = local_1a8.x *
+                          (float)((double)NuLgtArcLaserData[iVar5].sizew *
+                                 (double)(float)((double)(float)((double)(float)(local_b0 - dVar12 )
+                                                                * dVar8) / dVar9));
+            fVar18 = pfVar4[0x1d] - pfVar4[0x19];
+            fVar1 = pfVar4[0x1c] - pfVar4[0x18];
+            fVar2 = pfVar4[0x1e] - pfVar4[0x1a];
+            pfVar4[0x1c] = fVar1;
+            pfVar4[0x1d] = fVar18;
+            pfVar4[0x1f] = pfVar4[0x1f] - pfVar4[0x1b];
+            pfVar4[0x1e] = fVar2;
+            fVar18 = sqrt(fVar2 * fVar2 + fVar1 * fVar1 + fVar18 * fVar18);
+            dVar13 = (double)fVar18;
+            if (dVar7 < dVar13) {
+              fVar18 = NuLgtArcLaserData[iVar5].lasdir.x;
+              pfVar4[0x28] = fVar18;
+              fVar1 = NuLgtArcLaserData[iVar5].lasdir.y;
+              pfVar4[0x29] = fVar1;
+              fVar2 = NuLgtArcLaserData[iVar5].lasdir.z;
+              fVar18 = fVar2 * fVar2 + fVar18 * fVar18 + fVar1 * fVar1;
+              dVar15 = (double)fVar18;
+              pfVar4[0x2a] = fVar2;
+              if (dVar7 < dVar15) {
+                fVar18 = NuFsqrt(fVar18);
+                dVar15 = (double)(NuLgtArcLaserData[iVar5].arcsize / fVar18);
+              }
+              pfVar4[0x28] = (float)((double)pfVar4[0x28] * dVar15);
+              pfVar4[0x29] = (float)((double)pfVar4[0x29] * dVar15);
+              pfVar4[0x2a] = (float)((double)pfVar4[0x2a] * dVar15);
+              NuLgtSeed = NuLgtArcLaserData[iVar5].seed;
+              dVar13 = (double)(float)((double)NuLgtArcLaserData[iVar5].sizel / dVar13);
+              if (dVar14 < dVar13) {
+                dVar13 = dVar14;
+              }
+              local_188 = NuLgtArcU0;
+              local_184 = NuLgtArcU1;
+              local_180 = NuLgtArcU0;
+              local_17c = NuLgtArcU1;
+              pfVar4[0x13] = (float)dVar14;
+              pfVar4[0x10] = pfVar4[0x18];
+              pfVar4[0x11] = pfVar4[0x19];
+              pfVar4[0x12] = pfVar4[0x1a];
+              dVar15 = dVar14;
+              NuVec4MtxTransformVU0(dest_00,dest_00,b);
+              dVar16 = (double)(float)(dVar15 / (double)pfVar4[0x13]);
+              NuVec4Scale((float)(dVar15 / (double)pfVar4[0x13]),dest_00,dest_00);
+              local_198 = (float)((double)local_1a8.x * dVar16);
+              local_194 = (float)((double)local_1a8.y * dVar16);
+              dVar15 = 50.0;
+              pfVar4[0xc] = pfVar4[0x10];
+              pfVar4[0xd] = pfVar4[0x11];
+              pfVar4[0xe] = pfVar4[0x12];
+              pfVar4[4] = pfVar4[0x10];
+              pfVar4[5] = pfVar4[0x11];
+              pfVar4[6] = pfVar4[0x12];
+              do {
+                fVar18 = NuLgtArcU1;
+                dVar16 = (double)(float)(dVar7 + dVar13);
+                if (dVar16 < dVar14) {
+                  uVar6 = (int)(dVar7 + dVar13) & 0xffff;
+                  pfVar4[0x14] = pfVar4[0x28] * NuTrigTable[uVar6] +
+                                 (float)((double)pfVar4[0x1c] * dVar16 + (double)pfVar4[0x18]);
+                  pfVar4[0x15] = pfVar4[0x29] * NuTrigTable[uVar6] +
+                                 (float)((double)pfVar4[0x1d] * dVar16 + (double)pfVar4[0x19]);
+                  pfVar4[0x16] = pfVar4[0x2a] * NuTrigTable[uVar6] +
+                                 (float)((double)pfVar4[0x1e] * dVar16 + (double)pfVar4[0x1a]);
+                }
+                else {
+                  fVar1 = NuLgtArcU0 - NuLgtArcU1;
+                  pfVar4[0x14] = pfVar4[0x18] + pfVar4[0x1c];
+                  pfVar4[0x15] = pfVar4[0x19] + pfVar4[0x1d];
+                  local_188 = fVar18 + (float)((double)(fVar1 * (float)(dVar14 - dVar7)) / dVar13) ;
+                  pfVar4[0x16] = pfVar4[0x1a] + pfVar4[0x1e];
+                  local_180 = local_188;
+                }
+                pfVar4[0x17] = (float)dVar14;
+                NuVec4MtxTransformVU0(dest,dest,b);
+                dVar17 = (double)(float)(dVar14 / (double)pfVar4[0x17]);
+                NuVec4Scale((float)(dVar14 / (double)pfVar4[0x17]),dest,dest);
+                if (((double)(float)(dVar14 - (double)(float)(dVar13 * 1.5)) <= dVar7) ||
+                   (NuLgtSeed == 0)) {
+                  fVar18 = 0.0;
+                  dVar7 = dVar16;
+                  fVar1 = fVar18;
+                }
+                else {
+                  uVar6 = NuLgtRand();
+                  local_b0 = (double)CONCAT44(0x43300000,(uVar6 & 0xff) - 0x80 ^ 0x80000000);
+                  fVar18 = (float)((double)(local_1a8.x * (float)(local_b0 - dVar12) *
+                                           NuLgtArcLaserData[iVar5].sizewob) * dVar17);
+                  dVar7 = dVar16;
+                  fVar1 = (float)((double)(local_1a8.y * (float)(local_b0 - dVar12) *
+                                          NuLgtArcLaserData[iVar5].sizewob) * dVar17);
+                }
+                local_198 = (float)((double)local_1a8.x * dVar17);
+                local_194 = (float)((double)local_1a8.y * dVar17);
+                fVar2 = (pfVar4[0x14] - local_198) + fVar18;
+                *pfVar4 = fVar2;
+                fVar3 = (pfVar4[0x15] - local_194) + fVar1;
+                pfVar4[1] = fVar3;
+                pfVar4[8] = pfVar4[0x14] + local_198 + fVar18;
+                pfVar4[10] = pfVar4[0x16];
+                pfVar4[2] = pfVar4[0x16];
+                pfVar4[9] = pfVar4[0x15] + local_194 + fVar1;
+                if (((((-50.0 <= fVar2) || (dVar15 <= (double)pfVar4[4])) &&
+                     ((fVar2 <= 700.0 || (pfVar4[4] <= 700.0)))) &&
+                    ((-50.0 <= fVar3 || (-50.0 <= pfVar4[5])))) &&
+                   ((fVar3 <= 530.0 || (pfVar4[5] <= 530.0)))) {
+                  light.ambientdist = (float)NuLgtArcLaserData[iVar5].col;
+                  light.AmbIndex = (int)*pfVar4;
+                  light.AmbCol.x = pfVar4[1];
+                  light.AmbCol.y = pfVar4[2];
+                  light.dir1.Direction.x = pfVar4[4];
+                  light.dir1.Direction.y = pfVar4[5];
+                  light.dir1.Direction.z = pfVar4[6];
+                  light.dir2.Index = (int)pfVar4[8];
+                  light.dir2.Direction.x = pfVar4[9];
+                  light.dir2.Direction.y = pfVar4[10];
+                  light.CurLoopIndex = (int)local_188;
+                  light.dir1.Index = (int)v0_2;
+                  light.dir1.Colour.b = local_184;
+                  light.dir1.Distance = v0;
+                  light.AmbCol.z = 0.1;
+                  light.dir1.Colour.r = 0.1;
+                  light.dir2.Direction.z = 0.1;
+                  light.dir2.Colour.g = local_180;
+                  light.dir2.Colour.b = v1_2;
+                  light.dir1.Colour.g = light.ambientdist;
+                  light.dir2.Colour.r = light.ambientdist;
+                  NuRndrTri2d(&light,NuLgtArcMtl);
+                  light.AmbIndex = (int)pfVar4[4];
+                  light.AmbCol.x = pfVar4[5];
+                  light.AmbCol.y = pfVar4[6];
+                  light.dir1.Direction.x = pfVar4[0xc];
+                  light.dir1.Direction.y = pfVar4[0xd];
+                  light.dir1.Direction.z = pfVar4[0xe];
+                  light.dir2.Index = (int)pfVar4[8];
+                  light.dir2.Direction.x = pfVar4[9];
+                  light.dir2.Direction.y = pfVar4[10];
+                  light.CurLoopIndex = (int)local_184;
+                  light.dir1.Index = (int)v0;
+                  light.dir1.Colour.b = local_17c;
+                  light.dir1.Distance = v1;
+                  light.dir2.Colour.g = local_180;
+                  light.dir2.Colour.b = v1_2;
+                  light.AmbCol.z = 0.1;
+                  light.dir1.Colour.r = 0.1;
+                  light.dir2.Direction.z = 0.1;
+                  NuRndrTri2d(&light,NuLgtArcMtl);
+                }
+                pfVar4[4] = *pfVar4;
+                pfVar4[5] = pfVar4[1];
+                pfVar4[0xc] = pfVar4[8];
+                pfVar4[0xd] = pfVar4[9];
+                pfVar4[6] = pfVar4[2];
+                pfVar4[0xe] = pfVar4[10];
+              } while (dVar7 < dVar14);
+            }
+          }
+          else if (dVar10 <= (double)pfVar4[0x17]) {
+            if (dVar10 <= dVar7) goto LAB_800b22a4;
+            fVar2 = NuLgtArcLaserData[iVar5].target.x;
+            fVar18 = (float)((double)pfVar4[0x17] - dVar10);
+            fVar1 = (float)((double)pfVar4[0x17] - dVar7);
+            pfVar4[0x18] = fVar2 + ((NuLgtArcLaserData[iVar5].start.x - fVar2) * fVar18) / fVar1;
+            fVar2 = NuLgtArcLaserData[iVar5].target.y;
+            pfVar4[0x19] = fVar2 + ((NuLgtArcLaserData[iVar5].start.y - fVar2) * fVar18) / fVar1;
+            fVar2 = NuLgtArcLaserData[iVar5].target.z;
+            fVar3 = NuLgtArcLaserData[iVar5].start.z;
+            pfVar4[0x1b] = (float)dVar11;
+            pfVar4[0x1a] = fVar2 + ((fVar3 - fVar2) * fVar18) / fVar1;
+            goto LAB_800b22c0;
+          }
+          iVar5 = iVar5 + 1;
+        } while (iVar5 < NuLgtArcLaserCnt);
+      }
+      NuRndrEndScene();
+      NuLgtArcLaserOldCnt = NuLgtArcLaserCnt;
+      NuLgtArcLaserCnt = 0;
+      if (paused == 0) {
+        NuLgtArcLaserFrame = NuLgtArcLaserFrame + 1;
+      }
+    }
+    NuScratchRelease();
+  }
+  return;
+}*/

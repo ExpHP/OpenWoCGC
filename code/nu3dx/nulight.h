@@ -46,6 +46,15 @@ struct nulight_s* currentlight2;
 struct nulight_s* currentlight3;
 float buglight_distance;
 struct numtl_s* NuLightAddMat;
+s32 NuLgtSeed;
+numtl_s* NuLgtArcMtl;
+float NuLgtArcU0;
+float NuLgtArcV0;
+float NuLgtArcU1;
+float NuLgtArcV1;
+s32 NuLgtArcLaserFrame;
+s32 NuLgtArcLaserOldCnt;
+s32 NuLgtArcLaserCnt;
 
 
 
@@ -76,6 +85,24 @@ struct nusyslight_s
 struct nulights_s
 {
     struct nulight_s light[3];
+};
+
+// Size: 0x40
+struct NuLgtArcLaserData
+{
+    struct nuvec_s start;
+    struct nuvec_s target;
+    struct nuvec_s lasdir;
+    f32 sizew;
+    f32 sizel;
+    f32 sizewob;
+    f32 arcsize;
+    u8 type;
+    u8 p1;
+    u8 p2;
+    u8 p3;
+    s32 col;
+    s32 seed;
 };
 
 

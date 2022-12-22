@@ -46,4 +46,8 @@
   800b7d44 0001bc 800b7d44  4 NuRndrShadPolys 	Global
 */
 
+numtl_s* nurndr_forced_mtl;
+
+numtl_s** nurndr_forced_mtl_table;
+
 #endif // !NURNDR_H

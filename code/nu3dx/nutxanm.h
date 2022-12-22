@@ -45,9 +45,20 @@
 
 struct nutexanimprog_s* sys_progs;
 struct nutexanimlist_s ntalsysbuff[64];
+struct nutexanimlist_s* ntal_first;
+struct nutexanimlist_s* ntal_free;
+static struct nutexanimprog_s* parprog;
+static u32 nta_sig_on;
+static u32 nta_sig_off;
+static u32 nta_sig_old;
+s32 nta_labels[64];
 char texanimbuff[32768];
-unsigned int texanimbits;
+u32 texanimbits;
+static char xdeflabtab[21][256];
+static s32 xdeflabtabcnt;
+static s32 labtabcnt;
 static texanimscripts texanmscripts[24];
+static nufpcomjmp_s nutexanimcomtab[19];
 
 
 // Size: 0x10

@@ -121,7 +121,7 @@ FPar* NuFParOpen(fileHandle handle)
         fPar->handle = handle;
         fPar->commandStack[7] = -1;
         fPar->bufferEndPos = -1;
-        fPar->f2 = 0xffffffff;
+        fPar->f2 = -1; //line_num
         u32 originalPos = NuFilePos(handle);
         NuFileSeek(handle, 0, 2);
         fPar->fileLength = NuFilePos(handle);
@@ -141,7 +141,7 @@ void NuFParDestroy(FPar* fPar)
 
 FPar* NuFParCreate(char* filename)
 {
-    fileHandle handle = NuFileOpen(filename, 0);
+    fileHandle handle = NuFileOpen(filename, 0); //0= NUFILE_READ
     if (handle != NULL)
     {
         FPar* fPar = NuFParOpen(handle);

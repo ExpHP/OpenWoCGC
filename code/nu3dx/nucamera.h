@@ -18,7 +18,7 @@
 */
 
 // Global camera.
-extern NuCamera global_camera;
+extern nucamera_s global_camera;
 
 // View matrix.
 extern Mtx* vmtx;
@@ -26,8 +26,14 @@ extern Mtx* vmtx;
 // Projection matrix.
 extern Mtx pmtx;
 
+static Mtx vpmtx;
+
 // VPCS matrix.
 extern Mtx vpcsmtx;
+
+static Mtx vpcmtx;
+
+static Mtx ivpcsmtx;
 
 // Camera clipping.
 extern u32 clip_enable;
@@ -35,8 +41,29 @@ extern u32 clip_enable;
 // Camera axes.
 extern Vec cam_axes;
 
+static struct Vec4 frustrumplanes[6];
+
+static Mtx vpc_vport_mtx;
+
+static Mtx cmtx;
+
+static Mtx smtx;
+
+static Mtx csmtx;
+
+static Mtx icsmtx;
+
+static Mtx* glassMtx[256]; 
+
+static Mtx smtx;
+
+static s32 clip_enable; 
+
+static Vec4 frustrumplanes[6];
+
+
 // Create a new camera.
-NuCamera* NuCameraCreate();
+nucamera_s* NuCameraCreate();
 
 // NuCameraCalcFrustrumPlanes
 

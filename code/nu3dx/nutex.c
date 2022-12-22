@@ -22,9 +22,27 @@ void NuTexInit()
 	ntex = 0;
 }
 
-void NuTexClose()
+void NuTexClose(void)		\\CHECK
+
 {
-	
+  int i;
+  int *data;
+  
+  NudxFw_DestroyBackBufferCopy();
+  i = 0x400;
+  data = (int *)&tinfo[0].tex.bits;
+  do {
+    if ((void *)*data != NULL) {
+      NuMemFree((void *)*data);
+      *data = 0;
+    }
+    data = data + 10;
+    i = i + -1;
+  } while (i != 0);
+  initialised = i;
+  tpid = i;
+  ntex = i;
+  return;
 }
 
 s32 GetTPID()
@@ -52,33 +70,36 @@ s32 NuTexCreate(struct nutex_s *nutex)
   return tpid;
 }
 
-s32 NuTexCreateFromSurface(nutex_s *tex,D3DTexture *surface)
+s32 NuTexGetDecalInfo(s32 tid)
 
 {
-  int width;
-  int tpid_temp;
-  int mode;
-  int *pal;
-  int height;
+  return (s32)tinfo[tid + -1].tex.decal;
+}
+
+s32 NuTexCreateFromSurface(nutex_s *tex,D3DTexture *surface)	//CHECK
+
+{
+  s32 width;
+  s32 cnt;
+  s32 *pal;
+  s32 height;
   void *bits;
   
   width = tex->width;
   height = tex->height;
-  mode = tex->mmcnt;
-  tpid_temp = tpid + 1;
+  cnt = tex->mmcnt;
   tinfo[tpid].tex.type = tex->type;
   tinfo[tpid].tex.width = width;
   tinfo[tpid].tex.height = height;
-  tinfo[tpid].tex.mmcnt = mode;
+  tinfo[tpid].tex.mmcnt = cnt;
   bits = tex->bits;
   pal = tex->pal;
   *(undefined4 *)&tinfo[tpid].tex.decal = *(undefined4 *)&tex->decal;
   tinfo[tpid].tex.bits = bits;
   tinfo[tpid].tex.pal = pal;
-  tinfo[tpid].tex.bits = (void *)0x0;
+  tinfo[tpid].tex.bits = NULL;
   tinfo[tpid].dds = surface;
-  tpid = tpid_temp;
-  return tpid_temp;
+  return tpid++;
 }
 
 void NuTexDestroy(s32 id)
@@ -88,11 +109,12 @@ void NuTexDestroy(s32 id)
 	{
 		if (tinfo[id].tex.data != NULL)
 		{
-			NuMemFree(tinfo[id].tex.data);
-			tinfo[id].tex.data = NULL;
+			NuMemFree(tinfo[id].tex.data);	//NuMemFree(tinfo[id].tex.bits);
+			tinfo[id].tex.data = NULL;		//tinfo[id].tex.bits = NULL;
 		}
 	}
 }
+
 
 u32 NuTexUnRef(s32 id)
 {
@@ -101,7 +123,7 @@ u32 NuTexUnRef(s32 id)
 	{
 		return NULL;
 	}
-	return --tinfo[id].refCount;
+	return --tinfo[id].ref;
 }
 
 s32 NuTexPixelSize(enum nutextype_e type) {
@@ -127,9 +149,9 @@ s32 NuTexPixelSize(enum nutextype_e type) {
   return 0;
 }
 
-u32 NuTexImgSize(u32 format, u32 width, u32 height)
+s32 NuTexImgSize(enum nutextype_e type, s32 width, s32 height)
 {
-	s32 size = width * height * NuTexPixelSize(format);
+	s32 size = width * height * NuTexPixelSize(type);
 	if (size < 0)
 	{
 		size += 7;
@@ -149,14 +171,14 @@ s32 NuTexPalSize(enum nutextype_e type)
   return 0;
 }
 
-s32 NuTexReadBitmapMM(char* fileName, u32 mode, NuTexData* tex)
+s32 NuTexReadBitmapMM(char* fileName, s32 mode, nutex_s* tex)
 {
 	if (fileName == NULL)
 	{
 		error_func e = NuErrorProlog("OpenCrashWOC/code/nu3dx/nutex.c", 999);
 		e("assert");
 	}
-	fileHandle handle = NuFileOpen(fileName, ReadBinary);
+	fileHandle handle = NuFileOpen(fileName, NUFILE_READ);
 	if (handle == NULL)
 	{
 		char strBuf[128];
@@ -170,16 +192,16 @@ s32 NuTexReadBitmapMM(char* fileName, u32 mode, NuTexData* tex)
 	}
 	else
 	{
-		memset(tex, 0, sizeof(NuTexData));
+		memset(tex, 0, sizeof(nutex_s));
 		NuFilePos(handle);
 		char bmpHeader[14];
 		NuFileRead(handle, &bmpHeader, 14);
 		char standardHeader[40];
 		NuFileRead(handle, &standardHeader, 40);
-		u16 bitsPerPixel = (u16)standardHeader[0xE];
+		s16 bitsPerPixel = (s16)standardHeader[0xE];
 		if (bitsPerPixel == 8)
 		{
-			tex->format = RGB8MAYBE;
+			tex->type = NUTEX_PAL8;
 			u32 palette[0x100]; // 256 colors.
 			NuFileRead(handle, &palette, 0x400);
 			u32 num = 0;
@@ -187,11 +209,13 @@ s32 NuTexReadBitmapMM(char* fileName, u32 mode, NuTexData* tex)
 			{
 				u32 color = palette[i];
 				palette[i] = (color & 0x00FF00FF) | ((color & 0xFF0000) >> 24) || ((color & 0xFF) << 24); // Convert RGBA to BGRA.
+
+				//palette[i] = (color >> 0x18) << 8 | (color >> 8) << 0x18 | color & 0xff00ff
 			}
 		}
 		else if (bitsPerPixel == 4)
 		{
-			tex->format = BPP4;
+			tex->type = NUTEX_PAL4;
 			u32 palette[0x10]; // 16 colors.
 			NuFileRead(handle, &palette, 0x40);
 			for (s32 i = 0; i < 0x10; i++)
@@ -202,33 +226,33 @@ s32 NuTexReadBitmapMM(char* fileName, u32 mode, NuTexData* tex)
 		}
 		else if (bitsPerPixel == 16) // I don't think this was in here, but makes sense to add it.
 		{
-			tex->format = BPP16;
+			tex->type = NUTEX_RGBA16;
 		}
 		else if (bitsPerPixel == 24)
 		{
-			tex->format = BPP24;
+			tex->type = NUTEX_RGB24;
 		}
 		else if (bitsPerPixel == 32)
 		{
-			tex->format = BPP32;
+			tex->type = NUTEX_RGBA32;
 		}
 		else
 		{
 			error_func e = NuErrorProlog("OpenCrashWOC/code/nu3dx/nutex.c", 999);
 			e("NuTexLoadBitmap:Bad BitCount <%d> on loading bitmap <%s>", bitsPerPixel, fileName);
 		}
-		tex->mode = mode + 1;
+		tex->mmcnt = mode + 1;
 		tex->height = (u32)standardHeader[8];
 		tex->width = (u32)standardHeader[4];
-		u32 size = NuTexPixelSize(tex->format);
+		s32 size = NuTexPixelSize(tex->type);
 		size *= tex->width;
 		// TODO!!!
 	}
 }
 
-NuTexData* NuTexReadBitmap(char* fileName)
+nutex_s * NuTexReadBitmap(char* fileName)
 {
-	NuTexData* ret = NuMemAlloc(sizeof(NuTexData));
+	nutex_s* ret = NuMemAlloc(sizeof(NuTexData));
 	if (!NuTexReadBitmapMM(fileName, 0, ret))
 	{
 		NuMemFree(ret);
