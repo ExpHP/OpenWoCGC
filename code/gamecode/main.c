@@ -49,9 +49,9 @@ union variptr_u superbuffer_end;
 /*void ResetSuperBuffer(void)	//TODO
 
 {
-  
-  if ((double)CONCAT44(0x43300000,superbuffersize ^ 0x80000000) - 4503601774854144.0 != 6008340.48 )
-  {
+
+  if ((double)CONCAT44(0x43300000,superbuffersize ^ 0x80000000) - (double)0x4330000080000000 !=
+      (double)0x4156eb851eb851ec) {
     if (superbuffer_base.voidptr != (void *)0x0) {
       NuMemFree(superbuffer_base.voidptr);
     }
@@ -66,7 +66,52 @@ union variptr_u superbuffer_end;
   }
   superbuffer_ptr = superbuffer_reset_base;
   return;
-}*/
+}
+
+
+void ResetSuperBuffer2(void)
+
+{
+  double dVar1;
+  double local_18;
+  
+  dVar1 = (double)0x4156eb851eb851ec;
+  local_18 = (double)CONCAT44(0x43300000,superbuffersize ^ 0x80000000);
+  if (local_18 - (double)0x4330000080000000 != (double)0x4156eb851eb851ec) {
+    if (superbuffer_base.voidptr != (void *)0x0) {
+      NuMemFree(superbuffer_base.voidptr);
+    }
+    superbuffer_base.voidptr = NuMemAlloc(0x5bae14);
+    local_18 = (double)CONCAT44(0x43300000,superbuffer_base.voidptr);
+    superbuffersize = 0x5bae14;
+    dVar1 = (local_18 - (double)0x4330000000000000) + dVar1;
+    if ((double)0x41e0000000000000 <= dVar1) {
+      superbuffer_end.intaddr = (int)(dVar1 - (double)0x41e0000000000000) ^ 0x80000000;
+    }
+    else {
+      superbuffer_end.intaddr = (uint)dVar1;
+    }
+    superbuffer_reset_base.voidptr = superbuffer_base.voidptr;
+    if (superbuffer_base.voidptr == (void *)0x0) {
+      e = NuErrorProlog("C:/source/crashwoc/code/gamecode/main.c",0x5e2);
+      //(*e)("unable to allocate super buffer");
+    }
+  }
+  superbuffer_ptr = superbuffer_reset_base;
+  return;
+}
+
+
+void DebrisMalloc(void)
+
+{
+  if (debbuffer == (char *)0x0) {
+    debbuffer = (char *)malloc_x(0x93400);
+  }
+  return;
+}
+
+*/
 
 /*
 
@@ -80,6 +125,7 @@ int main(int argc,char **argv)
   uint uVar5;
   float fVar6;
   nucamera_s *pnVar7;
+  GXInit *__return_storage_ptr__;
   mask *pmVar8;
   void *paused;
   int iVar9;
@@ -116,9 +162,10 @@ int main(int argc,char **argv)
              (uint)(unaff_cr4 & 0xf) << 0xc | (uint)(in_cr5 & 0xf) << 8 | (uint)(in_cr6 & 0xf) <<  4
              | (uint)(in_cr7 & 0xf);
   __main(argc,argv,in_r5);
+  __return_storage_ptr__ = (GXInit *)0x0;
   v155 = 0;
   DEMOInit((_GXRenderModeObj *)0x0);
-  GS_Init();
+  GS_Init(__return_storage_ptr__,argv,(ulong)in_r5);
   SS_Init();
   MC_Init();
   NuFileInitEx(0,0);
@@ -133,9 +180,9 @@ int main(int argc,char **argv)
   Hub = -1;
   MAXVPSIZEX = SWIDTH;
   MAXVPSIZEY = SHEIGHT;
-  MINVPSIZEX = (int)(((float)(_LODWORD - 4503601774854144.0) * 390.0) / 640.0);
+  MINVPSIZEX = (int)(((float)(_LODWORD - (double)0x4330000080000000) * 390.0) / 640.0);
   _LODWORD = (double)CONCAT44(0x43300000,SHEIGHT ^ 0x80000000);
-  MINVPSIZEY = (int)(((float)(_LODWORD - 4503601774854144.0) * 244.0) / 480.0);
+  MINVPSIZEY = (int)(((float)(_LODWORD - (double)0x4330000080000000) * 244.0) / 480.0);
   _LODWORD = (double)(longlong)MINVPSIZEY;
   InitCutScenes();
   NuTrigInit();
@@ -355,7 +402,7 @@ LAB_80051ef4:
       plr = player;
       FRAMES = 1;
       _LODWORD = (double)CONCAT44(0x43300000,(int)cufps ^ 0x80000000);
-      fVar3 = (float)(_LODWORD - 4503601774854144.0);
+      fVar3 = (float)(_LODWORD - (double)0x4330000080000000);
       if (fVar3 < 59.0) {
         FRAMES = 2;
       }
@@ -704,7 +751,7 @@ LAB_80052b3c:
           DrawCutMovie();
         }
         if (cut_on == 0) {
-          NuRndrFootPrints(DebMat[4],(float *)foot_u,(float *)foot_v);
+          NuRndrFootPrints(DebMat[4],foot_u,foot_v);
         }
         tbslotEnd(app_tbset,9);
         NuWaterRender();
@@ -760,11 +807,11 @@ LAB_80052b3c:
             iVar10 = (int)((float)(dVar17 - (double)(float)((double)(float)((double)(POWERTEXTY +
                                                                                     0.7) + dVar17)  *
                                                            dVar15)) *
-                          (float)(_LODWORD - 4503601774854144.0));
+                          (float)(_LODWORD - (double)0x4330000080000000));
             iVar9 = (int)((float)(dVar17 - (double)(float)((double)(float)((double)(POWERTEXTY -
                                                                                    0.75) + dVar17)  *
                                                           dVar15)) *
-                         (float)(_LODWORD - 4503601774854144.0));
+                         (float)(_LODWORD - (double)0x4330000080000000));
             _LODWORD = (double)(longlong)iVar9;
             NuRndrRect2di(0,iVar10,SWIDTH << 4,iVar9 - iVar10,0x18777777,fade_mtl);
           }

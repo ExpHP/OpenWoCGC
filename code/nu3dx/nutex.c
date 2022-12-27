@@ -171,6 +171,60 @@ s32 NuTexPalSize(enum nutextype_e type)
   return 0;
 }
 
+
+void NuTexSetTextureStates(numtl_s *mtl)
+
+{
+  uint flag_or_float;
+  
+  if (mtl->tid == 0) {
+    NuTexSetTexture(0,0);
+    NudxFw_SetTextureState(0,D3DTSS_COLOROP,1);
+    NudxFw_SetTextureState(0,D3DTSS_ALPHAOP,1);
+  }
+  else {
+    NudxFw_SetTextureState(0,D3DTSS_COLOROP,4);
+    NudxFw_SetTextureState(0,D3DTSS_COLORARG1,2);
+    NudxFw_SetTextureState(0,D3DTSS_COLORARG2,0);
+    NudxFw_SetTextureState(0,D3DTSS_ALPHAARG1,2);
+    NudxFw_SetTextureState(0,D3DTSS_ALPHAARG2,0);
+    NudxFw_SetTextureState(0,D3DTSS_ALPHAOP,4);
+    NudxFw_SetTextureState(0,D3DTSS_TEXCOORDINDEX,0);
+    NudxFw_SetTextureState(0,D3DTSS_TEXTURETRANSFORMFLAGS,0);
+    flag_or_float = (uint)mtl->attrib >> 0x18 & 3;
+    if (flag_or_float == 0) {
+      GS_TexSetWrapModes(0,1);
+    }
+    else if (flag_or_float == 2) {
+      GS_TexSetWrapModes(0,2);
+    }
+    else if (flag_or_float == 3) {
+      GS_TexSetWrapModes(0,0);
+    }
+    else {
+      GS_TexSetWrapModes(0,0);
+    }
+    flag_or_float = (uint)mtl->attrib >> 0x16 & 3;
+    if (flag_or_float == 0) {
+      GS_TexSetWrapModet(0,1);
+    }
+    else if (flag_or_float == 2) {
+      GS_TexSetWrapModet(0,2);
+    }
+    else if (flag_or_float == 3) {
+      GS_TexSetWrapModet(0,0);
+    }
+    else {
+      GS_TexSetWrapModet(0,0);
+    }
+    NudxFw_SetTextureState(0,D3DTSS_MAGFILTER,2);
+    NudxFw_SetTextureState(0,D3DTSS_MINFILTER,2);
+    NudxFw_SetTextureState(0,D3DTSS_MIPFILTER,2);
+  }
+  return;
+}
+
+
 s32 NuTexReadBitmapMM(char* fileName, s32 mode, nutex_s* tex)
 {
 	if (fileName == NULL)
@@ -250,6 +304,18 @@ s32 NuTexReadBitmapMM(char* fileName, s32 mode, nutex_s* tex)
 	}
 }
 
+void NuTexSetTexture(uint stage,int tid)
+
+{
+  if (tid < 1) {
+    GS_TexSelect(stage,0);
+  }
+  else {
+    GS_TexSelect(stage,tid);
+  }
+  return;
+}
+
 nutex_s * NuTexReadBitmap(char* fileName)
 {
 	nutex_s* ret = NuMemAlloc(sizeof(NuTexData));
@@ -264,4 +330,78 @@ nutex_s * NuTexReadBitmap(char* fileName)
 NuSurface* NuTexLoadTextureFromDDSFile(char* fileName)
 {
 	return NULL;
+}
+
+void GS_TexSelect(int stage,int NUID)
+
+{
+  bool bVar1;
+  int iVar2;
+  uint uVar3;
+  GXTexObj *GX_texobj;
+  
+  bVar1 = stage == 0;
+  if (bVar1) {
+    ShadowBodge = stage;
+  }
+  if (3 < stage) {
+    DisplayErrorAndLockup("C:/source/crashwoc/code/system/gc/gstex.c",0x21c,"GS_TexSelect1");
+  }
+  TexStages[stage] = NUID;
+  GX_texobj = (GXTexObj *)GS_TexList;
+  if ((NUID == 0) || (NUID == 9999)) {
+    GXSetNumTevStages('\x01');
+    GXSetTevOrder(stage,GX_TEXCOORD_NULL,GX_TEXMAP_NULL,GX_COLOR0A0);
+    GXSetTevOp(stage,GX_PASSCLR);
+  }
+  else {
+    if (NUID == ShadowMatBodge) {
+      ShadowBodge = 1;
+    }
+    if (maxstage.189 < stage) {
+      maxstage.189 = stage;
+    }
+    if (bVar1) {
+      maxstage.189 = stage;
+    }
+    if (NUID == 0x270e) {
+      GS_SetFBCopyTexturePause();
+    }
+    GXSetNumTexGens((char)maxstage.189 + '\x01');
+    GXSetNumTevStages((char)maxstage.189 + '\x01');
+    GXSetTexCoordGen2(stage,GX_TG_MTX2x4,GX_TG_TEX0,0x3c,'\0',0x7d);
+    GXSetTevOrder(stage,stage,stage,GX_COLOR0A0);
+    iVar2 = 0;
+    if (bVar1) {
+      iVar2 = 10;
+    }
+    GXSetTevColorIn(stage,0xf,8,iVar2,0xf);
+    GXSetTevColorOp((_GXTevStageID *)stage,0,0,0,1,0);
+    iVar2 = 0;
+    if (bVar1) {
+      iVar2 = 5;
+    }
+    GXSetTevColorIn(stage,7,4,iVar2,7);
+    GXSetTevAlphaOp(stage,0,0,0,1,0);
+    if (1 < NUID - 0x270eU) {
+      uVar3 = 0;
+      if (GS_NumTextures != 0) {
+        do {
+          if (((_GS_TEXTURE *)GX_texobj)->NUID == NUID - 1U) {
+            GXInitTexObjWrapMode
+                      ((GXTexObj *)(_GXTexObj *)((int)GX_texobj + 0x20),
+                       (GXTexWrapMode)(&GS_TexWrapMode_s)[stage],
+                       (GXTexWrapMode)(&GS_TexWrapMode_t)[stage]);
+            GXLoadTexObj((_GXTexObj *)((int)GX_texobj + 0x20),stage);
+            return;
+          }
+          uVar3 = uVar3 + 1;
+          GX_texobj = (GXTexObj *)((int)GX_texobj + 0x4c);
+        } while (uVar3 < GS_NumTextures);
+      }
+      DisplayErrorAndLockup("C:/source/crashwoc/code/system/gc/gstex.c",0x281,"GS_TexSelect2");
+      GXLoadTexObj(&GS_TexList->Tex,stage);
+    }
+  }
+  return;
 }

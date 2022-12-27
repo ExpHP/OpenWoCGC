@@ -5,7 +5,9 @@
 s32 backbuffer_grabbed_this_frame = 0;
 
 // Back buffer TID.
-s32 backbuffer_tid = 0x207F;
+s32 backbuffer_tid = 0x207F;.
+
+struct rendertargetlist_s g_pRTArray[16];
 
 void ResetFwGlobals()
 {
@@ -18,10 +20,43 @@ void ResetFwGlobals()
   	return;
 }
 
+
+void InitRenderTargets(void)
+
+{
+  s32 iVar1;
+  s32 count;
+  rendertargetlist_s *tglist;
+  s32 i;
+  
+    memset(g_pRTArray,0,0x1c0);
+  g_pRTArray[0].last = -1;
+  g_pRTArray[0].next = 1;
+  i = 0xe;
+  count = 1;
+  tglist = g_pRTArray;
+  do {
+    iVar1 = count;
+    count = iVar1 + 1;
+    tglist[1].last = iVar1 + -1;
+    tglist[1].next = count;
+    i = i + -1;
+    tglist = tglist + 1;
+  } while (i != 0);
+  g_pRTArray[count].last = iVar1;
+  g_pRTArray[count].next = -1;
+  g_dwNumRT = 0;
+  g_dwCurrentRT = -1;
+  g_dwFreeRT = 0;
+  g_dwAllocRT = -1;
+  return;
+}
+
+
 void initd3d(void)
 
 {
-  NudxFw_Init((HWND__ *)0x0,(int *)0x0,0);
+  NudxFw_Init(NULL,NULL,0);
   return;
 }
 
@@ -67,14 +102,14 @@ s32 NudxFw_Init()
 }
 
 
-int NudxFw_SetRenderTargetSurface(D3DSurface *RenderTarget,D3DSurface *Zbuffer)
+s32 NudxFw_SetRenderTargetSurface(D3DSurface *RenderTarget,D3DSurface *Zbuffer)
 
 {
   return 0;
 }
 
 
-int NudxFw_BeginScene(int hRT)
+s32 NudxFw_BeginScene(s32 hRT)
 
 {
   if ((hRT + -1 != g_dwCurrentRT) || (hRT != -1)) {
@@ -84,13 +119,13 @@ int NudxFw_BeginScene(int hRT)
   return 0;
 }
 
-int SetRenderTarget(uint hRT)
+s32 SetRenderTarget(u32 hRT)
 
 {
   return 0;
 }
 
-int NudxFw_Clear(int flags,int colour,float depth)
+s32 NudxFw_Clear(s32 flags,s32 colour,float depth)
 
 {
   GS_RenderClear(flags,colour,depth,0);
@@ -113,7 +148,7 @@ int NudxFw_FlipScreen(int hRT,int ss)
 s32 NudxFw_SetRenderState(_D3DRENDERSTATETYPE state, u32 data)
 
 {
-  GS_SetRenderState(state,data);
+  GS_SetRenderState(state,data);	//Empty function
   return 0;
 }
 
@@ -126,7 +161,7 @@ void GS_SetRenderState(int state,int data)
 s32 NudxFw_SetTextureState(u32 stage, _D3DTEXTURESTAGESTATETYPE state, u32 data)
 
 {
-  GS_SetTextureStageState();
+  GS_SetTextureStageState(); //Empty function
   return 0;
 }
 
@@ -151,10 +186,10 @@ D3DSurface * NudxFw_GetZBuffer(void)
 
 
 
-s32 CreateEnvironment(HWND__ *hwnd)
+s32 CreateEnvironment(struct HWND__ *hwnd)
 {
-  int RT;
-  int next;
+  s32 RT;
+  s32 next;
   
   next = CreateDirect3D(hwnd);
   if (-1 < next) {
@@ -196,11 +231,11 @@ s32 GetFullscreenBuffers(D3DDevice *lpdev)
   return 0;
 }
 
-int CreateDirect3D(HWND__ *hwnd)
+s32 CreateDirect3D(HWND__ *hwnd)
 
 {
-  _GS_VIEWPORT gsvp;
-  _D3DVIEWPORT8 vp;
+  struct _GS_VIEWPORT gsvp;
+  struct _D3DVIEWPORT8 vp;
   
   GS_RenderClear(1,0,1.0,0);
   GS_RenderClear(2,0,1.0,0);
@@ -237,19 +272,82 @@ void GS_SetViewport(_GS_VIEWPORT *pViewport)
 void GS_RenderClear(ulong Flags,ulong Color,float Z,ulong Stencil)
 
 {
-  _GXColor bgcol;
+  _GXColor bgcol [2];
   
   if ((Flags & 0xf0) != 0) {
     if (fadeval == 0xff) {
-      GS_BgColour = (_GXColor)0x0;
+      GS_BgColour = NULL;
     }
     else {
       GS_BgColour._2_2_ = CONCAT11((char)Color,(char)(Color >> 0x18));
       GS_BgColour = (_GXColor)((Color >> 8) << 0x10 | (uint)GS_BgColour._2_2_);
     }
-    bgcol = GS_BgColour;
-    GXSetCopyClear((_GXColor)&bgcol,0xffffff);
+    bgcol[0] = GS_BgColour;
+    GXSetCopyClear(bgcol,0xffffff);
   }
+  return;
+}
+
+
+void GS_FlipScreen(void)
+
+{
+  size_t sVar1;
+  int iVar2;
+  undefined4 uVar3;
+  char *pcVar4;
+  double dVar5;
+  
+  if (GS_IsNewFrame != 0) {
+    DEMOBeforeRender();
+  }
+  GS_IsNewFrame = 0;
+  if (PrintError == 0) {
+    if (Lockupbuffer1[0] == '\0') {
+      TTLLights();
+      GS_SetZCompare(1,1,7);
+      goto LAB_800c9244;
+    }
+    TTLLights();
+    GS_SetZCompare(1,1,7);
+    GS_SetBlendSrc(1,1,0);
+    DEMOInitCaption(0,0x280,0x1c0);
+    DEMOPrintf(10,0xf,0,"FATAL ERROR - GAME HALTED");
+    DEMOPrintf(10,0x19,0,"REPORT THE FOLLOWING MESSAGE AND HOW TO REPRODUCE");
+    DEMOPrintf(10,0x2d,0,Lockupbuffer1);
+    DEMOPrintf(10,0x37,0,Lockupbuffer2);
+    DEMOPrintf(10,0x41,0,Lockupbuffer3);
+    iVar2 = 10;
+    pcVar4 = namesave;
+    uVar3 = 0x4b;
+  }
+  else {
+    TTLLights();
+    GS_SetZCompare(1,1,7);
+    GS_SetBlendSrc(1,1,0);
+    DEMOInitCaption(0,0x280,0x1c0);
+    sVar1 = strlen(Lockupbuffer1);
+    DEMOPrintf((int)(short)(0x140 - (short)(sVar1 << 2)),0x91,0,Lockupbuffer1);
+    sVar1 = strlen(Lockupbuffer2);
+    DEMOPrintf((int)(short)(0x140 - (short)(sVar1 << 2)),0x9b,0,Lockupbuffer2);
+    sVar1 = strlen(Lockupbuffer3);
+    pcVar4 = Lockupbuffer3;
+    uVar3 = 0xa5;
+    iVar2 = (int)(short)(0x140 - (short)(sVar1 << 2));
+  }
+  DEMOPrintf(iVar2,uVar3,0,pcVar4);
+LAB_800c9244:
+  DBTimerReset();
+  DEMODoneRender();
+  DEMOSwapBuffers();
+  dVar5 = (double)TimerGetFPS();
+  avfps = (avfps + (float)dVar5) * 0.5;
+  GS_IsNewFrame = 1;
+  nuvideo_global_vbcnt = nuvideo_global_vbcnt + 1;
+  GS_WorldMatIsIdentity = 0;
+  GS_CurrentTexture = -1;
+  cufps = (float)dVar5;
+  GS_CurrentVertDesc = -1;
   return;
 }
 
@@ -483,4 +581,130 @@ LAB_800cf290:
   free_x(bits_00);
   DebugText[0] = '\0';
   return (D3DTexture *)0x0;
+}
+
+
+void GS_TexCreateNU(nutextype_e type,int width,int height,void *bits,int mmcnt,int rendertargetfl ag,
+                   int tpid)
+
+{
+  size_t sVar1;
+  void *pvVar2;
+  GXTexObj *obj;
+  GXTexFmt format;
+  int iVar3;
+  _GS_TEXTURE *texlist;
+  
+  texlist = GS_TexList;
+  if (iss3cmp == 0) {
+    if (type == 0x80) {
+      pvVar2 = malloc(mmcnt);
+      GS_TexAllocs = GS_TexAllocs + mmcnt;
+      memcpy(pvVar2,bits,mmcnt);
+      DCFlushRange(pvVar2,mmcnt);
+      for (iVar3 = 0; iVar3 < 0x400; iVar3 = iVar3 + 1) {
+        if (texlist->Flags == 0) {
+          texlist->Pad = 0xe;
+          obj = (GXTexObj *)&texlist->Tex;
+          texlist->Format = 0x80;
+          texlist->NUID = tpid;
+          texlist->Width = width;
+          texlist->Height = height;
+          format = GX_CTF_RA8;
+          goto LAB_800cbc0c;
+        }
+        texlist = texlist + 1;
+      }
+    }
+    else if (type == 0x81) {
+      sVar1 = width * height * 2;
+      pvVar2 = malloc(sVar1);
+      GS_TexAllocs = GS_TexAllocs + sVar1;
+      DCFlushRange(bits,sVar1);
+      memcpy(pvVar2,bits,sVar1);
+      DCFlushRange(pvVar2,sVar1);
+      for (iVar3 = 0; iVar3 < 0x400; iVar3 = iVar3 + 1) {
+        if (texlist->Flags == 0) {
+          texlist->Pad = 5;
+          obj = (GXTexObj *)&texlist->Tex;
+          texlist->Format = 0x81;
+          texlist->NUID = tpid;
+          texlist->Width = width;
+          texlist->Height = height;
+          format = GX_TF_RGB565;
+          goto LAB_800cbc0c;
+        }
+        texlist = texlist + 1;
+      }
+    }
+    else if (type == 0x82) {
+      sVar1 = width * height * 4;
+      pvVar2 = malloc(sVar1);
+      GS_TexAllocs = GS_TexAllocs + sVar1;
+      DCFlushRange(bits,sVar1);
+      memcpy(pvVar2,bits,sVar1);
+      DCFlushRange(pvVar2,sVar1);
+      for (iVar3 = 0; iVar3 < 0x400; iVar3 = iVar3 + 1) {
+        if (texlist->Flags == 0) {
+          texlist->Pad = 6;
+          obj = (GXTexObj *)&texlist->Tex;
+          texlist->Format = 0x82;
+          texlist->NUID = tpid;
+          texlist->Width = width;
+          texlist->Height = height;
+          format = GX_TF_RGB5A3;
+          goto LAB_800cbc0c;
+        }
+        texlist = texlist + 1;
+      }
+    }
+    else {
+      sVar1 = width * height * 2;
+      pvVar2 = malloc(sVar1);
+      GS_TexAllocs = GS_TexAllocs + sVar1;
+      DCFlushRange(bits,width * height * 4);
+      GS_TexSwizzleRGB5A3(width,height,bits,pvVar2);
+      DCFlushRange(pvVar2,sVar1);
+      for (iVar3 = 0; iVar3 < 0x400; iVar3 = iVar3 + 1) {
+        if (texlist->Flags == 0) {
+          texlist->Pad = 5;
+          texlist->Format = type;
+          texlist->NUID = tpid;
+          texlist->Width = width;
+          texlist->Height = height;
+          texlist->TexBits = (uint)pvVar2;
+          texlist->Flags = 0xffffffff;
+          GXInitTexObj((GXTexObj *)&texlist->Tex,pvVar2,width & 0xffff,height & 0xffff,GX_TF_RGB56 5,
+                       GX_CLAMP,GX_CLAMP,'\0');
+          break;
+        }
+        texlist = texlist + 1;
+      }
+    }
+  }
+  else {
+    pvVar2 = malloc(iss3cmp);
+    GS_TexAllocs = GS_TexAllocs + iss3cmp;
+    memcpy(pvVar2,(void *)((int)bits + 0xc),iss3cmp);
+    DCFlushRange(pvVar2,iss3cmp);
+    for (iVar3 = 0; iVar3 < 0x400; iVar3 = iVar3 + 1) {
+      if (texlist->Flags == 0) {
+        texlist->Pad = 0xe;
+        obj = (GXTexObj *)&texlist->Tex;
+        texlist->Format = type;
+        texlist->NUID = tpid;
+        texlist->Width = width;
+        texlist->Height = height;
+        format = GX_CTF_RA8;
+LAB_800cbc0c:
+        texlist->TexBits = (uint)pvVar2;
+        texlist->Flags = 0xffffffff;
+        GXInitTexObj(obj,pvVar2,width & 0xffff,height & 0xffff,format,GX_CLAMP,GX_CLAMP,'\0');
+        break;
+      }
+      texlist = texlist + 1;
+    }
+  }
+  GS_NumTextures = GS_NumTextures + 1;
+  return;
 }

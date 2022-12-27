@@ -69,9 +69,9 @@ void NuHGobjDestroyDynamic(NUHGOBJ_s *hgobj)
   int iVar4;
   int iVar5;
   int iVar6;
-
+  
   if (hgobj->texanims != (nutexanim_s *)0x0) {
-    NuTexAnimRemoveList();
+    NuTexAnimRemoveList(hgobj->texanims);
   }
   if ((hgobj->layers != (NULAYERDATA_s *)0x0) && (iVar6 = 0, hgobj->num_layers != '\0')) {
     do {
@@ -129,7 +129,7 @@ void NuHGobjDestroyDynamic(NUHGOBJ_s *hgobj)
     } while (iVar3 < hgobj->numtid);
   }
   if (hgobj->texanims != (nutexanim_s *)0x0) {
-    NuTexAnimRemoveList();
+    NuTexAnimRemoveList(hgobj->texanims);
   }
   return;
 }
@@ -244,7 +244,7 @@ void ReadNuIFFHGobjSet(filehandle handle,NUHGOBJ_s *hgobj)
   float fVar13;
   float fVar14;
   size_t size;
-
+  
   num_joints = NuFileReadChar(handle);
   hgobj->num_joints = num_joints;
   if (((int)(char)num_joints & 0xffU) != 0) {
@@ -499,6 +499,7 @@ void ReadNuIFFHGobjSet(filehandle handle,NUHGOBJ_s *hgobj)
 }
 
 
+
 */
 
 void ReadNuIFFGeomCntrl(filehandle handle, NuGeom geom)
@@ -506,3 +507,4 @@ void ReadNuIFFGeomCntrl(filehandle handle, NuGeom geom)
   NuFileReadInt(handle);
   return;
 }
+

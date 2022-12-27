@@ -48,9 +48,8 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
 {
   short sVar1;
   float sizebuf;
-  NUERRORFUNC *error;
   int amount_prim;
-  NuPrim *prim1;
+  nuprim_s *prim1;
   uint bufsize;
   GS_Buffer *buffer;
   primdef_s *ppVar2;
@@ -68,17 +67,17 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
   int iVar9;
   int amount_6;
   int iVar10;
-  NuPrim *next;
+  nuprim_s *next;
   int iVar11;
   int vtxcount [300];
-  NuPrim *prim3;
+  nuprim_s *prim3;
   undefined4 local_50;
   uint uStack_4c;
-  NuPrim *prim2;
+  nuprim_s *prim2;
   
   if (geom->vertex_type != NUVT_TC1) {
     e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x69);
-    //("CreateSkinGeom : Unknown vertex type!");
+    //(*error)("CreateSkinGeom : Unknown vertex type!");
   }
   amount_6 = primdefs->baseid;
   count = 1;
@@ -196,7 +195,7 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
   }
   GS_DeleteBuffer((void *)geom->hVB);
   prim2 = geom->prim;
-  while (prim2 != (NuPrim *)0x0) {
+  while (prim2 != (nuprim_s *)0x0) {
     next = prim2->next;
     NuPrimDestroy(prim2);
     prim2 = next;
@@ -208,25 +207,22 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
 }
 
 
+/*
 
-// This function creates a skinned geometry. It does this by creating an array of
-// primitives, setting vertex skin data, sorting the primitives and then creating a
-// new geometry from the sorted primitive array. A better name for this function
-
-/*void NuPs2CreateSkinNorm(struct nugobj_s *gobj)
+void NuPs2CreateSkinNorm(nugobj_s *gobj)
 
 {
-  struct primdef_s *primdef_2;
+  primdef_s *primdef_2;
   int iVar2;
   int *num_mtx;
   int pdcnt;
-  struct nuprim_s *prims;
+  nuprim_s *prims;
   int skinnedVtxCount;
   int iVar3;
-  struct nuvtx_tc1_s *vtx_buf;
-  struct nugeom_s *currgeom;
-  struct primdef_s *pd;
-  struct GS_Buffer *primsbuffer;
+  nuvtx_tc1_s *srcvb;
+  nugeom_s *currgeom;
+  primdef_s *pd;
+  int vid;
   int iVar4;
   
   memset(stats,0,0x3c);
@@ -236,16 +232,16 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
   totalpts = 0;
   tritot = 0;
   pd = primdefs;
-  for (; currgeom != NULL; currgeom = currgeom->next) {
+  for (; currgeom != (nugeom_s *)0x0; currgeom = currgeom->next) {
     primdefs = pd;
-    if ((currgeom->skin != NULL) || (currgeom->vtxskininfo != NULL)) {
+    if ((currgeom->skin != (NuSkin *)0x0) || (currgeom->vtxskininfo != (NUVTXSKININFO_s *)0x0)) {
       prims = currgeom->prim;
       pdcnt = 0;
-      primsbuffer = (struct GS_Buffer *)prims->idxbuff;
-      vtx_buf = (struct nuvtx_tc1_s *)currgeom->hVB;
+      vid = prims->idxbuff;
+      srcvb = (nuvtx_tc1_s *)currgeom->hVB;
       if (0x898 < prims->vertexCount / 3) {
-        error = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x35e);
-        (*error)("NuPs2CreateSkinNorm: TOO MANY PRIMS!");
+        e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x35e);
+        //(*e)("NuPs2CreateSkinNorm: TOO MANY PRIMS!");
       }
       skinnedVtxCount = 0;
       if (prims->vertexCount != 0) {
@@ -253,14 +249,14 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
           memset(pd,0,0x174);
           memset(pd->mtxid,-1,0x3c);
           if (currgeom->vtxskininfo == (NUVTXSKININFO_s *)0x0) {
-            SetVtxSkinData(pd,0,vtx_buf,(uint)*(ushort *)&primsbuffer->size,currgeom);
-            SetVtxSkinData(pd,1,vtx_buf,(uint)*(ushort *)((int)&primsbuffer->size + 2),currgeom);
-            SetVtxSkinData(pd,2,vtx_buf,(uint)*(ushort *)&primsbuffer->type,currgeom);
+            SetVtxSkinData(pd,0,srcvb,(uint)*(ushort *)vid,currgeom);
+            SetVtxSkinData(pd,1,srcvb,(uint)*(ushort *)(vid + 2),currgeom);
+            SetVtxSkinData(pd,2,srcvb,(uint)*(ushort *)(vid + 4),currgeom);
           }
           else {
-            SetVtxSkinData2(pd,0,vtx_buf,(uint)*(ushort *)&primsbuffer->size,currgeom);
-            SetVtxSkinData2(pd,1,vtx_buf,(uint)*(ushort *)((int)&primsbuffer->size + 2),currgeom);
-            SetVtxSkinData2(pd,2,vtx_buf,(uint)*(ushort *)&primsbuffer->type,currgeom);
+            SetVtxSkinData2(pd,0,srcvb,(uint)*(ushort *)vid,currgeom);
+            SetVtxSkinData2(pd,1,srcvb,(uint)*(ushort *)(vid + 2),currgeom);
+            SetVtxSkinData2(pd,2,srcvb,(uint)*(ushort *)(vid + 4),currgeom);
           }
           if (((pd->vid[0] == pd->vid[1]) || (pd->vid[1] == pd->vid[2])) ||
              (pd->vid[0] == pd->vid[2])) {
@@ -271,7 +267,7 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
           skinnedVtxCount = skinnedVtxCount + 3;
           pd = pd + 1;
           pdcnt = pdcnt + 1;
-          primsbuffer = (GS_Buffer *)((int)&primsbuffer->type + 2);
+          vid = vid + 6;
           stats[*num_mtx] = stats[*num_mtx] + 1;
         } while (skinnedVtxCount < (int)(uint)prims->vertexCount);
       }
@@ -298,10 +294,14 @@ void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
   }
   primdefs = pd;
   return;
-}*/
+}
+
+*/
 
 
-
+// This function creates a skinned geometry. It does this by creating an array of
+// primitives, setting vertex skin data, sorting the primitives and then creating a
+// new geometry from the sorted primitive array. A better name for this function
 
 void NuPs2CreateSkinNorm(struct nugobj_s *gobj)
 {
@@ -359,56 +359,56 @@ void NuPs2CreateSkinNorm(struct nugobj_s *gobj)
 int FillFreeMatrixSlots(struct primdef_s *pd,int cnt,int start)
 
 {
-  bool bVar1;
+  int iVar1;
+  int numbatchmtx;
   int iVar2;
   int iVar3;
+  primdef_s *primdef_batch;
   int iVar4;
-  int iVar5;
-  struct primdef_s *ppVar6;
+  int *piVar5;
+  int iVar6;
   int iVar7;
-  int *piVar8;
-  int iVar9;
-  int iVar10;
+  bool check;
   
-  iVar3 = pd[start].nummtx;
-  if (((start < cnt) && (iVar3 < 0xc)) && (iVar5 = start + 1, iVar5 < cnt)) {
-    iVar2 = iVar5 * 0x174;
-    iVar10 = iVar3 * 4 + 300;
-    ppVar6 = pd + iVar5;
+  numbatchmtx = pd[start].nummtx;
+  if (((start < cnt) && (numbatchmtx < 0xc)) && (iVar3 = start + 1, iVar3 < cnt)) {
+    iVar1 = iVar3 * 0x174;
+    iVar7 = numbatchmtx * 4 + 300;
+    primdef_batch = pd + iVar3;
     do {
-      if ((ppVar6->sorted != 1) && (iVar4 = 0, ppVar6->mtxid[0] != -1)) {
-        iVar7 = 0;
-        piVar8 = (int *)((int)pd[start].vrts[0].tc + iVar10 + -0x1c);
+      if ((primdef_batch->sorted != 1) && (iVar2 = 0, primdef_batch->mtxid[0] != -1)) {
+        iVar4 = 0;
+        piVar5 = (int *)((int)pd[start].vrts[0].tc + iVar7 + -0x1c);
         do {
-          iVar9 = *(int *)((int)pd->mtxid + iVar7 + iVar2 + 300 + -300);
-          if (*(char *)((int)mtxused[0].mtx + iVar9) == '\0') {
-            *piVar8 = iVar9;
-            bVar1 = iVar3 == 0xb;
-            piVar8 = piVar8 + 1;
-            iVar10 = iVar10 + 4;
-            iVar3 = iVar3 + 1;
+          iVar6 = *(int *)((int)pd->mtxid + iVar4 + iVar1 + 300 + -300);
+          if (*(char *)((int)mtxused[0].mtx + iVar6) == '\0') {
+            *piVar5 = iVar6;
+            check = numbatchmtx == 0xb;
+            piVar5 = piVar5 + 1;
+            iVar7 = iVar7 + 4;
+            numbatchmtx = numbatchmtx + 1;
             *(undefined *)
-             ((int)mtxused[0].mtx + *(int *)((int)pd->mtxid + iVar7 + iVar2 + 300 + -300)) = 1;
-            if (bVar1) {
+             ((int)mtxused[0].mtx + *(int *)((int)pd->mtxid + iVar4 + iVar1 + 300 + -300)) = 1;
+            if (check) {
               return 0xc;
             }
           }
-          iVar4 = iVar4 + 1;
-          iVar7 = iVar7 + 4;
-        } while ((iVar4 < 0xc) && (*(int *)((int)pd->mtxid + iVar7 + iVar2) != -1));
+          iVar2 = iVar2 + 1;
+          iVar4 = iVar4 + 4;
+        } while ((iVar2 < 0xc) && (*(int *)((int)pd->mtxid + iVar4 + iVar1) != -1));
       }
-      iVar5 = iVar5 + 1;
-      ppVar6 = ppVar6 + 1;
-      iVar2 = iVar2 + 0x174;
-    } while (iVar5 < cnt);
+      iVar3 = iVar3 + 1;
+      primdef_batch = primdef_batch + 1;
+      iVar1 = iVar1 + 0x174;
+    } while (iVar3 < cnt);
   }
-  return iVar3;
+  return numbatchmtx;
 }
 
 
 
 
-/*int SortPrimdefs(primdef_s *primdef,int count)  //Loop
+/*int SortPrimdefs(primdef_s *primdef,int count)
 
 {
   int iVar1;
@@ -873,34 +873,33 @@ LAB_800ae5b0:
 int AddMtxToPrimDef(primdef_s *primdef,int mtxid)
 
 {
-  int iVar1;
-  int iVar2;
-  int *piVar3;
+  int n;
+  int i;
+  int *mtxid_;
   
-  iVar2 = 0;
+  i = 0;
   if (0 < primdef->nummtx) {
-    piVar3 = primdef->mtxid;
+    mtxid_ = primdef->mtxid;
     do {
-      iVar1 = *piVar3;
-      piVar3 = piVar3 + 1;
-      if (iVar1 == mtxid) {
-        return iVar2;
+      n = *mtxid_;
+      mtxid_ = mtxid_ + 1;
+      if (n == mtxid) {
+        return i;
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < primdef->nummtx);
+      i = i + 1;
+    } while (i < primdef->nummtx);
   }
-  if (iVar2 < 0xf) {
-    primdef->mtxid[iVar2] = mtxid;
+  if (i < 0xf) {
+    primdef->mtxid[i] = mtxid;
     primdef->nummtx = primdef->nummtx + 1;
-    return iVar2;
+    return i;
   }
   return 0;
 }
 
 
 
-void SetVtxSkinData(primdef_s *pd,int pdix,nuvtx_tc1_s *vb,int vid,NuGeom *currgeom)
-
+void SetVtxSkinData(primdef_s *pd,int pdix,nuvtx_tc1_s *vb,int vid,nugeom_s *currgeom)
 {
   int iVar1;
   nuvtx_tc1_s *pnVar2;
@@ -962,8 +961,7 @@ void SetVtxSkinData(primdef_s *pd,int pdix,nuvtx_tc1_s *vb,int vid,NuGeom *currg
 
 
 
-void SetVtxSkinData2(primdef_s *pd,int pdix,nuvtx_tc1_s *vertexbuf,int vid,NuGeom *currgeom)
-
+void SetVtxSkinData2(primdef_s *pd,int pdix,nuvtx_tc1_s *vertexbuf,int vid,nugeom_s *currgeom)
 {
   bool bVar1;
   nuvtx_tc1_s *pnVar2;
@@ -1017,4 +1015,3 @@ void SetVtxSkinData2(primdef_s *pd,int pdix,nuvtx_tc1_s *vertexbuf,int vid,NuGeo
   }
   return;
 }
-

@@ -32,7 +32,6 @@ int GetGlassSpecularTexId(void)
 /*
 
 void InitOverrideMtl(void)	//TODO
-
 {
   numtlattrib_s attrib;
   int BBtid;
@@ -125,7 +124,7 @@ int isGlassInstance(nugscn_s *gsc,nuinstance_s *inst)
     return 0;
   }
   while( true ) {
-    if (geom == NULL) {
+    if (geom == (nugeom_s *)0x0) {
       return 0;
     }
     fxid = geom->mtls->fxid;
@@ -315,7 +314,6 @@ void NuGlassRenderStatic(void)	//TODO
 
 
 void ProcessGlass(int paused)	//TODO
-
 {
   numtlattrib_s *attrib;
   numtl_s *bs;
@@ -327,7 +325,7 @@ void ProcessGlass(int paused)	//TODO
   bs2 = glass_mtl_blendskin2;
   bs = glass_mtl_blendskin;
   gmtl = glass_mtl;
-  if (glass_mtl == NULL) {
+  if (glass_mtl == (numtl_s *)0x0) {
     return;
   }
   if (paused == 0) {
