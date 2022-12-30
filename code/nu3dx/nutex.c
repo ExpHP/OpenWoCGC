@@ -332,23 +332,23 @@ NuSurface* NuTexLoadTextureFromDDSFile(char* fileName)
 	return NULL;
 }
 
-void GS_TexSelect(int stage,int NUID)
+void GS_TexSelect(_GXTevStageID stage,int NUID)
 
 {
-  bool bVar1;
-  int iVar2;
-  uint uVar3;
-  GXTexObj *GX_texobj;
+  int iVar1;
+  uint uVar2;
+  _GS_TEXTURE *GSTex;
+  bool check;
   
-  bVar1 = stage == 0;
-  if (bVar1) {
+  check = stage == GX_TEVSTAGE0;
+  if (check) {
     ShadowBodge = stage;
   }
-  if (3 < stage) {
+  if (3 < (int)stage) {
     DisplayErrorAndLockup("C:/source/crashwoc/code/system/gc/gstex.c",0x21c,"GS_TexSelect1");
   }
   TexStages[stage] = NUID;
-  GX_texobj = (GXTexObj *)GS_TexList;
+  GSTex = GS_TexList;
   if ((NUID == 0) || (NUID == 9999)) {
     GXSetNumTevStages('\x01');
     GXSetTevOrder(stage,GX_TEXCOORD_NULL,GX_TEXMAP_NULL,GX_COLOR0A0);
@@ -356,12 +356,12 @@ void GS_TexSelect(int stage,int NUID)
   }
   else {
     if (NUID == ShadowMatBodge) {
-      ShadowBodge = 1;
+      ShadowBodge = GX_TEVSTAGE1;
     }
-    if (maxstage.189 < stage) {
+    if ((int)maxstage.189 < (int)stage) {
       maxstage.189 = stage;
     }
-    if (bVar1) {
+    if (check) {
       maxstage.189 = stage;
     }
     if (NUID == 0x270e) {
@@ -371,33 +371,30 @@ void GS_TexSelect(int stage,int NUID)
     GXSetNumTevStages((char)maxstage.189 + '\x01');
     GXSetTexCoordGen2(stage,GX_TG_MTX2x4,GX_TG_TEX0,0x3c,'\0',0x7d);
     GXSetTevOrder(stage,stage,stage,GX_COLOR0A0);
-    iVar2 = 0;
-    if (bVar1) {
-      iVar2 = 10;
+    iVar1 = 0;
+    if (check) {
+      iVar1 = 10;
     }
-    GXSetTevColorIn(stage,0xf,8,iVar2,0xf);
-    GXSetTevColorOp((_GXTevStageID *)stage,0,0,0,1,0);
-    iVar2 = 0;
-    if (bVar1) {
-      iVar2 = 5;
+    GXSetTevColorIn(stage,0xf,8,iVar1,0xf);
+    GXSetTevColorOp(stage,0,0,0,1,0);
+    iVar1 = 0;
+    if (check) {
+      iVar1 = 5;
     }
-    GXSetTevColorIn(stage,7,4,iVar2,7);
+    GXSetTevColorIn(stage,7,4,iVar1,7);
     GXSetTevAlphaOp(stage,0,0,0,1,0);
     if (1 < NUID - 0x270eU) {
-      uVar3 = 0;
+      uVar2 = 0;
       if (GS_NumTextures != 0) {
         do {
-          if (((_GS_TEXTURE *)GX_texobj)->NUID == NUID - 1U) {
-            GXInitTexObjWrapMode
-                      ((GXTexObj *)(_GXTexObj *)((int)GX_texobj + 0x20),
-                       (GXTexWrapMode)(&GS_TexWrapMode_s)[stage],
-                       (GXTexWrapMode)(&GS_TexWrapMode_t)[stage]);
-            GXLoadTexObj((_GXTexObj *)((int)GX_texobj + 0x20),stage);
+          if (GSTex->NUID == NUID - 1U) {
+            GXInitTexObjWrapMode(&GSTex->Tex,(&GS_TexWrapMode_s)[stage],(&GS_TexWrapMode_t)[stage] );
+            GXLoadTexObj(&GSTex->Tex,stage);
             return;
           }
-          uVar3 = uVar3 + 1;
-          GX_texobj = (GXTexObj *)((int)GX_texobj + 0x4c);
-        } while (uVar3 < GS_NumTextures);
+          uVar2 = uVar2 + 1;
+          GSTex = GSTex + 1;
+        } while (uVar2 < GS_NumTextures);
       }
       DisplayErrorAndLockup("C:/source/crashwoc/code/system/gc/gstex.c",0x281,"GS_TexSelect2");
       GXLoadTexObj(&GS_TexList->Tex,stage);

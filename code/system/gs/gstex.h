@@ -13,6 +13,3 @@
   800cc0cc 000024 800cc0cc  4 GS_SetTevModulate 	Global
   800cc0f0 000004 800cc0f0  4 GS_SetTextureStageState 	Global
 */
-
-// Re-initialize textures.
-void GS_TexReInit(); // TODO!!!

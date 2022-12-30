@@ -130,19 +130,19 @@ void NuFileClose(fileHandle handle)
 	}
 }
 
-fileHandle NuMemFileOpen(void* buffer, u32 size, u32 mode)
+fileHandle NuMemFileOpen(void* start, s32 size, s32 mode)
 {
 	if (size > 0 && mode == NUFILE_READ)
 	{
 		for (s32 i = 0; i < MAX_MEM_FILES; i++) {
 			numemfile_s* m = &memfiles[i];
-			if (!m->open)
+			if (!m->used)
 			{
-				m->open = 1;
-				m->end = (void*)((u32)buffer + (size - 1));
-				m->currposition = buffer;
-				m->unused = 0;
-				m->start = buffer;
+				m->used = 1;
+				m->end = (char*)((s32)start + (size - 1));
+				m->currposition = (char*)start;
+				m->unused = NUFILE_READ;
+				m->start = (char*)start;
 				return i + 0x400;
 			}
 		}

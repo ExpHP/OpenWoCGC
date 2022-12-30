@@ -115,6 +115,7 @@ void DebrisMalloc(void)
 
 /*
 
+
 int main(int argc,char **argv)
 
 {
@@ -125,7 +126,6 @@ int main(int argc,char **argv)
   uint uVar5;
   float fVar6;
   nucamera_s *pnVar7;
-  GXInit *__return_storage_ptr__;
   mask *pmVar8;
   void *paused;
   int iVar9;
@@ -162,10 +162,9 @@ int main(int argc,char **argv)
              (uint)(unaff_cr4 & 0xf) << 0xc | (uint)(in_cr5 & 0xf) << 8 | (uint)(in_cr6 & 0xf) <<  4
              | (uint)(in_cr7 & 0xf);
   __main(argc,argv,in_r5);
-  __return_storage_ptr__ = (GXInit *)0x0;
   v155 = 0;
   DEMOInit((_GXRenderModeObj *)0x0);
-  GS_Init(__return_storage_ptr__,argv,(ulong)in_r5);
+  GS_Init();
   SS_Init();
   MC_Init();
   NuFileInitEx(0,0);
@@ -932,6 +931,7 @@ LAB_80052b3c:
   number_of_times_played = number_of_times_played + 1;
   goto LAB_80051ba4;
 }
+
 
 
 

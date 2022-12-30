@@ -589,10 +589,6 @@ s32 GS_LightEnable(s32 Index, s32 Enable)
     return 0;
 }
 
-void GS_SetupFog(int type, float startz, float endz, u32 colour)
-{
-    return 0;
-}
 
 /*void NuLgtArcLaserDraw(int paused)	//TODO
 
