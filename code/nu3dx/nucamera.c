@@ -154,138 +154,129 @@ void NuCameraCalcFrustrumPlanes(void)	//CHECK
   return;
 }
 
-void NuCameraSet(struct nucamera_s *camera) //CHECK
-
+void NuCameraSet(struct nucamera_s* camera) //CHECK
 {
-  int size;
-  float *pfVar3;
-  struct nucamera_s *glob_cam;
-  struct numtx_s *pfVar2;
-  float *pfVar4;
-  struct numtx_s *uvmtx2;
-  struct numtx_s *uvmtx;
-  float *pfVar5;
-  struct numtx_s *pfVar1;
-  float *pfVar6;
-  double dVar7;
-  double dVar8;
-  struct numtx_s mM;
-  struct numtx_s minv;
-  struct numtx_s m;
-  struct nucamfxmode_s camfx_;
-  float fov;
-  
-  size = 0x60;
-  glob_cam = &global_camera;
-  do {
-    size = size + -0x18;
-    (glob_cam->mtx).mtx[0] = (camera->mtx).mtx[0];
-    (glob_cam->mtx).mtx[1] = (camera->mtx).mtx[1];
-    (glob_cam->mtx).mtx[2] = (camera->mtx).mtx[2];
-    (glob_cam->mtx).mtx[3] = (camera->mtx).mtx[3];
-    (glob_cam->mtx).mtx[1][0] = (camera->mtx).mtx[1][0];
-    uvmtx = &camera->mtx;
-    camera = (nucamera_s *)((camera->mtx).mtx[1] + 2);
-    (glob_cam->mtx).mtx[1][1] = uvmtx->mtx[1][1];
-    glob_cam = (nucamera_s *)((glob_cam->mtx).mtx[1] + 2);
-  } while (size != 0);
-  FixAxes(&global_camera.mtx);
-  if (camfx == NUCAMFX_NONE) {
-    NuMtxInv(&vmtx,&global_camera.mtx);
-    NuMtxScale(&vmtx,&global_camera.scale);
-  }
-  else {
-    NuMtxSetIdentity(&m);
-    m.mtx[1][1] = -1.0;
-    NuMtxInv(&mM,&global_camera.mtx);
-    NuMtxInv(&minv,&global_reflect.mtx);
-    size = 0x30;
-    pfVar4 = (float *)&vmtx;
-    pfVar6 = (float *)&minv;
+    struct numtx_s sp88;
+    struct numtx_s sp48;
+    struct numtx_s sp8;
+    f32 temp_f1;
+    f32 temp_r0;
+    f32 temp_r0_2;
+    f32 temp_r0_3;
+    f32 temp_r11;
+    s32 cnt;
+    struct nucamera_s* cam;
+    struct nucamera_s* glob_cam;
+    struct numtx_s* temp_r3;
+    struct numtx_s* var_r10;
+    struct numtx_s* var_r11_3;
+    struct numtx_s* var_r29;
+    struct numtx_s* var_r8;
+    struct numtx_s* vTmp;
+    struct numtx_s* var_r28;
+
+    cam = camera;
+    cnt = 0x60;
+    glob_cam = &global_camera;
     do {
-      pfVar1 = (numtx_s *)pfVar6;
-      pfVar2 = (numtx_s *)pfVar4;
-      size = size + -0x18;
-      pfVar2->mtx[0] = pfVar1->mtx[0];
-      pfVar2->mtx[1] = pfVar1->mtx[1];
-      pfVar2->mtx[2] = pfVar1->mtx[2];
-      pfVar2->mtx[3] = pfVar1->mtx[3];
-      pfVar2->mtx[1][0] = pfVar1->mtx[1][0];
-      pfVar6 = pfVar1->mtx[1] + 2;
-      pfVar2->mtx[1][1] = pfVar1->mtx[1][1];
-      camfx_ = camfx;
-      pfVar4 = pfVar2->mtx[1] + 2;
-    } while (size != 0);
-    *pfVar4 = *pfVar6;
-    pfVar2->mtx[1][3] = pfVar1->mtx[1][3];
-    pfVar2->mtx[2][0] = pfVar1->mtx[2][0];
-    pfVar2->mtx[2][1] = pfVar1->mtx[2][1];
-    if (camfx_ == NUCAMFX_REFLECT) {
-      NuMtxMul(&vmtx,&vmtx,&m);
+        cnt -= 0x18;
+        glob_cam->mtx._00 = cam->mtx._00;
+        glob_cam->mtx._01 = cam->mtx._01;
+        glob_cam->mtx._02 = cam->mtx._02;
+        glob_cam->mtx._03 = cam->mtx._03;
+        glob_cam->mtx._10 = cam->mtx._10;
+        temp_r0 = cam->mtx._11;
+        cam += 0x18;
+        glob_cam->mtx._11 = temp_r0;
+        glob_cam += 0x18;
+    } while (cnt != 0);
+    FixAxes(&global_camera.mtx);
+    if ((enum nucamfxmode_s) camfx == NUCAMFX_NONE) {
+        NuMtxInv(&vmtx, &global_camera.mtx);
+        NuMtxScale(&vmtx - 0x32BC, &global_camera.scale);
+    } else {
+        var_r29 = &sp48;
+        NuMtxSetIdentity(&sp88);
+        sp88._11 = -1.0;
+        NuMtxInv(&sp8, &global_camera.mtx);
+        NuMtxInv(var_r29, &global_reflect.mtx);
+        vTmp = &vmtx;
+        cnt = 0x30;
+        do {
+            cnt -= 0x18;
+            vTmp->_00 = var_r29->_00;
+            vTmp->_01 = var_r29->_01;
+            vTmp->_02 = var_r29->_02;
+            vTmp->_03 = var_r29->_03;
+            vTmp->_10 = var_r29->_10;
+            temp_r11 = var_r29->_11;
+            var_r29 += 0x18;
+            vTmp->_11 = temp_r11;
+            vTmp += 0x18;
+        } while (cnt != 0);
+        vTmp->_00 = var_r29->_00;
+        vTmp->_01 = var_r29->_01;
+        vTmp->_02 = var_r29->_02;
+        vTmp->_03 = var_r29->_03;
+        if ((enum nucamfxmode_s) camfx == NUCAMFX_REFLECT) {
+            NuMtxMul(&vmtx, &vmtx, &sp88);
+        }
+        NuMtxMul(&vmtx, &vmtx, &global_reflect.mtx);
+        temp_r3 = &vmtx - 0x32BC;
+        NuMtxMul(temp_r3, temp_r3, &sp8);
     }
-    NuMtxMul(&vmtx,&vmtx,&global_reflect.mtx);
-    NuMtxMul(&vmtx,&vmtx,&mM);
-  }
-  SetProjectionMatrix(&pmtx,global_camera.fov,global_camera.aspect,global_camera.nearclip,
-                      global_camera.farclip);
-  NuVpGetClippingMtx(&cmtx);
-  NuVpGetScalingMtx(&smtx);
-  NuMtxMulH(&vpmtx,&vmtx,&pmtx);
-  NuMtxMulH(&vpcmtx,&vpmtx,&cmtx);
-  NuMtxMulH(&vpcsmtx,&vpcmtx,&smtx);
-  NuMtxMulH(&csmtx,&cmtx,&smtx);
-  NuMtxInvH(&icsmtx,&csmtx);
-  NuMtxInvH(&ivpcsmtx,&vpcsmtx);
-  size = 0x30;
-  uvmtx = &global_reflect.uvmtx;
-  pfVar4 = (float *)&vpcmtx;
-  do {
-    pfVar6 = pfVar4;
-    uvmtx2 = uvmtx;
-    size = size + -0x18;
-    uvmtx2->mtx[0] = *pfVar6;
-    uvmtx2->mtx[1] = pfVar6[1];
-    uvmtx2->mtx[2] = pfVar6[2];
-    uvmtx2->mtx[3] = pfVar6[3];
-    uvmtx2->mtx[1][0] = (*(float (*) [4])(pfVar6 + 4))[0];
-    uvmtx2->mtx[1][1] = pfVar6[5];
-    uvmtx = (numtx_s *)(uvmtx2->mtx[1] + 2);
-    pfVar4 = pfVar6 + 6;
-  } while (size != 0);
-  uvmtx->mtx[0] = pfVar6[6];
-  size = 0x30;
-  uvmtx2->mtx[1][3] = pfVar6[7];
-  uvmtx2->mtx[2][0] = pfVar6[8];
-  uvmtx2->mtx[2][1] = pfVar6[9];
-  pfVar4 = (float *)&vpc_vport_mtx;
-  pfVar6 = (float *)&vpcmtx;
-  do {
-    pfVar5 = pfVar6;
-    pfVar3 = pfVar4;
-    size = size + -0x18;
-    *pfVar3 = *pfVar5;
-    pfVar3[1] = pfVar5[1];
-    pfVar3[2] = pfVar5[2];
-    pfVar3[3] = pfVar5[3];
-    (*(float (*) [4])(pfVar3 + 4))[0] = (*(float (*) [4])(pfVar5 + 4))[0];
-    pfVar3[5] = pfVar5[5];
-    pfVar4 = pfVar3 + 6;
-    pfVar6 = pfVar5 + 6;
-  } while (size != 0);
-  pfVar3[6] = pfVar5[6];
-  dVar8 = 0.5;
-  pfVar3[7] = pfVar5[7];
-  fov = global_camera.fov;
-  pfVar3[8] = pfVar5[8];
-  pfVar3[9] = pfVar5[9];
-  dVar7 = tan((double)(fov * 0.5));
-  zx = (float)dVar7 / global_camera.aspect;
-  dVar7 = tan((double)(float)((double)global_camera.fov * dVar8));
-  zy = (float)dVar7;
-  GS_SetViewMatrix(&vmtx);
-  GS_SetProjectionMatrix(&pmtx);
-  NuCameraCalcFrustrumPlanes();
-  return;
+    SetProjectionMatrix(&pmtx, global_camera.fov, global_camera.aspect, global_camera.nearclip, global_camera.farclip);
+    NuVpGetClippingMtx(&cmtx);
+    NuVpGetScalingMtx(&smtx);
+    NuMtxMulH(&vpmtx, &vmtx, &pmtx - 0x327C);
+    NuMtxMulH(&vpcmtx,&vpmtx,&cmtx);
+    NuMtxMulH(&vpcsmtx,&vpcmtx,&smtx);
+    NuMtxMulH(&csmtx,&cmtx,&smtx);
+    NuMtxInvH(&icsmtx, &csmtx);
+    NuMtxInvH(&ivpcsmtx, &vpcsmtx);
+    var_r28 = &vpcmtx;
+    cnt = 0x30;
+    var_r10 = &global_reflect.uvmtx;
+    do {
+        cnt -= 0x18;
+        var_r10->_00 = var_r28->_00;
+        var_r10->_01 = var_r28->_01;
+        var_r10->_02 = var_r28->_02;
+        var_r10->_03 = var_r28->_03;
+        var_r10->_10 = var_r28->_10;
+        temp_r0_2 = var_r28->_11;
+        var_r28 += 0x18;
+        var_r10->_11 = temp_r0_2;
+        var_r10 += 0x18;
+    } while (cnt != 0);
+    var_r8 = &vpc_vport_mtx;
+    var_r10->_00 = var_r28->_00;
+    var_r11_3 = &vpcmtx;
+    cnt = 0x30;
+    var_r10->_01 = var_r28->_00;
+    var_r10->_02 = var_r28->_02;
+    var_r10->_03 = var_r28->_03;
+    do {
+        cnt -= 0x18;
+        var_r8->_00 = var_r11_3->_00;
+        var_r8->_01 = var_r11_3->_01;
+        var_r8->_02 = var_r11_3->_02;
+        var_r8->_03 = var_r11_3->_03;
+        var_r8->_10 = var_r11_3->_10;
+        temp_r0_3 = var_r11_3->_11;
+        var_r11_3 += 0x18;
+        var_r8->_11 = temp_r0_3;
+        var_r8 += 0x18;
+    } while (cnt != 0);
+    var_r8->_00 = var_r11_3->_00;
+    var_r8->_01 = var_r11_3->_01;
+    var_r8->_02 = var_r11_3->_02;
+    var_r8->_03 = var_r11_3->_03;
+    zx = (f32) tan(global_camera.fov * 0.5) / global_camera.aspect;
+    zy = tan(global_camera.fov * 0.5);
+    GS_SetViewMatrix(&vmtx);
+    GS_SetProjectionMatrix(&pmtx);
+    NuCameraCalcFrustrumPlanes();
 }
 
 void NuCameraTransformView(struct nuvec_s *dest,struct nuvec_s *src,int n,struct numtx_s *w)	//CHECK
@@ -382,50 +373,48 @@ void NuCameraTransformClip(nuvec_s *v,nuvec_s *b,int param_3,numtx_s *a)	//TODO
 */
 
 
-void NuCameraTransformScreenClip(nuvec_s *dest,nuvec_s *src,int n,numtx_s *w)	//CHECK
+void NuCameraTransformScreenClip(struct NuVec* dest, struct NuVec* src, s32 n, struct numtx_s* w) {
+    struct numtx_s m;
+    f32 temp_r0;
+    s32 cnt;
+    struct NuVec* end;
+    struct numtx_s* mTmp;
+    struct numtx_s* vpcTmp;
 
-{
-  float *pfVar1;
-  float *pfVar2;
-  float *pfVar3;
-  int size;
-  float *pfVar4;
-  nuvec_s *end;
-  numtx_s m;
-  
-  end = src + n;
-  if (w == (numtx_s *)0x0) {
-    size = 0x30;
-    pfVar1 = (float *)&vpc_vport_mtx;
-    pfVar2 = (float *)&m;
-    do {
-      pfVar4 = pfVar2;
-      pfVar3 = pfVar1;
-      size = size + -0x18;
-      *pfVar4 = *pfVar3;
-      pfVar4[1] = pfVar3[1];
-      pfVar4[2] = pfVar3[2];
-      pfVar4[3] = pfVar3[3];
-      (*(float (*) [4])(pfVar4 + 4))[0] = (*(float (*) [4])(pfVar3 + 4))[0];
-      pfVar4[5] = pfVar3[5];
-      pfVar1 = pfVar3 + 6;
-      pfVar2 = pfVar4 + 6;
-    } while (size != 0);
-    pfVar4[6] = pfVar3[6];
-    pfVar4[7] = pfVar3[7];
-    pfVar4[8] = pfVar3[8];
-    pfVar4[9] = pfVar3[9];
-  }
-  else {
-    NuMtxMulH(&m,w,&vpc_vport_mtx);
-  }
-  for (; src < end; src = src + 1) {
-    NuVecMtxTransformH(dest,src,&m);
-    dest = dest + 1;
-  }
-  return;
+
+    if (w != NULL) {
+        NuMtxMulH(&m, w, &vpc_vport_mtx);
+    } else {
+        mTmp = &m;
+        vpcTmp = &vpc_vport_mtx;
+        cnt = 0x30;
+        do {
+            cnt -= 0x18;
+            mTmp->_00 = vpcTmp->_00;
+            mTmp->_01 = vpcTmp->_01;
+            mTmp->_02 = vpcTmp->_02;
+            mTmp->_03 = vpcTmp->_03;
+            mTmp->_10 = vpcTmp->_10;
+            temp_r0 = vpcTmp->_11;
+            vpcTmp += 0x18;
+            mTmp->_11 = temp_r0;
+            mTmp += 0x18;
+        } while (cnt != 0);
+        mTmp->_00 = vpcTmp->_00;
+        mTmp->_01 = vpcTmp->_01;
+        mTmp->_02 = vpcTmp->_02;
+        mTmp->_03 = vpcTmp->_03;
+    }
+loop_6:
+    if (src < &src[n]) {
+        end = src;
+        src += 0xC;
+        NuVecMtxTransformH(dest, end, &m);
+        dest += 0xC;
+        goto loop_6;
+    }
+    return;
 }
-
 /*
 
 int NuCameraClipTestExtents(nuvec_s *min,nuvec_s *max,numtx_s *wm)		//TODO
@@ -558,126 +547,108 @@ int NuCameraClipTestBoundingSphere(nuvec_s *gobj_centre,float *radius,numtx_s *w
 
 /*
 
-int NuCameraClipTestPoints(nuvec_s *pnts,int cnt,numtx_s *wm)		//CHECK
-
+s32 NuCameraClipTestPoints(struct NuVec* pnts, s32 cnt, struct numtx_s* wm) 	//CHECK
 {
-  numtx_s *pnVar1;
-  numtx_s *pnVar2;
-  float uVar3;
-  numtx_s *pfVar3;
-  numtx_s *pfVar2;
-  int iVar3;
-  numtx_s *pfVar5;
-  numtx_s *pfVar4;
-  int uVar7;
-  numtx_s m;
-  nuvec_s v;
-  
-  if (wm == (numtx_s *)0x0) {
-    iVar3 = 0x30;
-    pnVar1 = &vmtx;
-    pnVar2 = &m;
-    do {
-      pfVar5 = pnVar2;
-      pfVar3 = pnVar1;
-      iVar3 = iVar3 + -0x18;
-      pfVar5->mtx[0] = pfVar3->mtx[0];
-      pfVar5->mtx[1] = pfVar3->mtx[1];
-      pfVar5->mtx[2] = pfVar3->mtx[2];
-      pfVar5->mtx[3] = pfVar3->mtx[3];
-      pfVar5->mtx[1][0] = pfVar3->mtx[1][0];
-      pfVar2 = (numtx_s *)(pfVar3->mtx[1] + 2);
-      pfVar5->mtx[1][1] = pfVar3->mtx[1][1];
-      pfVar4 = (numtx_s *)(pfVar5->mtx[1] + 2);
-      pnVar1 = pfVar2;
-      pnVar2 = pfVar4;
-    } while (iVar3 != 0);
-    pfVar4->mtx[0] = pfVar2->mtx[0];
-    pfVar5->mtx[1][3] = pfVar3->mtx[1][3];
-    pfVar5->mtx[2][0] = pfVar3->mtx[2][0];
-    pfVar5->mtx[2][1] = pfVar3->mtx[2][1];
-  }
-  else {
-    NuMtxMulH(&m,wm,&vmtx);
-  }
-  uVar7 = -1;
-  if (0 < cnt) {
-    do {
-      NuVecMtxTransform(&v,pnts,&m);
-      uVar3 = (float)(uint)(v.z < global_camera.nearclip);
-      if (global_camera.farclip < v.z) {
-        uVar3 = (float)((uint)uVar3 | 2);
-      }
-      if (v.x < -v.z * zx) {
-        uVar3 = (float)((uint)uVar3 | 4);
-      }
-      if (v.z * zx < v.x) {
-        uVar3 = (float)((uint)uVar3 | 8);
-      }
-      if (v.y < -v.z * zy) {
-        uVar3 = (float)((uint)uVar3 | 0x20);
-      }
-      if (v.z * zy < v.y) {
-        uVar3 = (float)((uint)uVar3 | 0x10);
-      }
-      uVar7 = uVar7 & (uint)uVar3;
-      pnts = pnts + 1;
-      cnt = cnt + -1;
-    } while (cnt != 0);
-  }
-  return uVar7;
+    struct NuVec v;
+    struct numtx_s m;
+    f32 temp_f10;
+    f32 temp_f13;
+    f32 temp_r0;
+    s32 var_r0;
+    s32 var_r10;
+    s32 var_r29;
+    s32 i;
+    struct numtx_s* mTmp;
+    struct numtx_s* Vtmp;
+
+    i = cnt;
+    if (wm != NULL) {
+        NuMtxMulH(&m, wm, &vmtx);
+    } else {
+        mTmp = &m;
+        Vtmp = &vmtx;
+        var_r10 = 0x30;
+        do {
+            var_r10 -= 0x18;
+            mTmp->_00 = Vtmp->_00;
+            mTmp->_01 = Vtmp->_01;
+            mTmp->_02 = Vtmp->_02;
+            mTmp->_03 = Vtmp->_03;
+            mTmp->_10 = Vtmp->_10;
+            temp_r0 = Vtmp->_11;
+            Vtmp += 0x18;
+            mTmp->_11 = temp_r0;
+            mTmp += 0x18;
+        } while (var_r10 != 0);
+        mTmp->_00 = Vtmp->_00;
+        mTmp->_01 = Vtmp->_01;
+        mTmp->_02 = Vtmp->_02;
+        mTmp->_03 = Vtmp->_03;
+    }
+    var_r29 = -1;
+    if (i > 0) {
+        do {
+            NuVecMtxTransform(&v, pnts, &m);
+            var_r0 = 0;
+            if (v.z < global_camera.nearclip) {
+                var_r0 = 1;
+            }
+            if (v.z > global_camera.farclip) {
+                var_r0 |= 2;
+            }
+            temp_f10 = -v.z;
+            temp_f13 = (bitwise f32) v;
+            if (temp_f13 < (temp_f10 * zx)) {
+                var_r0 |= 4;
+            }
+            if (temp_f13 > (v.z * zx)) {
+                var_r0 |= 8;
+            }
+            if (v.y < (temp_f10 * zy)) {
+                var_r0 |= 0x20;
+            }
+            if (v.y > (v.z * zy)) {
+                var_r0 |= 0x10;
+            }
+            var_r29 &= var_r0;
+            pnts += 0xC;
+            i -= 1;
+        } while (i != 0);
+    }
+    return var_r29;
 }
 
 
+void SetProjectionMatrix(struct numtx_s* mtx, f32 fFOV, f32 fAspect, f32 fNearPlane, f32 fFarPlane) {
+    f32 temp_f0;
+    f32 temp_f27;
+    f32 dist;
+    f32 temp_f29_2;
+    f32 temp_f30_2;
+    f32 temp_f31_2;
+    f64 temp_f30;
+    f64 temp_f31;
 
-void SetProjectionMatrix(numtx_s *mtx,float fFOV,float fAspect,float fNearPlane,float fFarPlane)	//TODO
-
-{
-  float f;
-  double dVar1;
-  double dVar2;
-  double dVar3;
-  double dVar4;
-  double dVar5;
-  double dVar6;
-  double dVar7;
-  double dVar8;
-  
-  dVar4 = (double)fFarPlane;
-  dVar5 = (double)fNearPlane;
-  dVar8 = (double)fAspect;
-  dVar1 = (double)fFOV;
-  f = (float)(dVar4 - dVar5);
-  dVar7 = (double)f;
-  dVar2 = (double)f;
-  NuFabs(f);
-  dVar6 = 0.009999999776482582;
-  if (dVar2 <= 0.009999999776482582) {
-    e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucamera.c",0x2a2);
-    //("assert");
-  }
-  dVar1 = (double)(float)(dVar1 * 0.5);
-  dVar2 = sin(dVar1);
-  dVar3 = (double)(float)dVar2;
-  NuFabs((float)dVar2);
-  if (dVar3 <= dVar6) {
-    e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucamera.c",0x2a3);
-    //("assert");
-  }
-  dVar2 = cos(dVar1);
-  dVar6 = (double)(float)(dVar4 / dVar7);
-  dVar4 = sin(dVar1);
-  dVar8 = (double)(float)(dVar8 * (double)(float)(dVar2 / dVar4));
-  dVar2 = cos(dVar1);
-  dVar1 = sin(dVar1);
-  dVar1 = (double)(float)(dVar2 / dVar1);
-  memset(mtx,0,0x40);
-  mtx->mtx[3][2] = (float)(-dVar6 * dVar5);
-  mtx->mtx[0] = (float)dVar8;
-  mtx->mtx[1][1] = (float)dVar1;
-  mtx->mtx[2][3] = 1.0;
-  mtx->mtx[2][2] = (float)dVar6;
-  return;
+    dist = fFarPlane - fNearPlane;
+    temp_f27 = 0.01;
+    if (!(NuFabs(dist) > temp_f27)) {
+        NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucamera.c", 0x2A2)("assert");
+    }
+    temp_f0 = fFOV * 0.5;
+    if (!(NuFabs((f32) sin(temp_f0)) > temp_f27)) {
+        NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucamera.c", 0x2A3)("assert");
+    }
+    temp_f29_2 = fFarPlane / dist;
+    temp_f31 = cos(temp_f0);
+    temp_f31_2 = fAspect * (f32) (temp_f31 / sin(temp_f0));
+    temp_f30 = cos(temp_f0);
+    temp_f30_2 = (f32) (temp_f30 / sin(temp_f0));
+    memset(mtx, 0, 0x40);
+    mtx->_32 = -temp_f29_2 * fNearPlane;
+    mtx->_00 = temp_f31_2;
+    mtx->_11 = temp_f30_2;
+    mtx->_23 = 1.0;
+    mtx->_22 = temp_f29_2;
 }
 
 
