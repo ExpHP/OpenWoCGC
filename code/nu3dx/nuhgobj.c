@@ -146,16 +146,19 @@ void NuHGobjPOIMtx(struct NUHGOBJ_s* hgobj, u8 poi_id, struct numtx_s* world_mtx
     return;
 }
 
-/*
-NUUPOINTOFINTEREST_s* NuHGobjGetPOI(NUHGOBJ_s* hgobj, uchar poi_id) {
-    undefined3 in_register_00000010;
 
-    if ((CONCAT31(in_register_00000010, poi_id) < (uint)hgobj->num_poi_ixs) &&
-        (hgobj->poi_ixs[CONCAT31(in_register_00000010, poi_id)] != 0xff)) {
-        return hgobj->points_of_interest + hgobj->poi_ixs[CONCAT31(in_register_00000010, poi_id)];
+struct NUPOINTOFINTEREST_s* NuHGobjGetPOI(struct NUHGOBJ_s* hgobj, u8 poi_id) {
+    u8 cindex;
+
+    if (poi_id < (u8) hgobj->num_poi_ixs) {
+        cindex = hgobj->poi_ixs[poi_id];
+        if ((s32) cindex != 0xFF) {
+            return &hgobj->points_of_interest[cindex];
+        }
     }
-    return (NUPOINTOFINTEREST_s*)0x0;
-}*/
+    return NULL;
+}
+
 
 void ReadNuIFFHGobj(fileHandle handle, struct NUHGOBJ_s *hgobj)
 {
