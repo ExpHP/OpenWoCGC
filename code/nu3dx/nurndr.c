@@ -44,7 +44,7 @@ void NuRndrEndScene(void)
 
 {
   if (GS_Parallax != 0) {
-    GS_SetZCompare(0,0,0);
+    GS_SetZCompare(0,0,GX_NEVER);
   }
   NuRndrFlush();
   GS_EndScene();
@@ -181,32 +181,32 @@ LAB_800b47d0:
             (*e)("NuRndrGobj : No free matrix slots!");
           }
           i = 0x30;
-          m = (float *)(rndrmtx + rndrmtx_cnt);
-          pfVar2 = m;
-          pfVar3 = (float *)wm;
+          m = rndrmtx + rndrmtx_cnt;
+          pnVar2 = m;
+          pnVar3 = wm;
           do {
-            pfVar8 = pfVar3;
-            pfVar7 = pfVar2;
+            pnVar8 = pnVar3;
+            pnVar7 = pnVar2;
             i = i + -0x18;
-            *pfVar7 = *pfVar8;
-            pfVar7[1] = pfVar8[1];
-            pfVar7[2] = pfVar8[2];
-            pfVar7[3] = pfVar8[3];
-            (*(float (*) [4])(pfVar7 + 4))[0] = (*(float (*) [4])(pfVar8 + 4))[0];
-            pfVar7[5] = pfVar8[5];
-            pfVar2 = pfVar7 + 6;
-            pfVar3 = pfVar8 + 6;
+            pnVar7->_00 = pnVar8->_00;
+            pnVar7->_01 = pnVar8->_01;
+            pnVar7->_02 = pnVar8->_02;
+            pnVar7->_03 = pnVar8->_03;
+            pnVar7->_10 = pnVar8->_10;
+            pnVar7->_11 = pnVar8->_11;
+            pnVar2 = (numtx_s *)&pnVar7->_12;
+            pnVar3 = (numtx_s *)&pnVar8->_12;
           } while (i != 0);
-          pfVar7[6] = pfVar8[6];
-          pfVar7[7] = pfVar8[7];
-          pfVar7[8] = pfVar8[8];
-          pfVar7[9] = pfVar8[9];
+          pnVar7->_12 = pnVar8->_12;
+          pnVar7->_13 = pnVar8->_13;
+          pnVar7->_20 = pnVar8->_20;
+          pnVar7->_21 = pnVar8->_21;
           if (nextgobj != (nugobj_s *)0x0) {
             NuMtxSetIdentity(&mtx);
-            mtx.mtx[3][0] = (gobj->origin).x;
-            mtx.mtx[3][1] = (gobj->origin).y;
-            mtx.mtx[3][2] = (gobj->origin).z;
-            NuMtxMul((numtx_s *)m,&mtx,(numtx_s *)m);
+            mtx._30 = (gobj->origin).x;
+            mtx._31 = (gobj->origin).y;
+            mtx._32 = (gobj->origin).z;
+            NuMtxMul(m,&mtx,m);
           }
           geom = gobj->geom;
           if (geom != (nugeom_s *)0x0) {
@@ -224,7 +224,7 @@ LAB_800b47d0:
                   geomitem[i].hdr.flags = 1;
                 }
                 geomitem[i].hdr.lights_index = (short)currlgts;
-                geomitem[i].mtx = (numtx_s *)m;
+                geomitem[i].mtx = m;
                 geomitem[i].geom = geom;
                 geomitem[i].blendvals = blendvals;
                 sVar6 = NuShaderAssignShader(geom);
@@ -232,16 +232,16 @@ LAB_800b47d0:
                 geomitem[i].hShader = sVar6;
                 if ((ppnVar1 == (numtl_s **)0x0) || (s_id = (uint)geom->mtls->special_id, s_id ==  0)
                    ) {
-                  mtl = nurndr_forced_mtl;
+                  mtl = (nusysmtl_s *)nurndr_forced_mtl;
                   if (nurndr_forced_mtl == (numtl_s *)0x0) {
-                    mtl = geom->mtls;
+                    mtl = (nusysmtl_s *)geom->mtls;
                   }
                 }
                 else {
-                  mtl = ppnVar1[s_id];
-                  if (mtl == (numtl_s *)0x0) goto LAB_800b4994;
+                  mtl = (nusysmtl_s *)ppnVar1[s_id];
+                  if (mtl == (nusysmtl_s *)0x0) goto LAB_800b4994;
                 }
-                NuMtlAddRndrItem(mtl,&geomitem[i].hdr);
+                NuMtlAddRndrItem(mtl,geomitem + i);
               }
 LAB_800b4994:
               geom = geom->next;
@@ -264,7 +264,7 @@ LAB_800b4994:
               if (iVar4 == 1) {
                 geomitem[i].hdr.flags = 1;
               }
-              geomitem[i].mtx = (numtx_s *)m;
+              geomitem[i].mtx = m;
               geomitem[i].blendvals = blendvals;
               NuMtlAddFaceonItem(geom->mtls,&geomitem[i].hdr);
             }
@@ -290,42 +290,29 @@ LAB_800b47cc:
 
 int NuRndrGrassGobj(nugobj_s *gobj,numtx_s *wm,float **blendvals)
 
-{
+{ 
   float fVar1;
   float fVar2;
   float fVar3;
   numtl_s **ppnVar4;
-  float *pfVar5;
-  float *pfVar6;
+  numtx_s *pnVar5;
+  numtx_s *pnVar6;
   NUERRORFUNC *pNVar7;
   int iVar8;
   short sVar9;
-  numtl_s *mtl;
-  float *pfVar10;
+  nusysmtl_s *mtl;
+  numtx_s *pnVar10;
   uint uVar11;
   int iVar12;
-  float *pfVar13;
+  numtx_s *pnVar13;
   int iVar14;
-  float *pfVar15;
+  numtx_s *pnVar15;
   int iVar16;
   nugeom_s *geom;
-  byte in_cr0;
-  byte in_cr1;
-  byte in_cr2;
-  byte in_cr3;
-  byte unaff_cr4;
-  byte in_cr5;
-  byte in_cr6;
-  byte in_cr7;
   double dVar17;
   nuvec_s local_70;
-  nuvec_s local_60 [2];
-  uint local_48;
+  nuvec_s local_60;
   
-  local_48 = (uint)(in_cr0 & 0xf) << 0x1c | (uint)(in_cr1 & 0xf) << 0x18 |
-             (uint)(in_cr2 & 0xf) << 0x14 | (uint)(in_cr3 & 0xf) << 0x10 |
-             (uint)(unaff_cr4 & 0xf) << 0xc | (uint)(in_cr5 & 0xf) << 8 | (uint)(in_cr6 & 0xf) <<  4
-             | (uint)(in_cr7 & 0xf);
   iVar14 = -1;
   if (gobj != (nugobj_s *)0x0) {
     dVar17 = 100.0;
@@ -333,14 +320,14 @@ int NuRndrGrassGobj(nugobj_s *gobj,numtx_s *wm,float **blendvals)
       local_70.x = (gobj->bounding_box_min).x;
       local_70.y = (gobj->bounding_box_min).y;
       local_70.z = (gobj->bounding_box_min).z;
-      local_60[0].x = (gobj->bounding_box_max).x;
-      local_60[0].y = (gobj->bounding_box_max).y;
-      local_60[0].z = (gobj->bounding_box_max).z;
+      local_60.x = (gobj->bounding_box_max).x;
+      local_60.y = (gobj->bounding_box_max).y;
+      local_60.z = (gobj->bounding_box_max).z;
       NuVecAdd(&local_70,&gobj->bounding_box_min,&gobj->origin);
-      NuVecAdd(local_60,&gobj->bounding_box_max,&gobj->origin);
-      fVar1 = local_70.y - wm->mtx[3][1];
-      fVar2 = local_70.x - wm->mtx[3][0];
-      fVar3 = local_70.z - wm->mtx[3][2];
+      NuVecAdd(&local_60,&gobj->bounding_box_max,&gobj->origin);
+      fVar1 = local_70.y - wm->_31;
+      fVar2 = local_70.x - wm->_30;
+      fVar3 = local_70.z - wm->_32;
       if ((double)(fVar3 * fVar3 + fVar2 * fVar2 + fVar1 * fVar1) <= dVar17) {
         iVar16 = NuCameraClipTestBoundingSphere
                            (&gobj->bounding_box_center,&gobj->bounding_radius_from_center,wm);
@@ -359,26 +346,26 @@ LAB_800b4b88:
             (*pNVar7)("NuRndrGobj : No free matrix slots!");
           }
           iVar12 = 0x30;
-          pfVar15 = (float *)(rndrmtx + rndrmtx_cnt);
-          pfVar5 = pfVar15;
-          pfVar6 = (float *)wm;
+          pnVar15 = rndrmtx + rndrmtx_cnt;
+          pnVar5 = pnVar15;
+          pnVar6 = wm;
           do {
-            pfVar13 = pfVar6;
-            pfVar10 = pfVar5;
+            pnVar13 = pnVar6;
+            pnVar10 = pnVar5;
             iVar12 = iVar12 + -0x18;
-            *pfVar10 = *pfVar13;
-            pfVar10[1] = pfVar13[1];
-            pfVar10[2] = pfVar13[2];
-            pfVar10[3] = pfVar13[3];
-            (*(float (*) [4])(pfVar10 + 4))[0] = (*(float (*) [4])(pfVar13 + 4))[0];
-            pfVar10[5] = pfVar13[5];
-            pfVar5 = pfVar10 + 6;
-            pfVar6 = pfVar13 + 6;
+            pnVar10->_00 = pnVar13->_00;
+            pnVar10->_01 = pnVar13->_01;
+            pnVar10->_02 = pnVar13->_02;
+            pnVar10->_03 = pnVar13->_03;
+            pnVar10->_10 = pnVar13->_10;
+            pnVar10->_11 = pnVar13->_11;
+            pnVar5 = (numtx_s *)&pnVar10->_12;
+            pnVar6 = (numtx_s *)&pnVar13->_12;
           } while (iVar12 != 0);
-          pfVar10[6] = pfVar13[6];
-          pfVar10[7] = pfVar13[7];
-          pfVar10[8] = pfVar13[8];
-          pfVar10[9] = pfVar13[9];
+          pnVar10->_12 = pnVar13->_12;
+          pnVar10->_13 = pnVar13->_13;
+          pnVar10->_20 = pnVar13->_20;
+          pnVar10->_21 = pnVar13->_21;
           geom = gobj->geom;
           if (geom != (nugeom_s *)0x0) {
             do {
@@ -396,7 +383,7 @@ LAB_800b4b88:
                 }
                 iVar8 = NuLightStoreCurrentLights();
                 geomitem[iVar12].hdr.lights_index = (short)iVar8;
-                geomitem[iVar12].mtx = (numtx_s *)pfVar15;
+                geomitem[iVar12].mtx = pnVar15;
                 geomitem[iVar12].geom = geom;
                 geomitem[iVar12].blendvals = blendvals;
                 sVar9 = NuShaderAssignShader(geom);
@@ -404,16 +391,16 @@ LAB_800b4b88:
                 geomitem[iVar12].hShader = sVar9;
                 if ((ppnVar4 == (numtl_s **)0x0) ||
                    (uVar11 = (uint)geom->mtls->special_id, uVar11 == 0)) {
-                  mtl = nurndr_forced_mtl;
+                  mtl = (nusysmtl_s *)nurndr_forced_mtl;
                   if (nurndr_forced_mtl == (numtl_s *)0x0) {
-                    mtl = geom->mtls;
+                    mtl = (nusysmtl_s *)geom->mtls;
                   }
                 }
                 else {
-                  mtl = ppnVar4[uVar11];
-                  if (mtl == (numtl_s *)0x0) goto LAB_800b4d14;
+                  mtl = (nusysmtl_s *)ppnVar4[uVar11];
+                  if (mtl == (nusysmtl_s *)0x0) goto LAB_800b4d14;
                 }
-                NuMtlAddRndrItem(mtl,&geomitem[iVar12].hdr);
+                NuMtlAddRndrItem(mtl,geomitem + iVar12);
               }
 LAB_800b4d14:
               geom = geom->next;
@@ -441,18 +428,18 @@ LAB_800b4b84:
 int NuRndrGobjSkin2(nugobj_s *gobj,int nummtx,numtx_s *wm,float **blendvals)
 
 {
-  float *pfVar1;
-  float *pfVar2;
-  int iVar3;
+  numtx_s *pnVar1;
+  numtx_s *pnVar2;
+  int i;
   int cclip;
   NUERRORFUNC *e;
   int currlgt;
-  short sVar4;
-  numtl_s *mtl;
-  float *pfVar5;
-  uint uVar6;
-  int iVar7;
-  float *pfVar8;
+  short sVar3;
+  nusysmtl_s *mtl;
+  numtx_s *pnVar4;
+  uint uVar5;
+  int iVar6;
+  numtx_s *pnVar7;
   numtx_s *m;
   nugeom_s *geom;
   numtl_s **mtl_2;
@@ -471,31 +458,31 @@ int NuRndrGobjSkin2(nugobj_s *gobj,int nummtx,numtx_s *wm,float **blendvals)
       (*e)("NuRndrGobjSkin : No free matrix slots!");
     }
     m = rndrmtx + rndrmtx_cnt;
-    iVar3 = 0;
+    i = 0;
     if (0 < nummtx) {
       do {
-        currlgt = iVar3 + 1;
-        iVar7 = 0x30;
-        pfVar1 = (float *)(m + iVar3);
-        pfVar2 = (float *)(wm + iVar3);
+        currlgt = i + 1;
+        iVar6 = 0x30;
+        pnVar1 = m + i;
+        pnVar2 = wm + i;
         do {
-          pfVar8 = pfVar2;
-          pfVar5 = pfVar1;
-          iVar7 = iVar7 + -0x18;
-          *pfVar5 = *pfVar8;
-          pfVar5[1] = pfVar8[1];
-          pfVar5[2] = pfVar8[2];
-          pfVar5[3] = pfVar8[3];
-          (*(float (*) [4])(pfVar5 + 4))[0] = (*(float (*) [4])(pfVar8 + 4))[0];
-          pfVar5[5] = pfVar8[5];
-          pfVar1 = pfVar5 + 6;
-          pfVar2 = pfVar8 + 6;
-        } while (iVar7 != 0);
-        pfVar5[6] = pfVar8[6];
-        pfVar5[7] = pfVar8[7];
-        pfVar5[8] = pfVar8[8];
-        pfVar5[9] = pfVar8[9];
-        iVar3 = currlgt;
+          pnVar7 = pnVar2;
+          pnVar4 = pnVar1;
+          iVar6 = iVar6 + -0x18;
+          pnVar4->_00 = pnVar7->_00;
+          pnVar4->_01 = pnVar7->_01;
+          pnVar4->_02 = pnVar7->_02;
+          pnVar4->_03 = pnVar7->_03;
+          pnVar4->_10 = pnVar7->_10;
+          pnVar4->_11 = pnVar7->_11;
+          pnVar1 = (numtx_s *)&pnVar4->_12;
+          pnVar2 = (numtx_s *)&pnVar7->_12;
+        } while (iVar6 != 0);
+        pnVar4->_12 = pnVar7->_12;
+        pnVar4->_13 = pnVar7->_13;
+        pnVar4->_20 = pnVar7->_20;
+        pnVar4->_21 = pnVar7->_21;
+        i = currlgt;
       } while (currlgt < nummtx);
     }
     geom = gobj->geom;
@@ -506,32 +493,32 @@ int NuRndrGobjSkin2(nugobj_s *gobj,int nummtx,numtx_s *wm,float **blendvals)
           (*e)("NuRndrGobjSkin : No free geom item slots!");
         }
         else {
-          iVar3 = geomitem_cnt + -1;
-          geomitem_cnt = iVar3;
-          geomitem[iVar3].hdr.type = NURNDRITEM_SKIN3D2;
-          geomitem[iVar3].hdr.flags = 0;
+          i = geomitem_cnt + -1;
+          geomitem_cnt = i;
+          geomitem[i].hdr.type = NURNDRITEM_SKIN3D2;
+          geomitem[i].hdr.flags = 0;
           if (cclip == 1) {
-            geomitem[iVar3].hdr.flags = 1;
+            geomitem[i].hdr.flags = 1;
           }
           currlgt = NuLightStoreCurrentLights();
-          geomitem[iVar3].hdr.lights_index = (short)currlgt;
-          geomitem[iVar3].blendvals = blendvals;
-          geomitem[iVar3].mtx = m;
-          geomitem[iVar3].geom = geom;
-          sVar4 = NuShaderAssignShader(geom);
+          geomitem[i].hdr.lights_index = (short)currlgt;
+          geomitem[i].blendvals = blendvals;
+          geomitem[i].mtx = m;
+          geomitem[i].geom = geom;
+          sVar3 = NuShaderAssignShader(geom);
           mtl_2 = nurndr_forced_mtl_table;
-          geomitem[iVar3].hShader = sVar4;
-          if ((mtl_2 == (numtl_s **)0x0) || (uVar6 = (uint)geom->mtls->special_id, uVar6 == 0)) {
-            mtl = nurndr_forced_mtl;
+          geomitem[i].hShader = sVar3;
+          if ((mtl_2 == (numtl_s **)0x0) || (uVar5 = (uint)geom->mtls->special_id, uVar5 == 0)) {
+            mtl = (nusysmtl_s *)nurndr_forced_mtl;
             if (nurndr_forced_mtl == (numtl_s *)0x0) {
-              mtl = geom->mtls;
+              mtl = (nusysmtl_s *)geom->mtls;
             }
           }
           else {
-            mtl = mtl_2[uVar6];
-            if (mtl == (numtl_s *)0x0) goto LAB_800b4f6c;
+            mtl = (nusysmtl_s *)mtl_2[uVar5];
+            if (mtl == (nusysmtl_s *)0x0) goto LAB_800b4f6c;
           }
-          NuMtlAddRndrItem(mtl,&geomitem[iVar3].hdr);
+          NuMtlAddRndrItem(mtl,geomitem + i);
         }
 LAB_800b4f6c:
         geom = geom->next;
@@ -556,7 +543,7 @@ int NuRndrTri2d(nuvtx_tltc1_s *vtx,numtl_s *mtl)
   nuprim_s *prim;
   float *tc;
   
-  NuMtlGet2dBuffer(mtl,NUPT_NDXTRI,&geom,&prim,&superbuffer_ptr,&superbuffer_end);
+  NuMtlGet2dBuffer((nusysmtl_s *)mtl,NUPT_NDXTRI,&geom,&prim,&superbuffer_ptr,&superbuffer_end);
   if (geom->vtxmax - geom->vtxcount < 3) {
     e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x5c0);
     (*e)("NuRndrTri2d : Vertex buffer full!");
@@ -666,15 +653,15 @@ int NuRndrTri3d(nuvtx_tc1_s *vtx,numtl_s *mtl,numtx_s *wm)
   return 1;
 }
 
-float NuRndrItemDist(nurndritem_s *item)
+float NuRndrItemDist(nugeomitem_s *item)
 
 {
   nuvec_s pnt;
   float dist;
   
   dist = 0.0;
-  if (item->type == NURNDRITEM_GEOM3D) {
-    NuCameraTransformClip(&pnt,(nuvec_s *)(item[1].next + 3),1,NULL);
+  if ((item->hdr).type == NURNDRITEM_GEOM3D) {
+    NuCameraTransformClip(&pnt,(nuvec_s *)&item->mtx->_30,1,NULL);
     dist = pnt.z;
   }
   return dist;
@@ -976,13 +963,14 @@ void NuRndrGeomItem(nugeomitem_s *item)
   return;
 }
 
+
 void NuRndrSkinItem2(nugeomitem_s *item)
 
 {
   NUERRORFUNC *e;
   nuprim_s *prim;
   
-  if ((item->blendvals == (float **)0x0) || (item->geom->blendgeom == (NuBlendShape *)0x0)) {
+  if ((item->blendvals == (float **)0x0) || (item->geom->blendgeom == (NUBLENDGEOM_s *)0x0)) {
     DBTimerStart(5);
     SetupShaders(item);
     GS_LoadWorldMatrixIdentity();
@@ -1011,55 +999,55 @@ void NuRndrBlendedSkinItem(nugeomitem_s *item)
 
 {
   float fVar1;
+  int i;
+  NUERRORFUNC *e;
   int iVar2;
-  NUERRORFUNC *error;
+  float *hVB2;
   int iVar3;
-  float *pfVar4;
-  int iVar5;
-  int iVar6;
-  nugeom_s *pnVar7;
-  float *pfVar8;
-  int iVar9;
-  NuBlendShape *pNVar10;
+  int iVar4;
+  nugeom_s *geom;
+  float *hVB;
+  int cnt;
+  NUBLENDGEOM_s *blendgeom;
   nuprim_s *prim;
   
-  pNVar10 = item->geom->blendgeom;
+  blendgeom = item->geom->blendgeom;
   DBTimerStart(4);
   DBTimerStart(0xd);
   PPCMtmmcr0(0x8b);
   PPCMtmmcr1(0x78400000);
-  pnVar7 = item->geom;
-  iVar6 = 0;
-  pfVar8 = (float *)pnVar7->hVB;
-  pfVar4 = (float *)pnVar7->blendgeom->hVB;
-  if (0 < pnVar7->vtxcount) {
+  geom = item->geom;
+  iVar4 = 0;
+  hVB = (float *)geom->hVB;
+  hVB2 = (float *)geom->blendgeom->hVB;
+  if (0 < geom->vtxcount) {
     do {
-      iVar2 = 0;
-      *pfVar4 = *pfVar8;
-      iVar9 = iVar6 + 1;
-      pfVar4[1] = pfVar8[1];
-      pfVar4[2] = pfVar8[2];
-      if (0 < pNVar10->nblends) {
-        iVar6 = iVar6 * 0xc;
-        iVar3 = 0;
+      i = 0;
+      *hVB2 = *hVB;
+      cnt = iVar4 + 1;
+      hVB2[1] = hVB[1];
+      hVB2[2] = hVB[2];
+      if (0 < blendgeom->nblends) {
+        iVar4 = iVar4 * 0xc;
+        iVar2 = 0;
         do {
-          iVar5 = *(int *)(iVar3 + (int)pNVar10->blend_offsets);
-          if ((iVar5 != 0) &&
-             (fVar1 = (*item->blendvals)[*(int *)(iVar3 + (int)pNVar10->ix)], fVar1 != 0.0)) {
-            *pfVar4 = *(float *)(iVar6 + iVar5) * fVar1 + *pfVar4;
-            pfVar4[1] = *(float *)(iVar6 + *(int *)(iVar3 + (int)pNVar10->blend_offsets) + 4) *
-                        fVar1 + pfVar4[1];
-            pfVar4[2] = *(float *)(iVar6 + *(int *)(iVar3 + (int)pNVar10->blend_offsets) + 8) *
-                        fVar1 + pfVar4[2];
+          iVar3 = *(int *)(iVar2 + (int)blendgeom->blend_offsets);
+          if ((iVar3 != 0) &&
+             (fVar1 = (*item->blendvals)[*(int *)(iVar2 + (int)blendgeom->ix)], fVar1 != 0.0)) {
+            *hVB2 = *(float *)(iVar4 + iVar3) * fVar1 + *hVB2;
+            hVB2[1] = *(float *)(iVar4 + *(int *)(iVar2 + (int)blendgeom->blend_offsets) + 4) *
+                      fVar1 + hVB2[1];
+            hVB2[2] = *(float *)(iVar4 + *(int *)(iVar2 + (int)blendgeom->blend_offsets) + 8) *
+                      fVar1 + hVB2[2];
           }
-          iVar2 = iVar2 + 1;
-          iVar3 = iVar3 + 4;
-        } while (iVar2 < pNVar10->nblends);
+          i = i + 1;
+          iVar2 = iVar2 + 4;
+        } while (i < blendgeom->nblends);
       }
-      pfVar4 = pfVar4 + 3;
-      iVar6 = iVar9;
-      pfVar8 = pfVar8 + 0xe;
-    } while (iVar9 < item->geom->vtxcount);
+      hVB2 = hVB2 + 3;
+      iVar4 = cnt;
+      hVB = hVB + 0xe;
+    } while (cnt < item->geom->vtxcount);
   }
   PPCMtmmcr1(0);
   PPCMtmmcr0(0);
@@ -1074,8 +1062,8 @@ void NuRndrBlendedSkinItem(nugeomitem_s *item)
       SkinnedShaderBlend(prim->vertexCount,prim->idxbuff);
     }
     else {
-      error = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x1087);
-      (*error)("NuRndrGeomItem : Unknown primitive type!");
+      e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x1087);
+      (*e)("NuRndrGeomItem : Unknown primitive type!");
     }
   }
   DBTimerEnd(4);
@@ -1087,22 +1075,20 @@ void NuRndrBlendedSkinItem(nugeomitem_s *item)
 void NuRndrAnglesZX(nuvec_s *src,nuvec_s *rot)
 
 {
-  uint uVar1;
-  int iVar2;
-  double dVar3;
-  nuvec_s local_38 [2];
+  uint A2D;
+  int iVar1;
+  double dVar2;
+  nuvec_s local_38;
   double local_20;
   
-  uVar1 = NuAtan2D(src->z,src->y);
-  dVar3 = 4503601774854144.0;
-  local_20 = (double)CONCAT44(0x43300000,uVar1 ^ 0x80000000);
+  A2D = NuAtan2D(src->z,src->y);
+  dVar2 = 4503601774854144.0;
+  local_20 = (double)CONCAT44(0x43300000,A2D ^ 0x80000000);
   rot->x = (float)(local_20 - 4503601774854144.0);
-  iVar2 = (int)-(float)(local_20 - 4503601774854144.0);
-  local_20 = (double)(longlong)iVar2;
-  NuVecRotateX(local_38,src,iVar2);
-  iVar2 = NuAtan2D(local_38[0].x,local_38[0].y);
-  local_20 = (double)CONCAT44(0x43300000,-iVar2 ^ 0x80000000);
-  rot->z = (float)(local_20 - dVar3);
+  NuVecRotateX(&local_38,src,(int)-(float)(local_20 - 4503601774854144.0));
+  iVar1 = NuAtan2D(local_38.x,local_38.y);
+  local_20 = (double)CONCAT44(0x43300000,-iVar1 ^ 0x80000000);
+  rot->z = (float)(local_20 - dVar2);
   return;
 }
 
@@ -1113,77 +1099,78 @@ void NuRndrAddFootPrint(int rot,float sizex,float sizez,int brightness,nuvec_s *
 {
   float fVar1;
   float fVar2;
-  int iVar3;
-  uint uVar4;
-  nuvec4_s local_c8;
-  nuvec4_s local_b8;
-  nuvec4_s local_a8;
-  nuvec4_s local_98;
+  float fVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  int iVar7;
+  uint i2;
+  numtx_s m2;
   nuvec_s terrrot;
   numtx_s m;
   longlong local_30;
   uint free;
+  float trigtab;
   
-  fVar1 = NuTrigTable[rot & 0xffff];
-  fVar2 = *(float *)((int)NuTrigTable + ((rot + 0x4000) * 4 & 0x3fffcU));
-  local_a8.z = fVar2 * -sizez;
-  local_a8.x = fVar1 * -sizez;
-  local_b8.z = -fVar1 * -sizex;
-  local_c8.w = 0.0;
-  local_b8.x = fVar2 * -sizex;
-  local_98.x = local_b8.x + local_a8.x;
-  local_98.y = 0.0;
-  local_98.z = local_b8.z + local_a8.z;
-  local_a8.y = 0.0;
-  local_c8.z = -fVar1 * sizex;
-  local_b8.y = 0.0;
-  local_a8.z = local_c8.z + local_a8.z;
-  local_c8.y = 0.0;
-  local_a8.x = fVar2 * sizex + local_a8.x;
-  local_b8.x = local_b8.x + fVar1 * sizez;
-  local_b8.z = local_b8.z + fVar2 * sizez;
-  local_c8.x = fVar2 * sizex + fVar1 * sizez;
-  local_c8.z = local_c8.z + fVar2 * sizez;
-  local_98.w = 0.0;
-  local_a8.w = 0.0;
-  local_b8.w = 0.0;
+  trigtab = NuTrigTable[rot & 0xffff];
+  fVar1 = *(float *)((int)NuTrigTable + ((rot + 0x4000) * 4 & 0x3fffcU));
+  fVar5 = fVar1 * -sizez;
+  fVar4 = trigtab * -sizez;
+  fVar3 = -trigtab * -sizex;
+  m2._03 = 0.0;
+  fVar6 = fVar1 * -sizex;
+  m2._30 = fVar6 + fVar4;
+  m2._31 = 0.0;
+  m2._32 = fVar3 + fVar5;
+  m2._21 = 0.0;
+  fVar2 = -trigtab * sizex;
+  m2._11 = 0.0;
+  m2._22 = fVar2 + fVar5;
+  m2._01 = 0.0;
+  m2._20 = fVar1 * sizex + fVar4;
+  m2._10 = fVar6 + trigtab * sizez;
+  m2._12 = fVar3 + fVar1 * sizez;
+  m2._00 = fVar1 * sizex + trigtab * sizez;
+  m2._02 = fVar2 + fVar1 * sizez;
+  m2._33 = 0.0;
+  m2._23 = 0.0;
+  m2._13 = 0.0;
   NuRndrAnglesZX(norm,&terrrot);
   NuMtxSetIdentity(&m);
   local_30 = (longlong)(int)terrrot.z;
   NuMtxRotateZ(&m,(int)terrrot.z);
   local_30 = (longlong)(int)terrrot.x;
   NuMtxRotateX(&m,(int)terrrot.x);
-  NuVec4MtxTransformVU0(&local_c8,&local_c8,&m);
-  NuVec4MtxTransformVU0(&local_b8,&local_b8,&m);
-  NuVec4MtxTransformVU0(&local_a8,&local_a8,&m);
-  NuVec4MtxTransformVU0(&local_98,&local_98,&m);
+  NuVec4MtxTransformVU0((nuvec4_s *)&m2,(nuvec4_s *)&m2,&m);
+  NuVec4MtxTransformVU0((nuvec4_s *)&m2._10,(nuvec4_s *)&m2._10,&m);
+  NuVec4MtxTransformVU0((nuvec4_s *)&m2._20,(nuvec4_s *)&m2._20,&m);
+  NuVec4MtxTransformVU0((nuvec4_s *)&m2._30,(nuvec4_s *)&m2._30,&m);
   free = NuRndrFootFree & 0x3f;
-  NuRndrFootData[free].pnts[0].x = local_c8.x + pos->x;
-  NuRndrFootData[free].pnts[0].y = local_c8.y + pos->y;
-  uVar4 = NuRndrFootFree + 1;
-  NuRndrFootData[free].pnts[0].z = local_c8.z + pos->z;
-  iVar3 = NuRndrFootFree + 9;
-  NuRndrFootData[free].pnts[1].x = local_b8.x + pos->x;
-  NuRndrFootData[free].pnts[1].y = local_b8.y + pos->y;
-  NuRndrFootData[free].pnts[1].z = local_b8.z + pos->z;
-  NuRndrFootData[free].pnts[2].x = local_a8.x + pos->x;
-  NuRndrFootData[free].pnts[2].y = local_a8.y + pos->y;
-  NuRndrFootData[free].pnts[2].z = local_a8.z + pos->z;
-  NuRndrFootData[free].pnts[3].x = local_98.x + pos->x;
-  NuRndrFootData[free].pnts[3].y = local_98.y + pos->y;
-  NuRndrFootFree = uVar4;
-  NuRndrFootData[free].pnts[3].z = local_98.z + pos->z;
+  NuRndrFootData[free].pnts[0].x = m2._00 + pos->x;
+  NuRndrFootData[free].pnts[0].y = m2._01 + pos->y;
+  i2 = NuRndrFootFree + 1;
+  NuRndrFootData[free].pnts[0].z = m2._02 + pos->z;
+  iVar7 = NuRndrFootFree + 9;
+  NuRndrFootData[free].pnts[1].x = m2._10 + pos->x;
+  NuRndrFootData[free].pnts[1].y = m2._11 + pos->y;
+  NuRndrFootData[free].pnts[1].z = m2._12 + pos->z;
+  NuRndrFootData[free].pnts[2].x = m2._20 + pos->x;
+  NuRndrFootData[free].pnts[2].y = m2._21 + pos->y;
+  NuRndrFootData[free].pnts[2].z = m2._22 + pos->z;
+  NuRndrFootData[free].pnts[3].x = m2._30 + pos->x;
+  NuRndrFootData[free].pnts[3].y = m2._31 + pos->y;
+  NuRndrFootFree = i2;
+  NuRndrFootData[free].pnts[3].z = m2._32 + pos->z;
   NuRndrFootData[free].brightness = (short)brightness;
   NuRndrFootData[free].gfx = (char)(gfx << 2);
   NuRndrFootData[free].timer = '\x10';
-  for (; (int)uVar4 < iVar3; uVar4 = uVar4 + 1) {
-    if ('\x0f' < NuRndrFootData[uVar4 & 0x3f].timer) {
-      NuRndrFootData[uVar4 & 0x3f].timer = '\x0f';
+  for (; (int)i2 < iVar7; i2 = i2 + 1) {
+    if ('\x0f' < NuRndrFootData[i2 & 0x3f].timer) {
+      NuRndrFootData[i2 & 0x3f].timer = '\x0f';
     }
   }
   return;
 }
-
 
 
 void NuRndrFootPrints(numtl_s *mtl,float *u,float *v)
@@ -1195,7 +1182,7 @@ void NuRndrFootPrints(numtl_s *mtl,float *u,float *v)
   nuvec_s *pnVar4;
   float *pfVar5;
   float fVar6;
-  undefined4 *puVar7;
+  nuvtx_tc1_s *pnVar7;
   float fVar8;
   float fVar9;
   float fVar10;
@@ -1204,7 +1191,9 @@ void NuRndrFootPrints(numtl_s *mtl,float *u,float *v)
   undefined4 *puVar13;
   undefined4 *puVar14;
   int iVar15;
-  nuvec_s local_30;
+  nuvtx_tc1_s *local_30;
+  undefined4 *local_2c;
+  undefined4 *local_28;
   undefined4 *local_24;
   
   iVar15 = 0x40;
@@ -1266,21 +1255,21 @@ void NuRndrFootPrints(numtl_s *mtl,float *u,float *v)
     iVar15 = iVar15 + -1;
   } while (iVar15 != 0);
   if ((iVar11 != 0) && (iVar15 = 0, 0 < iVar11)) {
-    puVar7 = &vtx.247;
+    pnVar7 = (nuvtx_tc1_s *)&vtx.247;
     puVar12 = &DAT_801bd184;
     puVar13 = &DAT_801bd160;
     puVar14 = &DAT_801bd13c;
     do {
-      local_30.x = (float)puVar7;
-      local_30.y = (float)puVar14;
-      local_30.z = (float)puVar13;
+      local_30 = pnVar7;
+      local_2c = puVar14;
+      local_28 = puVar13;
       local_24 = puVar12;
-      NuRndrStrip3d(&local_30,mtl,0,4);
+      NuRndrStrip3d((nuvtx_tc1_s *)&local_30,mtl,0,4);
       iVar15 = iVar15 + 4;
       puVar12 = puVar12 + 0x24;
       puVar13 = puVar13 + 0x24;
       puVar14 = puVar14 + 0x24;
-      puVar7 = puVar7 + 0x24;
+      pnVar7 = pnVar7 + 4;
     } while (iVar15 < iVar11);
   }
   return;
@@ -1517,13 +1506,12 @@ void NuRndrTrail(int trailpt,trail *trail,int TRAILCOUNT)
 }
 
 void NuRndrWaterRip(numtl_s *mtl)	//TODO
-
 {
   float fVar1;
   short sVar2;
   int iVar3;
   float fVar4;
-  undefined4 *puVar5;
+  float *pfVar5;
   float fVar6;
   short *psVar7;
   int iVar8;
@@ -1549,12 +1537,12 @@ void NuRndrWaterRip(numtl_s *mtl)	//TODO
   } while (iVar8 < 0x20);
   if (NuRndrWaterRipCnt != 0) {
     iVar8 = 4;
-    puVar5 = &DAT_801e112c;
+    pfVar5 = (float *)&DAT_801e112c;
     do {
-      puVar5[-2] = 0x3f800000;
-      puVar5[-1] = 0;
-      *puVar5 = 0;
-      puVar5 = puVar5 + 9;
+      pfVar5[-2] = 1.0;
+      pfVar5[-1] = 0.0;
+      *pfVar5 = 0.0;
+      pfVar5 = pfVar5 + 9;
       iVar8 = iVar8 + -1;
     } while (iVar8 != 0);
     DAT_801e11b4 = &DAT_801e1184;
@@ -1600,7 +1588,7 @@ void NuRndrWaterRip(numtl_s *mtl)	//TODO
         DAT_801e1188 = DAT_801e111c;
         DAT_801e118c = DAT_801e1168;
         DAT_801e119c = DAT_801e1130;
-        NuRndrStrip3d((nuvec_s *)&vtx2.271,mtl,0,4);
+        NuRndrStrip3d((nuvtx_tc1_s *)&vtx2.271,mtl,0,4);
       } while (iVar8 < NuRndrWaterRipCnt);
     }
   }
@@ -1715,7 +1703,7 @@ void NuRndrRectUV2di(int x,int y,int w,int h,float tx,float ty,float tw,float th
   NuTexSetTextureStates(mtl);
   SetVertexShader(0x144);
   NuTexSetTexture(0,mtl->tid);
-  GS_DrawTriListTTL(&local_118,6);
+  GS_DrawTriListTTL((int)&local_118,6);
   return;
 }
 
@@ -1724,60 +1712,60 @@ void NuRndrShadPolys(numtl_s *mtl)
 
 {
   float fVar1;
-  nuvec_s *pnVar2;
-  float fVar3;
-  undefined4 *puVar4;
-  float fVar5;
-  ShadPolDat *pSVar6;
-  int iVar7;
-  double dVar8;
-  double dVar9;
-  double dVar10;
+  float fVar2;
+  float *pfVar3;
+  float fVar4;
+  int i;
+  ShadPolDat *dat;
+  double dVar5;
+  double dVar6;
+  double dVar7;
+  nuvec_s *v;
   
   if (NuRndrShadowCnt != 0) {
-    iVar7 = 4;
-    puVar4 = &DAT_801e120c;
+    i = 4;
+    pfVar3 = (float *)&DAT_801e120c;
     do {
-      puVar4[-2] = 0;
-      puVar4[-1] = 0;
-      *puVar4 = 0;
-      puVar4 = puVar4 + 9;
-      iVar7 = iVar7 + -1;
-    } while (iVar7 != 0);
-    DAT_801e1294 = &DAT_801e1264;
-    vtx2.283 = &vtx.282;
-    iVar7 = 0;
-    DAT_801e128c = &DAT_801e121c;
-    DAT_801e1290 = &DAT_801e1240;
+      pfVar3[-2] = 0.0;
+      pfVar3[-1] = 0.0;
+      *pfVar3 = 0.0;
+      pfVar3 = pfVar3 + 9;
+      i = i + -1;
+    } while (i != 0);
+    vtx2.283[3] = (nuvec_s *)&DAT_801e1264;
+    vtx2.283[0] = (nuvec_s *)&vtx.282;
+    i = 0;
+    vtx2.283[1] = (nuvec_s *)&DAT_801e121c;
+    vtx2.283[2] = (nuvec_s *)&DAT_801e1240;
     if (0 < NuRndrShadowCnt) {
-      dVar8 = 0.009999999776482582;
-      dVar9 = 0.0;
-      dVar10 = 1.0;
-      pSVar6 = NuRndrShadPolDat;
+      dVar5 = 0.009999999776482582;
+      dVar6 = 0.0;
+      dVar7 = 1.0;
+      dat = NuRndrShadPolDat;
       do {
-        fVar3 = (pSVar6->pos).x;
-        pnVar2 = &pSVar6->pos;
-        fVar5 = (pSVar6->pos).z;
-        iVar7 = iVar7 + 1;
-        fVar1 = pSVar6->size;
-        pSVar6 = pSVar6 + 1;
-        DAT_801e121c = fVar3 + fVar1;
-        DAT_801e1248 = fVar5 + fVar1;
+        fVar2 = (dat->pos).x;
+        v = &dat->pos;
+        fVar4 = (dat->pos).z;
+        i = i + 1;
+        fVar1 = dat->size;
+        dat = dat + 1;
+        DAT_801e121c = fVar2 + fVar1;
+        DAT_801e1248 = fVar4 + fVar1;
         DAT_801e127c = 0xff000000;
-        DAT_801e11fc = (float)((double)pnVar2->y + dVar8);
-        vtx.282 = fVar3 - fVar1;
-        DAT_801e1200 = fVar5 - fVar1;
+        DAT_801e11fc = (float)((double)v->y + dVar5);
+        vtx.282 = fVar2 - fVar1;
+        DAT_801e1200 = fVar4 - fVar1;
         DAT_801e1210 = 0xff000000;
         DAT_801e1234 = 0xff000000;
         DAT_801e1258 = 0xff000000;
-        DAT_801e1214 = (float)dVar9;
-        DAT_801e1218 = (float)dVar9;
-        DAT_801e1238 = (float)dVar10;
-        DAT_801e123c = (float)dVar9;
-        DAT_801e125c = (float)dVar9;
-        DAT_801e1260 = (float)dVar10;
-        DAT_801e1280 = (float)dVar10;
-        DAT_801e1284 = (float)dVar10;
+        DAT_801e1214 = (float)dVar6;
+        DAT_801e1218 = (float)dVar6;
+        DAT_801e1238 = (float)dVar7;
+        DAT_801e123c = (float)dVar6;
+        DAT_801e125c = (float)dVar6;
+        DAT_801e1260 = (float)dVar7;
+        DAT_801e1280 = (float)dVar7;
+        DAT_801e1284 = (float)dVar7;
         DAT_801e1220 = DAT_801e11fc;
         DAT_801e1224 = DAT_801e1200;
         DAT_801e1240 = vtx.282;
@@ -1785,8 +1773,8 @@ void NuRndrShadPolys(numtl_s *mtl)
         DAT_801e1264 = DAT_801e121c;
         DAT_801e1268 = DAT_801e11fc;
         DAT_801e126c = DAT_801e1248;
-        NuRndrStrip3d((nuvec_s *)&vtx2.283,mtl,0,4);
-      } while (iVar7 < NuRndrShadowCnt);
+        NuRndrStrip3d((nuvtx_tc1_s *)vtx2.283,mtl,0,4);
+      } while (i < NuRndrShadowCnt);
     }
     NuRndrShadowCnt = 0;
   }
@@ -1842,24 +1830,24 @@ void NuRndrWaterRippleUpdate(int count)
 void NuRndrAddWaterRipple(nuvec_s *pos,float size,float endsize,int duration,int shade)
 
 {
-  float fVar1;
-  float fVar2;
+  float y;
+  float x;
   WaterDat *ripDat;
-  float fVar3;
-  int iVar4;
+  float z;
+  int i;
   
-  iVar4 = 0x20;
+  i = 0x20;
   ripDat = NuRndrWaterRipDat;
   do {
     if (ripDat->timer == 0) {
-      fVar3 = pos->z;
-      fVar2 = pos->x;
+      z = pos->z;
+      x = pos->x;
       pos->y = pos->y + 0.01;
-      fVar1 = pos->y;
+      y = pos->y;
       ripDat->otimer = (short)duration;
-      (ripDat->pos).x = fVar2;
-      (ripDat->pos).y = fVar1;
-      (ripDat->pos).z = fVar3;
+      (ripDat->pos).x = x;
+      (ripDat->pos).y = y;
+      (ripDat->pos).z = z;
       ripDat->cursize = size;
       ripDat->endsize = endsize;
       ripDat->shade = shade;
@@ -1869,12 +1857,12 @@ void NuRndrAddWaterRipple(nuvec_s *pos,float size,float endsize,int duration,int
       return;
     }
     ripDat = ripDat + 1;
-    iVar4 = iVar4 + -1;
-  } while (iVar4 != 0);
+    i = i + -1;
+  } while (i != 0);
   return;
 }
 
-void NuRndrAddShadow(double param_1,nuvec_s *v,short param_3,short param_4,short param_5,short param_6) //TODO
+void NuRndrAddShadow(float scale,nuvec_s *v,short shade,short xrot,short yrot,short zrot)
 
 {
   float y;
@@ -1926,7 +1914,6 @@ int NuRndrGScnObj(nugobj_s *gobj,numtx_s *wm)
 
 
 void NuRndrParticleGroup(_sceDmaTag *data,setup_s *setup,numtl_s *mtl,float time,numtx_s *wm)
-
 {
   int i;
   rdata_s *rdata;
@@ -1968,6 +1955,7 @@ int NuHGobjRndr(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers)
 {
   uint uVar1;
   NULAYERDATA_s *pNVar2;
+  NUERRORFUNC *e;
   nugobj_s *pnVar3;
   int iVar4;
   numtx_s *pnVar5;
@@ -1990,7 +1978,7 @@ int NuHGobjRndr(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers)
     iVar7 = 0;
     do {
       iVar4 = *(int *)(hgobj->joints->pad + iVar6 + -5);
-      pnVar8 = (numtx_s *)((int)hgobj->T->mtx + iVar7);
+      pnVar8 = (numtx_s *)((int)&hgobj->T->_00 + iVar7);
       if (iVar4 == -1) {
         NuMtxMul(pnVar5,pnVar8,wm);
       }
@@ -2005,11 +1993,11 @@ int NuHGobjRndr(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers)
     } while (iVar10 < (int)uVar1);
   }
   pNVar2 = hgobj->layers;
-  if ((pNVar2[iVar9].gobjs != (nugobj_s *)0x0) && (iVar10 = 0, uVar1 != 0)) {
+  if ((pNVar2[iVar9].gobjs != (nugobj_s **)0x0) && (iVar10 = 0, uVar1 != 0)) {
     iVar6 = 0;
     pnVar5 = mtx_arrayHGobj;
     do {
-      pnVar3 = *(nugobj_s **)((int)&(hgobj->layers[iVar9].gobjs)->sysnext + iVar6);
+      pnVar3 = *(nugobj_s **)(iVar6 + (int)hgobj->layers[iVar9].gobjs);
       if (pnVar3 != (nugobj_s *)0x0) {
         NuRndrGobj(pnVar3,pnVar5,(float **)0x0);
       }
@@ -2020,11 +2008,11 @@ int NuHGobjRndr(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers)
       pNVar2 = hgobj->layers;
     } while (iVar10 < (int)uVar1);
   }
-  if ((pNVar2[iVar9].blend_gobjs != (nugobj_s *)0x0) && (iVar10 = 0, uVar1 != 0)) {
+  if ((pNVar2[iVar9].blend_gobjs != (nugobj_s **)0x0) && (iVar10 = 0, uVar1 != 0)) {
     iVar6 = 0;
     pnVar5 = mtx_arrayHGobj;
     do {
-      pnVar3 = *(nugobj_s **)((int)&(hgobj->layers[iVar9].blend_gobjs)->sysnext + iVar6);
+      pnVar3 = *(nugobj_s **)(iVar6 + (int)hgobj->layers[iVar9].blend_gobjs);
       if (pnVar3 != (nugobj_s *)0x0) {
         NuRndrGobj(pnVar3,pnVar5,(float **)0x0);
       }
@@ -2040,7 +2028,7 @@ int NuHGobjRndr(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers)
     pnVar5 = mtx_arrayHGobj;
     do {
       iVar10 = iVar10 + 1;
-      NuMtxMul(pnVar8,(numtx_s *)((int)hgobj->INV_WT->mtx + iVar6),pnVar5);
+      NuMtxMul(pnVar8,(numtx_s *)((int)&hgobj->INV_WT->_00 + iVar6),pnVar5);
       pnVar8 = pnVar8 + 1;
       iVar6 = iVar6 + 0x40;
       pnVar5 = pnVar5 + 1;
@@ -2088,14 +2076,14 @@ int NuHGobjRndrMtxDwa(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers,num
 LAB_800b6930:
           if ((-1 < i) && (i <= (int)(uint)hgobj->num_layers)) {
             layerdat = hgobj->layers;
-            if ((layerdat[i].gobjs != (nugobj_s *)0x0) && (iVar3 = 0, hgobj->num_joints != '\0'))  {
+            if ((layerdat[i].gobjs != (nugobj_s **)0x0) && (iVar3 = 0, hgobj->num_joints != '\0'))  {
               iVar4 = 0;
               mtx = mtx_array;
               do {
-                if (*(int *)((int)&(hgobj->layers[i].gobjs)->sysnext + iVar4) != 0) {
+                if (*(int *)(iVar4 + (int)hgobj->layers[i].gobjs) != 0) {
                   NuMtxMul(&m,mtx,wm);
-                  uVar1 = NuRndrGobj(*(nugobj_s **)((int)&(hgobj->layers[i].gobjs)->sysnext + iVar 4)
-                                     ,&m,(float **)0x0);
+                  uVar1 = NuRndrGobj(*(nugobj_s **)(iVar4 + (int)hgobj->layers[i].gobjs),&m,
+                                     (float **)0x0);
                   uVar2 = uVar2 | uVar1;
                 }
                 iVar3 = iVar3 + 1;
@@ -2104,15 +2092,14 @@ LAB_800b6930:
                 layerdat = hgobj->layers;
               } while (iVar3 < (int)(uint)hgobj->num_joints);
             }
-            if ((layerdat[i].blend_gobjs != (nugobj_s *)0x0) &&
+            if ((layerdat[i].blend_gobjs != (nugobj_s **)0x0) &&
                (iVar3 = 0, hgobj->num_joints != '\0')) {
               iVar4 = 0;
               mtx = mtx_array;
               do {
-                if (*(int *)((int)&(hgobj->layers[i].blend_gobjs)->sysnext + iVar4) != 0) {
+                if (*(int *)(iVar4 + (int)hgobj->layers[i].blend_gobjs) != 0) {
                   NuMtxMul(&m,mtx,wm);
-                  uVar1 = NuRndrGobj(*(nugobj_s **)
-                                      ((int)&(hgobj->layers[i].blend_gobjs)->sysnext + iVar4),&m,
+                  uVar1 = NuRndrGobj(*(nugobj_s **)(iVar4 + (int)hgobj->layers[i].blend_gobjs),&m,
                                      (float **)0x0);
                   uVar2 = uVar2 | uVar1;
                 }
@@ -2131,7 +2118,7 @@ LAB_800b6930:
                 mtx = mtx_array;
                 do {
                   iVar3 = iVar3 + 1;
-                  NuMtxMul(m_00,(numtx_s *)((int)hgobj->INV_WT->mtx + iVar4),mtx);
+                  NuMtxMul(m_00,(numtx_s *)((int)&hgobj->INV_WT->_00 + iVar4),mtx);
                   m_00 = m_00 + 1;
                   iVar4 = iVar4 + 0x40;
                   mtx = mtx + 1;
@@ -2181,27 +2168,27 @@ int NuHGobjRndrMtx(NUHGOBJ_s *hgobj,numtx_s *wm,int nlayers,short *layers,numtx_
 }
 
 
-void NuHGobjEvalAnim(NUHGOBJ_s *hgobj,NuAnimData_s *animdata,float time,int njanims,
+void NuHGobjEvalAnim(NUHGOBJ_s *hgobj,nuAnimData_s *animdata,float time,int njanims,
                     NUJOINTANIM_s *janim,numtx_s *mtx_array)
 
 {
-  float *pfVar1;
+  numtx_s *pnVar1;
   nuanimcurveset_s *animcurveset;
-  float *pfVar2;
-  float *m0;
-  float *pfVar3;
+  numtx_s *pnVar2;
+  numtx_s *m0;
+  numtx_s *pnVar3;
   NUJOINTDATA_s *jointdata;
   int iVar4;
   NUJOINTANIM_s *offset;
   uint uVar5;
-  nuanimdatachunks_s *pnVar6;
+  nuanimdatachunk_s *pnVar6;
   uint uVar7;
   numtx_s local_80;
   nuanimtime_s nStack_40;
   
-  VtxBuffer._3068_4_ = 0x3f800000;
-  VtxBuffer._3060_4_ = 0x3f800000;
-  VtxBuffer._3064_4_ = 0x3f800000;
+  VtxBuffer._3068_4_ = 1.0;		//VtxBuffer global var undefined1[3072];
+  VtxBuffer._3060_4_ = 1.0;
+  VtxBuffer._3064_4_ = 1.0;
   NuAnimDataCalcTime(animdata,time,&nStack_40);
   pnVar6 = animdata->chunks[nStack_40.chunk];
   if ((njanims != 0) && (uVar7 = 0, 0 < njanims)) {
@@ -2224,9 +2211,9 @@ void NuHGobjEvalAnim(NUHGOBJ_s *hgobj,NuAnimData_s *animdata,float time,int njan
         offset = janim;
         janim = janim + 1;
       }
-      animcurveset = *(nuanimcurveset_s **)(pnVar6->animcurveset->pad + uVar7 * 4 + -0xd);
+      animcurveset = pnVar6->animcurveset[uVar7];
       if (animcurveset == (nuanimcurveset_s *)0x0) {
-        m0 = (float *)(hgobj->T + uVar7);
+        m0 = hgobj->T + uVar7;
       }
       else {
         if (((animcurveset->flags & 0x1aU) == 0) &&
@@ -2244,32 +2231,32 @@ void NuHGobjEvalAnim(NUHGOBJ_s *hgobj,NuAnimData_s *animdata,float time,int njan
                      (VtxBuffer + (uint)*(byte *)((int)&hgobj->joints[uVar7].parent_ix + 3) * 0xc) ,
                      &local_80,offset);
         }
-        m0 = (float *)&local_80;
+        m0 = &local_80;
       }
       iVar4 = hgobj->joints[uVar7].parent_ix;
       if (iVar4 == -1) {
         iVar4 = 0x30;
-        pfVar1 = (float *)(mtx_array + uVar7);
+        pnVar1 = mtx_array + uVar7;
         do {
-          pfVar3 = m0;
-          pfVar2 = pfVar1;
+          pnVar3 = m0;
+          pnVar2 = pnVar1;
           iVar4 = iVar4 + -0x18;
-          *pfVar2 = *pfVar3;
-          pfVar2[1] = pfVar3[1];
-          pfVar2[2] = pfVar3[2];
-          pfVar2[3] = pfVar3[3];
-          (*(float (*) [4])(pfVar2 + 4))[0] = (*(float (*) [4])(pfVar3 + 4))[0];
-          pfVar2[5] = pfVar3[5];
-          pfVar1 = pfVar2 + 6;
-          m0 = pfVar3 + 6;
+          pnVar2->_00 = pnVar3->_00;
+          pnVar2->_01 = pnVar3->_01;
+          pnVar2->_02 = pnVar3->_02;
+          pnVar2->_03 = pnVar3->_03;
+          pnVar2->_10 = pnVar3->_10;
+          pnVar2->_11 = pnVar3->_11;
+          pnVar1 = (numtx_s *)&pnVar2->_12;
+          m0 = (numtx_s *)&pnVar3->_12;
         } while (iVar4 != 0);
-        pfVar2[6] = pfVar3[6];
-        pfVar2[7] = pfVar3[7];
-        pfVar2[8] = pfVar3[8];
-        pfVar2[9] = pfVar3[9];
+        pnVar2->_12 = pnVar3->_12;
+        pnVar2->_13 = pnVar3->_13;
+        pnVar2->_20 = pnVar3->_20;
+        pnVar2->_21 = pnVar3->_21;
       }
       else {
-        NuMtxMul(mtx_array + uVar7,(numtx_s *)m0,mtx_array + iVar4);
+        NuMtxMul(mtx_array + uVar7,m0,mtx_array + iVar4);
       }
       uVar7 = uVar7 + 1 & 0xff;
     } while (uVar7 < hgobj->num_joints);
@@ -2278,17 +2265,18 @@ void NuHGobjEvalAnim(NUHGOBJ_s *hgobj,NuAnimData_s *animdata,float time,int njan
 }
 
 
+
+//janim_arrayHGobjEval2 global var undefined1[1024];
+
 void NuHGobjEvalAnim2(NUHGOBJ_s *hgobj,nuanimdata2_s *animdata,float time,int njanims,
                      NUJOINTANIM_s *janim,numtx_s *mtx_array)
 
 {
   byte curvesetflags;
-  float *pfVar1;
-  float *pfVar2;
-  nuanimcurve2_s *animcurveset;
-  float *pfVar3;
-  char *curveflags;
-  float *pfVar4;
+  numtx_s *pnVar1;
+  numtx_s *pnVar2;
+  numtx_s *pnVar3;
+  numtx_s *pnVar4;
   NUJOINTDATA_s *jointdata;
   int iVar5;
   uint uVar6;
@@ -2296,9 +2284,9 @@ void NuHGobjEvalAnim2(NUHGOBJ_s *hgobj,nuanimdata2_s *animdata,float time,int nj
   numtx_s local_78;
   nuanimtime_s nStack_38;
   
-  scale_arrayHGobjEval2._3068_4_ = 0x3f800000;
-  scale_arrayHGobjEval2._3060_4_ = 0x3f800000;
-  scale_arrayHGobjEval2._3064_4_ = 0x3f800000;
+  scale_arrayHGobjEval2._3068_4_ = 1.0;		//scale_arrayHGobjEval2 global var undefined1[3072];
+  scale_arrayHGobjEval2._3060_4_ = 1.0;
+  scale_arrayHGobjEval2._3064_4_ = 1.0;
   NuAnimData2CalcTime(animdata,time,&nStack_38);
   if ((njanims != 0) && (uVar7 = 0, 0 < njanims)) {
     do {
@@ -2313,16 +2301,14 @@ void NuHGobjEvalAnim2(NUHGOBJ_s *hgobj,nuanimdata2_s *animdata,float time,int nj
   uVar7 = 0;
   if (hgobj->num_joints != '\0') {
     do {
-      iVar5 = (int)animdata->field2_0x6 * uVar7;
-      curvesetflags = *(byte *)(*(int *)&animdata[1].field3_0x8 + uVar7);
-      curveflags = (char *)(*(int *)&animdata[1].field1_0x4 + iVar5);
-      animcurveset = (nuanimcurve2_s *)((int)animdata[1].field0_0x0 + iVar5 * 4);
+      iVar5 = (int)animdata->ncurves * uVar7;
+      curvesetflags = animdata->curvesetflags[uVar7];
       if ((curvesetflags & 0x1a) == 0) {
         jointdata = hgobj->joints + uVar7;
         if ((jointdata->flags & 8U) != 0) goto LAB_800b58ec;
         NuAnimCurve2SetApplyToJointBasic
-                  (animcurveset,curveflags,curvesetflags,&nStack_38,jointdata,
-                   (nuvec_s *)(scale_arrayHGobjEval2 + uVar7 * 0xc),
+                  (animdata->curves + iVar5,animdata->curveflags + iVar5,curvesetflags,&nStack_38,
+                   jointdata,(nuvec_s *)(scale_arrayHGobjEval2 + uVar7 * 0xc),
                    (nuvec_s *)
                    (scale_arrayHGobjEval2 + (uint)*(byte *)((int)&jointdata->parent_ix + 3) * 0xc) ,
                    &local_78,(NUJOINTANIM_s *)((byte)jointdata->flags & 8));
@@ -2330,8 +2316,8 @@ void NuHGobjEvalAnim2(NUHGOBJ_s *hgobj,nuanimdata2_s *animdata,float time,int nj
       else {
 LAB_800b58ec:
         NuAnimCurve2SetApplyToJoint
-                  (animcurveset,curveflags,curvesetflags,&nStack_38,hgobj->joints + uVar7,
-                   (nuvec_s *)(scale_arrayHGobjEval2 + uVar7 * 0xc),
+                  (animdata->curves + iVar5,animdata->curveflags + iVar5,curvesetflags,&nStack_38,
+                   hgobj->joints + uVar7,(nuvec_s *)(scale_arrayHGobjEval2 + uVar7 * 0xc),
                    (nuvec_s *)
                    (scale_arrayHGobjEval2 +
                    (uint)*(byte *)((int)&hgobj->joints[uVar7].parent_ix + 3) * 0xc),&local_78,
@@ -2340,25 +2326,25 @@ LAB_800b58ec:
       iVar5 = hgobj->joints[uVar7].parent_ix;
       if (iVar5 == -1) {
         iVar5 = 0x30;
-        pfVar1 = (float *)(mtx_array + uVar7);
-        pfVar2 = (float *)&local_78;
+        pnVar1 = mtx_array + uVar7;
+        pnVar2 = &local_78;
         do {
-          pfVar4 = pfVar2;
-          pfVar3 = pfVar1;
+          pnVar4 = pnVar2;
+          pnVar3 = pnVar1;
           iVar5 = iVar5 + -0x18;
-          *pfVar3 = *pfVar4;
-          pfVar3[1] = pfVar4[1];
-          pfVar3[2] = pfVar4[2];
-          pfVar3[3] = pfVar4[3];
-          (*(float (*) [4])(pfVar3 + 4))[0] = (*(float (*) [4])(pfVar4 + 4))[0];
-          pfVar3[5] = pfVar4[5];
-          pfVar1 = pfVar3 + 6;
-          pfVar2 = pfVar4 + 6;
+          pnVar3->_00 = pnVar4->_00;
+          pnVar3->_01 = pnVar4->_01;
+          pnVar3->_02 = pnVar4->_02;
+          pnVar3->_03 = pnVar4->_03;
+          pnVar3->_10 = pnVar4->_10;
+          pnVar3->_11 = pnVar4->_11;
+          pnVar1 = (numtx_s *)&pnVar3->_12;
+          pnVar2 = (numtx_s *)&pnVar4->_12;
         } while (iVar5 != 0);
-        pfVar3[6] = pfVar4[6];
-        pfVar3[7] = pfVar4[7];
-        pfVar3[8] = pfVar4[8];
-        pfVar3[9] = pfVar4[9];
+        pnVar3->_12 = pnVar4->_12;
+        pnVar3->_13 = pnVar4->_13;
+        pnVar3->_20 = pnVar4->_20;
+        pnVar3->_21 = pnVar4->_21;
       }
       else {
         NuMtxMul(mtx_array + uVar7,&local_78,mtx_array + iVar5);
@@ -2372,21 +2358,21 @@ LAB_800b58ec:
 
 
 void NuHGobjEvalAnimBlend
-               (NUHGOBJ_s *hgobj,NuAnimData_s *animdata1,float time1,NuAnimData_s *animdata2,
+               (NUHGOBJ_s *hgobj,nuAnimData_s *animdata1,float time1,nuAnimData_s *animdata2,
                float time2,float blend,int njanims,NUJOINTANIM_s *janim,numtx_s *mtx_array)
 
 {
-  float *pfVar1;
+  numtx_s *pnVar1;
   nuanimcurveset_s *animcurveset1;
-  float *pfVar2;
-  float *m0;
-  float *pfVar3;
+  numtx_s *pnVar2;
+  numtx_s *m0;
+  numtx_s *pnVar3;
   nuanimcurveset_s *animcurveset2;
   int iVar4;
   uint uVar5;
   NUJOINTANIM_s *offset;
-  nuanimdatachunks_s *pnVar6;
-  nuanimdatachunks_s *pnVar7;
+  nuanimdatachunk_s *pnVar6;
+  nuanimdatachunk_s *pnVar7;
   uint uVar8;
   double dVar9;
   double dVar10;
@@ -2396,9 +2382,9 @@ void NuHGobjEvalAnimBlend
   
   dVar10 = (double)blend;
   dVar9 = (double)time2;
-  DAT_801bd114 = 0x3f800000;
-  DAT_801bd10c = 0x3f800000;
-  DAT_801bd110 = 0x3f800000;
+  DAT_801bd114 = 1.0;
+  DAT_801bd10c = 1.0;
+  DAT_801bd110 = 1.0;
   NuAnimDataCalcTime(animdata1,time1,&nStack_80);
   pnVar6 = animdata1->chunks[nStack_80.chunk];
   NuAnimDataCalcTime(animdata2,(float)dVar9,anStack_68);
@@ -2423,11 +2409,10 @@ void NuHGobjEvalAnimBlend
         offset = janim;
         janim = janim + 1;
       }
-      animcurveset1 = *(nuanimcurveset_s **)(pnVar6->animcurveset->pad + uVar8 * 4 + -0xd);
+      animcurveset1 = pnVar6->animcurveset[uVar8];
       if ((animcurveset1 == (nuanimcurveset_s *)0x0) ||
-         (animcurveset2 = *(nuanimcurveset_s **)(pnVar7->animcurveset->pad + uVar8 * 4 + -0xd),
-         animcurveset2 == (nuanimcurveset_s *)0x0)) {
-        m0 = (float *)(hgobj->T + uVar8);
+         (animcurveset2 = pnVar7->animcurveset[uVar8], animcurveset2 == (nuanimcurveset_s *)0x0))  {
+        m0 = hgobj->T + uVar8;
       }
       else {
         NuAnimCurveSetApplyBlendToJoint2
@@ -2437,32 +2422,32 @@ void NuHGobjEvalAnimBlend
                    (&scale_array0.202 +
                    (uint)*(byte *)((int)&hgobj->joints[uVar8].parent_ix + 3) * 0xc),&local_c0,offs et
                   );
-        m0 = (float *)&local_c0;
+        m0 = &local_c0;
       }
       uVar5 = hgobj->joints[uVar8].parent_ix;
       if ((uVar5 & 0xff) == 0xff) {
         iVar4 = 0x30;
-        pfVar1 = (float *)(mtx_array + uVar8);
+        pnVar1 = mtx_array + uVar8;
         do {
-          pfVar3 = m0;
-          pfVar2 = pfVar1;
+          pnVar3 = m0;
+          pnVar2 = pnVar1;
           iVar4 = iVar4 + -0x18;
-          *pfVar2 = *pfVar3;
-          pfVar2[1] = pfVar3[1];
-          pfVar2[2] = pfVar3[2];
-          pfVar2[3] = pfVar3[3];
-          (*(float (*) [4])(pfVar2 + 4))[0] = (*(float (*) [4])(pfVar3 + 4))[0];
-          pfVar2[5] = pfVar3[5];
-          pfVar1 = pfVar2 + 6;
-          m0 = pfVar3 + 6;
+          pnVar2->_00 = pnVar3->_00;
+          pnVar2->_01 = pnVar3->_01;
+          pnVar2->_02 = pnVar3->_02;
+          pnVar2->_03 = pnVar3->_03;
+          pnVar2->_10 = pnVar3->_10;
+          pnVar2->_11 = pnVar3->_11;
+          pnVar1 = (numtx_s *)&pnVar2->_12;
+          m0 = (numtx_s *)&pnVar3->_12;
         } while (iVar4 != 0);
-        pfVar2[6] = pfVar3[6];
-        pfVar2[7] = pfVar3[7];
-        pfVar2[8] = pfVar3[8];
-        pfVar2[9] = pfVar3[9];
+        pnVar2->_12 = pnVar3->_12;
+        pnVar2->_13 = pnVar3->_13;
+        pnVar2->_20 = pnVar3->_20;
+        pnVar2->_21 = pnVar3->_21;
       }
       else {
-        NuMtxMul(mtx_array + uVar8,(numtx_s *)m0,mtx_array + uVar5);
+        NuMtxMul(mtx_array + uVar8,m0,mtx_array + uVar5);
       }
       uVar8 = uVar8 + 1 & 0xff;
     } while (uVar8 < hgobj->num_joints);
@@ -2474,15 +2459,15 @@ void NuHGobjEvalAnimBlend
 void NuHGobjEval(NUHGOBJ_s *hgobj,int njanims,NUJOINTANIM_s *janim,numtx_s *mtx_array)
 
 {
+  numtx_s *pnVar1;
   numtx_s *pfVar2;
   NUJOINTANIM_s *offset;
   numtx_s *pfVar3;
-  float *pfVar1;
   numtx_s *pfVar4;
-  float *pfVar5;
   int iVar5;
+  numtx_s *pnVar2;
   uint uVar6;
-  float *dest;
+  numtx_s *dest;
   double dVar7;
   nuangvec_s local_d0;
   numtx_s mtx;
@@ -2502,62 +2487,62 @@ void NuHGobjEval(NUHGOBJ_s *hgobj,int njanims,NUJOINTANIM_s *janim,numtx_s *mtx_
         janim = janim + 1;
       }
       if (offset == (NUJOINTANIM_s *)0x0) {
-        dest = (float *)(hgobj->T + uVar6);
+        dest = hgobj->T + uVar6;
       }
       else {
-        dest = (float *)&mtx;
+        dest = &mtx;
         iVar5 = 0x30;
-        pfVar1 = dest;
-        pfVar5 = (float *)(hgobj->T + uVar6);
+        pnVar1 = dest;
+        pnVar2 = hgobj->T + uVar6;
         do {
-          pfVar4 = (numtx_s *)pfVar5;
-          pfVar3 = (numtx_s *)pfVar1;
+          pfVar4 = pnVar2;
+          pfVar3 = pnVar1;
           iVar5 = iVar5 + -0x18;
-          pfVar3->mtx[0] = pfVar4->mtx[0];
-          pfVar3->mtx[1] = pfVar4->mtx[1];
-          pfVar3->mtx[2] = pfVar4->mtx[2];
-          pfVar3->mtx[3] = pfVar4->mtx[3];
-          pfVar3->mtx[1][0] = pfVar4->mtx[1][0];
-          pfVar5 = pfVar4->mtx[1] + 2;
-          pfVar3->mtx[1][1] = pfVar4->mtx[1][1];
-          pfVar1 = pfVar3->mtx[1] + 2;
+          pfVar3->_00 = pfVar4->_00;
+          pfVar3->_01 = pfVar4->_01;
+          pfVar3->_02 = pfVar4->_02;
+          pfVar3->_03 = pfVar4->_03;
+          pfVar3->_10 = pfVar4->_10;
+          pfVar3->_11 = pfVar4->_11;
+          pnVar1 = (numtx_s *)&pfVar3->_12;
+          pnVar2 = (numtx_s *)&pfVar4->_12;
         } while (iVar5 != 0);
-        *pfVar1 = *pfVar5;
-        pfVar3->mtx[1][3] = pfVar4->mtx[1][3];
-        pfVar3->mtx[2][0] = pfVar4->mtx[2][0];
-        pfVar3->mtx[2][1] = pfVar4->mtx[2][1];
+        pfVar3->_12 = pfVar4->_12;
+        pfVar3->_13 = pfVar4->_13;
+        pfVar3->_20 = pfVar4->_20;
+        pfVar3->_21 = pfVar4->_21;
         local_d0.x = (int)((double)offset->rx * dVar7);
         local_d0.y = (int)((double)offset->ry * dVar7);
         local_d0.z = (int)((double)offset->rz * dVar7);
         local_38._0_8_ = (longlong)local_d0.z;
         NuMtxSetRotateXYZ(&nStack_80,&local_d0);
         NuMtxTranslate(&nStack_80,(nuvec_s *)&offset->tx);
-        NuMtxMul((numtx_s *)dest,&nStack_80,(numtx_s *)dest);
+        NuMtxMul(dest,&nStack_80,dest);
       }
       iVar5 = hgobj->joints[uVar6].parent_ix;
       if (iVar5 == -1) {
         iVar5 = 0x30;
-        pfVar1 = (float *)(mtx_array + uVar6);
+        pnVar1 = mtx_array + uVar6;
         do {
-          pfVar5 = pfVar1;
-          pfVar2 = (numtx_s *)dest;
+          pnVar2 = pnVar1;
+          pfVar2 = dest;
           iVar5 = iVar5 + -0x18;
-          *pfVar5 = pfVar2->mtx[0];
-          pfVar5[1] = pfVar2->mtx[1];
-          pfVar5[2] = pfVar2->mtx[2];
-          pfVar5[3] = pfVar2->mtx[3];
-          (*(float (*) [4])(pfVar5 + 4))[0] = pfVar2->mtx[1][0];
-          dest = pfVar2->mtx[1] + 2;
-          pfVar5[5] = pfVar2->mtx[1][1];
-          pfVar1 = pfVar5 + 6;
+          pnVar2->_00 = pfVar2->_00;
+          pnVar2->_01 = pfVar2->_01;
+          pnVar2->_02 = pfVar2->_02;
+          pnVar2->_03 = pfVar2->_03;
+          pnVar2->_10 = pfVar2->_10;
+          pnVar2->_11 = pfVar2->_11;
+          dest = (numtx_s *)&pfVar2->_12;
+          pnVar1 = (numtx_s *)&pnVar2->_12;
         } while (iVar5 != 0);
-        pfVar5[6] = *dest;
-        pfVar5[7] = pfVar2->mtx[1][3];
-        pfVar5[8] = pfVar2->mtx[2][0];
-        pfVar5[9] = pfVar2->mtx[2][1];
+        pnVar2->_12 = pfVar2->_12;
+        pnVar2->_13 = pfVar2->_13;
+        pnVar2->_20 = pfVar2->_20;
+        pnVar2->_21 = pfVar2->_21;
       }
       else {
-        NuMtxMul(mtx_array + uVar6,(numtx_s *)dest,mtx_array + iVar5);
+        NuMtxMul(mtx_array + uVar6,dest,mtx_array + iVar5);
       }
       uVar6 = uVar6 + 1 & 0xff;
     } while (uVar6 < hgobj->num_joints);
@@ -2565,91 +2550,88 @@ void NuHGobjEval(NUHGOBJ_s *hgobj,int njanims,NUJOINTANIM_s *janim,numtx_s *mtx_
   return;
 }
 
-float ** NuHGobjEvalDwa(int layer,void *bollox,NuAnimData_s *vtxanim,float vtxtime)
+float ** NuHGobjEvalDwa(int layer,void *bollox,nuAnimData_s *vtxanim,float vtxtime)
 
 {
-  int iVar1;
-  NuFaceOnGeom *iVar4;
-  float *pfVar2;
+  nufaceongeom_s *iVar4;
+  float *dwa;
   nuanimcurve_s *animcurve;
+  nuanimcurveset_s *pnVar1;
+  float **DWAptr;
+  int iVar2;
   int iVar3;
-  float **ppfVar4;
   int iVar5;
   int iVar6;
   int iVar7;
-  int iVar8;
+  double dVar8;
   double dVar9;
-  double dVar10;
-  float fVar11;
-  nuanimtime_s anStack_60 [2];
+  float fVar10;
+  nuanimtime_s atimeblendanim;
   
-  ppfVar4 = (float **)0x0;
-  iVar6 = 0;
-  if (vtxanim != (NuAnimData_s *)0x0) {
-    NuAnimDataCalcTime(vtxanim,vtxtime,anStack_60);
-    ppfVar4 = NuRndrCreateBlendShapeDWAPointers(1);
-    if (((anStack_60[0].chunk != -1) && (ppfVar4 != (float **)0x0)) &&
-       (vtxanim->chunks[anStack_60[0].chunk] != (nuanimdatachunks_s *)0x0)) {
-      iVar1 = layer * 4;
-      iVar4 = *(NuFaceOnGeom **)
-               (vtxanim->chunks[anStack_60[0].chunk]->animcurveset->pad + iVar1 + -0x11);
-      if (iVar4 != (NuFaceOnGeom *)0x0) {
-        pfVar2 = NuRndrCreateBlendShapeDeformerWeightsArray((int)*(char *)&iVar4->faceon_type);
-        *ppfVar4 = pfVar2;
-        if (pfVar2 != (float *)0x0) {
-          iVar5 = (int)*(char *)(*(int *)(vtxanim->chunks[anStack_60[0].chunk]->animcurveset->pad  +
-                                         iVar1 + -0x11) + 0xc);
-          if (0 < iVar5) {
-            dVar10 = 1e-08;
-            iVar8 = 0;
-            dVar9 = 0.0;
-            iVar7 = iVar5;
+  iVar6 = layer + -1;
+  DWAptr = (float **)0x0;
+  iVar3 = 0;
+  if (vtxanim != (nuAnimData_s *)0x0) {
+    NuAnimDataCalcTime(vtxanim,vtxtime,&atimeblendanim);
+    DWAptr = NuRndrCreateBlendShapeDWAPointers(1);
+    if (((atimeblendanim.chunk != -1) && (DWAptr != (float **)0x0)) &&
+       (vtxanim->chunks[atimeblendanim.chunk] != (nuanimdatachunk_s *)0x0)) {
+      iVar4 = (nufaceongeom_s *)vtxanim->chunks[atimeblendanim.chunk]->animcurveset[iVar6];
+      if (iVar4 != (nufaceongeom_s *)0x0) {
+        dwa = NuRndrCreateBlendShapeDeformerWeightsArray((int)*(char *)&iVar4->faceon_type);
+        *DWAptr = dwa;
+        if (dwa != (float *)0x0) {
+          iVar2 = (int)vtxanim->chunks[atimeblendanim.chunk]->animcurveset[iVar6]->ncurves;
+          if (0 < iVar2) {
+            dVar9 = 1e-08;
+            iVar7 = 0;
+            dVar8 = 0.0;
+            iVar5 = iVar2;
             do {
-              *(float *)(iVar8 + (int)pfVar2) = (float)dVar9;
-              iVar3 = *(int *)(vtxanim->chunks[anStack_60[0].chunk]->animcurveset->pad +
-                              iVar1 + -0x11);
-              animcurve = *(nuanimcurve_s **)(iVar8 + *(int *)(iVar3 + 8));
+              *(float *)(iVar7 + (int)dwa) = (float)dVar8;
+              pnVar1 = vtxanim->chunks[atimeblendanim.chunk]->animcurveset[iVar6];
+              animcurve = *(nuanimcurve_s **)(pnVar1->set->pad + iVar7 + -0xd);
               if (animcurve == (nuanimcurve_s *)0x0) {
-                fVar11 = *(float *)(iVar8 + *(int *)(iVar3 + 4));
-                *(float *)(iVar8 + (int)pfVar2) = fVar11;
-                if (dVar10 < (double)fVar11) {
-                  iVar6 = iVar6 + 1;
+                fVar10 = *(float *)(iVar7 + (int)pnVar1->constants);
+                *(float *)(iVar7 + (int)dwa) = fVar10;
+                if (dVar9 < (double)fVar10) {
+                  iVar3 = iVar3 + 1;
                 }
               }
               else {
-                iVar6 = iVar6 + 1;
-                fVar11 = NuAnimCurveCalcVal2(animcurve,anStack_60);
-                *(float *)(iVar8 + (int)pfVar2) = fVar11;
+                iVar3 = iVar3 + 1;
+                fVar10 = NuAnimCurveCalcVal2(animcurve,&atimeblendanim);
+                *(float *)(iVar7 + (int)dwa) = fVar10;
               }
-              if (*(float *)(iVar8 + (int)pfVar2) < 0.0) {
-                *(undefined4 *)(iVar8 + (int)pfVar2) = 0;
+              if (*(float *)(iVar7 + (int)dwa) < 0.0) {
+                *(undefined4 *)(iVar7 + (int)dwa) = 0;
               }
-              iVar8 = iVar8 + 4;
-              iVar7 = iVar7 + -1;
-            } while (iVar7 != 0);
+              iVar7 = iVar7 + 4;
+              iVar5 = iVar5 + -1;
+            } while (iVar5 != 0);
           }
-          if (maxblend_cnt <= iVar6) {
-            maxblend_cnt = iVar6;
-            maxblend_cntcnt = iVar5;
+          if (maxblend_cnt <= iVar3) {
+            maxblend_cnt = iVar3;
+            maxblend_cntcnt = iVar2;
           }
         }
       }
     }
   }
-  return ppfVar4;
+  return DWAptr;
 }
 
 
-float ** NuHGobjEvalDwaBlend(int nlayers,short *layers,NuAnimData_s *vtxanim1,float vtxtime1,
-                            NuAnimData_s *vtxanim2,float vtxtime2,float blend)
+float ** NuHGobjEvalDwaBlend(int nlayers,short *layers,nuAnimData_s *vtxanim1,float vtxtime1,
+                            nuAnimData_s *vtxanim2,float vtxtime2,float blend)
 
 {
   float *pfVar1;
   nuanimcurve_s *pnVar2;
-  int iVar3;
-  int iVar4;
+  nuanimcurveset_s *pnVar3;
+  float **ppfVar4;
   int iVar5;
-  float **ppfVar6;
+  int iVar6;
   int nweights;
   int iVar7;
   int iVar8;
@@ -2679,58 +2661,57 @@ float ** NuHGobjEvalDwaBlend(int nlayers,short *layers,NuAnimData_s *vtxanim1,fl
              (uint)(in_cr2 & 0xf) << 0x14 | (uint)(in_cr3 & 0xf) << 0x10 |
              (uint)(unaff_cr4 & 0xf) << 0xc | (uint)(in_cr5 & 0xf) << 8 | (uint)(in_cr6 & 0xf) <<  4
              | (uint)(in_cr7 & 0xf);
-  ppfVar6 = (float **)0x0;
-  if (((vtxanim1 != (NuAnimData_s *)0x0) || (vtxanim2 != (NuAnimData_s *)0x0)) && (nlayers != 0))  {
-    if (vtxanim1 != (NuAnimData_s *)0x0) {
+  ppfVar4 = (float **)0x0;
+  if (((vtxanim1 != (nuAnimData_s *)0x0) || (vtxanim2 != (nuAnimData_s *)0x0)) && (nlayers != 0))  {
+    if (vtxanim1 != (nuAnimData_s *)0x0) {
       NuAnimDataCalcTime(vtxanim1,vtxtime1,&nStack_a0);
     }
-    bVar11 = (vtxanim2 == (NuAnimData_s *)0x0) << 1;
-    if (vtxanim2 != (NuAnimData_s *)0x0) {
+    bVar11 = (vtxanim2 == (nuAnimData_s *)0x0) << 1;
+    if (vtxanim2 != (nuAnimData_s *)0x0) {
       NuAnimDataCalcTime(vtxanim2,(float)dVar14,anStack_88);
     }
     if (layers == (short *)0x0) {
       nlayers = 1;
     }
-    ppfVar6 = NuRndrCreateBlendShapeDWAPointers(nlayers);
-    if ((ppfVar6 != (float **)0x0) && (iVar8 = 0, 0 < nlayers)) {
+    ppfVar4 = NuRndrCreateBlendShapeDWAPointers(nlayers);
+    if ((ppfVar4 != (float **)0x0) && (iVar8 = 0, 0 < nlayers)) {
       do {
         if (layers == (short *)0x0) {
           iVar10 = 0;
 LAB_800c4018:
-          if (((vtxanim1 == (NuAnimData_s *)0x0) ||
+          if (((vtxanim1 == (nuAnimData_s *)0x0) ||
               (vtxanim1->chunks[nStack_a0.chunk]->numnodes <= iVar10)) ||
-             (iVar3 = *(int *)(vtxanim1->chunks[nStack_a0.chunk]->animcurveset->pad +
-                              iVar10 * 4 + -0xd), iVar3 == 0)) {
-            iVar3 = 0;
+             (pnVar3 = vtxanim1->chunks[nStack_a0.chunk]->animcurveset[iVar10],
+             pnVar3 == (nuanimcurveset_s *)0x0)) {
+            iVar5 = 0;
           }
           else {
-            iVar3 = (int)*(char *)(iVar3 + 0xc);
+            iVar5 = (int)pnVar3->ncurves;
           }
           if ((((bool)(bVar11 >> 1 & 1)) ||
               (vtxanim2->chunks[anStack_88[0].chunk]->numnodes <= iVar10)) ||
-             (iVar4 = *(int *)(vtxanim2->chunks[anStack_88[0].chunk]->animcurveset->pad +
-                              iVar10 * 4 + -0xd), iVar4 == 0)) {
-            iVar4 = 0;
+             (pnVar3 = vtxanim2->chunks[anStack_88[0].chunk]->animcurveset[iVar10],
+             pnVar3 == (nuanimcurveset_s *)0x0)) {
+            iVar6 = 0;
           }
           else {
-            iVar4 = (int)*(char *)(iVar4 + 0xc);
+            iVar6 = (int)pnVar3->ncurves;
           }
-          nweights = iVar4;
-          if (iVar4 < iVar3) {
-            nweights = iVar3;
+          nweights = iVar6;
+          if (iVar6 < iVar5) {
+            nweights = iVar5;
           }
           pfVar1 = NuRndrCreateBlendShapeDeformerWeightsArray(nweights);
-          ppfVar6[iVar8] = pfVar1;
+          ppfVar4[iVar8] = pfVar1;
           if ((pfVar1 != (float *)0x0) && (iVar9 = 0, 0 < nweights)) {
             dVar14 = 1.0;
             iVar7 = 0;
             do {
-              if (iVar9 < iVar3) {
-                iVar5 = *(int *)(vtxanim1->chunks[nStack_a0.chunk]->animcurveset->pad +
-                                iVar10 * 4 + -0xd);
-                pnVar2 = *(nuanimcurve_s **)(iVar7 + *(int *)(iVar5 + 8));
+              if (iVar9 < iVar5) {
+                pnVar3 = vtxanim1->chunks[nStack_a0.chunk]->animcurveset[iVar10];
+                pnVar2 = *(nuanimcurve_s **)(pnVar3->set->pad + iVar7 + -0xd);
                 if (pnVar2 == (nuanimcurve_s *)0x0) {
-                  dVar15 = (double)*(float *)(iVar7 + *(int *)(iVar5 + 4));
+                  dVar15 = (double)*(float *)(iVar7 + (int)pnVar3->constants);
                 }
                 else {
                   fVar16 = NuAnimCurveCalcVal2(pnVar2,&nStack_a0);
@@ -2740,12 +2721,11 @@ LAB_800c4018:
               else {
                 dVar15 = 0.0;
               }
-              if (iVar9 < iVar4) {
-                iVar5 = *(int *)(vtxanim2->chunks[anStack_88[0].chunk]->animcurveset->pad +
-                                iVar10 * 4 + -0xd);
-                pnVar2 = *(nuanimcurve_s **)(iVar7 + *(int *)(iVar5 + 8));
+              if (iVar9 < iVar6) {
+                pnVar3 = vtxanim2->chunks[anStack_88[0].chunk]->animcurveset[iVar10];
+                pnVar2 = *(nuanimcurve_s **)(pnVar3->set->pad + iVar7 + -0xd);
                 if (pnVar2 == (nuanimcurve_s *)0x0) {
-                  dVar12 = (double)*(float *)(iVar9 * 4 + *(int *)(iVar5 + 4));
+                  dVar12 = (double)pnVar3->constants[iVar9];
                 }
                 else {
                   fVar16 = NuAnimCurveCalcVal2(pnVar2,anStack_88);
@@ -2771,22 +2751,23 @@ LAB_800c4018:
       } while (iVar8 < nlayers);
     }
   }
-  return ppfVar6;
+  return ppfVar4;
 }
+
 
 
 float ** NuHGobjEvalDwa2(int nlayers,short *layers,nuanimdata2_s *vtxanim,float vtxtime)
 
 {
-  int iVar1;
+  char *pcVar1;
   float *pfVar2;
-  nuanimcurve2_s *animcurve;
   float **ppfVar3;
   int nweights;
   int iVar4;
   int iVar5;
   int iVar6;
   int iVar7;
+  nuanimcurve2_s *animcurve;
   byte in_cr0;
   byte in_cr1;
   byte in_cr2;
@@ -2816,18 +2797,17 @@ float ** NuHGobjEvalDwa2(int nlayers,short *layers,nuanimdata2_s *vtxanim,float 
         if (layers == (short *)0x0) {
           iVar7 = 0;
 LAB_800c429c:
-          nweights = (int)vtxanim->field2_0x6;
+          nweights = (int)vtxanim->ncurves;
           pfVar2 = NuRndrCreateBlendShapeDeformerWeightsArray(nweights);
           ppfVar3[iVar5] = pfVar2;
-          iVar1 = *(int *)&vtxanim[1].field1_0x4;
-          iVar7 = vtxanim->field2_0x6 * iVar7;
-          animcurve = (nuanimcurve2_s *)((int)vtxanim[1].field0_0x0 + iVar7 * 4);
+          pcVar1 = vtxanim->curveflags;
+          iVar7 = vtxanim->ncurves * iVar7;
+          animcurve = vtxanim->curves + iVar7;
           if ((pfVar2 != (float *)0x0) && (iVar6 = 0, 0 < nweights)) {
             dVar8 = 0.0;
             iVar4 = 0;
             do {
-              fVar9 = NuAnimCurve2CalcVal(animcurve,&nStack_60,(int)*(char *)(iVar1 + iVar7 + iVar 6)
-                                         );
+              fVar9 = NuAnimCurve2CalcVal(animcurve,&nStack_60,(int)pcVar1[iVar6 + iVar7]);
               *(float *)(iVar4 + (int)pfVar2) = fVar9;
               if ((double)fVar9 < dVar8) {
                 *(float *)(iVar4 + (int)pfVar2) = (float)dVar8;
@@ -2841,7 +2821,7 @@ LAB_800c429c:
         else {
           iVar7 = (int)layers[iVar5];
           if (-1 < iVar7) {
-            if (iVar7 < vtxanim->field1_0x4) goto LAB_800c429c;
+            if (iVar7 < vtxanim->nnodes) goto LAB_800c429c;
             pfVar2 = NuRndrCreateBlendShapeDeformerWeightsArray(0);
             ppfVar3[iVar5] = pfVar2;
           }
@@ -2852,4 +2832,3 @@ LAB_800c429c:
   }
   return ppfVar3;
 }
-

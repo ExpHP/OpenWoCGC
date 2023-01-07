@@ -78,7 +78,7 @@ void NuTexAnimProgInit(nutexanimprog_s *rv)	//TODO
 /*void NuTexAnimProgAssembleEnd(nutexanimprog_s *p)		//TODO
 
 {
-  short sVar1;
+    short sVar1;
   short sVar2;
   int iVar3;
   int iVar4;
@@ -88,7 +88,7 @@ void NuTexAnimProgInit(nutexanimprog_s *rv)	//TODO
     return;
   }
   do {
-    sVar1 = p->xdef_addrs[iVar3 + 0x24];
+    sVar1 = p->code[iVar3];
     sVar2 = (short)iVar3;
     if (sVar1 == 8) {
 LAB_800ba2fc:
@@ -96,8 +96,7 @@ LAB_800ba2fc:
       sVar2 = sVar2 + 2;
 LAB_800ba304:
       iVar3 = (int)sVar2;
-      p->xdef_addrs[iVar4 + 0x24] =
-           *(short *)((int)nta_labels + p->xdef_addrs[iVar4 + 0x24] * 4 + 2);
+      p->code[iVar4] = *(short *)((int)nta_labels + p->code[iVar4] * 4 + 2);
       goto LAB_800ba354;
     }
     if (sVar1 < 9) {
@@ -306,7 +305,7 @@ nutexanimprog_s * NuTexAnimProgReadScript(variptr_u *buff,char *fname)	//CHECK
       }
     }
     if (buff != NULL) {
-      buff->voidptr = ptr->xdef_addrs + ptr->eop + 0x24;
+      buff->voidptr = ptr->code + ptr->eop;
     }
     NuFParDestroy(fp);
     NuTexAnimProgAssembleEnd(ptr);
@@ -445,12 +444,12 @@ void NuTexAnimEnvProc(struct nutexanimenv_s *e)	//CHECK
 {
   short sVar1;
   int iVar2;
-  long lVar3;
+  long rand;
   nutexanimprog_s *p;
   uint off;
   int n;
   int *sig;
-  int iVar4;
+  int pause_r;
   bool check;
   
   check = false;
@@ -505,14 +504,13 @@ LAB_800bb24c:
     if (e->pause_cnt == 0) {
       do {
         n = e->pc;
-        sVar1 = p->xdef_addrs[n + 0x24];
+        sVar1 = p->code[n];
         if (sVar1 == 9) {
-          n = EvalVars((int)*(short *)(p[1].name + n * 2 + -8),e->tex_ix,
-                       (int)*(short *)(p[1].name + n * 2 + -6));
+          n = EvalVars((int)p->code[n + 1],e->tex_ix,(int)*(short *)(p[1].name + n * 2 + -8));
           if (n != 0) {
             n = e->pc + 3;
 LAB_800bb510:
-            e->pc = (int)p->xdef_addrs[n + 0x24];
+            e->pc = (int)p->code[n];
             goto LAB_800bb770;
           }
           n = e->pc + 4;
@@ -521,12 +519,12 @@ LAB_800bb76c:
         }
         else if (sVar1 < 10) {
           if (sVar1 == 2) {
-            e->pause_cnt = (int)*(short *)(p[1].name + n * 2 + -8);
-            if (*(short *)(p[1].name + n * 2 + -6) != 0) {
-              lVar3 = NuRand(0);
+            e->pause_cnt = (int)p->code[n + 1];
+            if (*(short *)(p[1].name + n * 2 + -8) != 0) {
+              rand = NuRand(0);
               e->pause_cnt = e->pause_cnt +
-                             (lVar3 - (lVar3 / (int)*(short *)(p[1].name + e->pc * 2 + -6)) *
-                                      (int)*(short *)(p[1].name + e->pc * 2 + -6));
+                             (rand - (rand / (int)*(short *)(p[1].name + e->pc * 2 + -8)) *
+                                     (int)*(short *)(p[1].name + e->pc * 2 + -8));
             }
             check = true;
             n = e->pc + 3;
@@ -534,45 +532,45 @@ LAB_800bb76c:
           }
           if (sVar1 < 3) {
             if (sVar1 == 0) {
-              sVar1 = *(short *)(p[1].name + n * 2 + -8);
+              sVar1 = p->code[n + 1];
               e->tex_ix = (int)sVar1;
               e->mtl->tid = (int)e->tids[sVar1];
               n = e->pause;
-              iVar4 = e->pause_r;
+              pause_r = e->pause_r;
               iVar2 = e->pc + 2;
             }
             else {
               if (sVar1 != 1) goto LAB_800bb770;
-              iVar2 = e->tex_ix + (int)*(short *)(p[1].name + n * 2 + -8);
-              if (iVar2 < *(short *)(p[1].name + n * 2 + -6)) {
-                iVar2 = (int)*(short *)(p[1].name + n * 2 + -6);
+              iVar2 = e->tex_ix + (int)p->code[n + 1];
+              if (iVar2 < *(short *)(p[1].name + n * 2 + -8)) {
+                iVar2 = (int)*(short *)(p[1].name + n * 2 + -8);
               }
-              if (*(short *)(p[1].name + n * 2 + -4) < iVar2) {
-                iVar2 = (int)*(short *)(p[1].name + n * 2 + -4);
+              if (*(short *)(p[1].name + n * 2 + -6) < iVar2) {
+                iVar2 = (int)*(short *)(p[1].name + n * 2 + -6);
               }
               e->tex_ix = iVar2;
               e->mtl->tid = (int)e->tids[iVar2];
               n = e->pause;
-              iVar4 = e->pause_r;
+              pause_r = e->pause_r;
               iVar2 = e->pc + 4;
             }
             e->pc = iVar2;
             e->pause_cnt = n;
-            if (iVar4 != 0) {
-              lVar3 = NuRand(0);
-              e->pause_cnt = e->pause_cnt + (lVar3 - (lVar3 / e->pause_r) * e->pause_r);
+            if (pause_r != 0) {
+              rand = NuRand((nunrand_s *)0x0);
+              e->pause_cnt = e->pause_cnt + (rand - (rand / e->pause_r) * e->pause_r);
             }
 LAB_800bb748:
             check = true;
           }
           else {
             if (sVar1 == 7) {
-              n = (int)*(short *)(p[1].name + n * 2 + -8);
+              n = (int)p->code[n + 1];
               goto LAB_800bb76c;
             }
             if (7 < sVar1) {
               if (0xf < e->ra_ix) {
-                e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x388);
+                err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x388);
                 //(*error)("TexAnim Processor Alert: Call Stack Overflow at (%d)",e->pc);
               }
               n = e->ra_ix;
@@ -582,8 +580,8 @@ LAB_800bb748:
               goto LAB_800bb510;
             }
             if (sVar1 == 5) {
-              e->pause = (int)*(short *)(p[1].name + n * 2 + -8);
-              sVar1 = *(short *)(p[1].name + n * 2 + -6);
+              e->pause = (int)p->code[n + 1];
+              sVar1 = *(short *)(p[1].name + n * 2 + -8);
               e->pc = n + 3;
               e->pause_r = (int)sVar1;
             }
@@ -591,7 +589,7 @@ LAB_800bb748:
         }
         else if (sVar1 == 0xc) {
           if (e->rep_ix == 0) {
-            e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x3a2);
+            err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x3a2);
             //(*error)("TexAnim Processor Alert: REPEND without REPEAT at (%d)",e->pc);
           }
           n = e->rep_ix;
@@ -607,7 +605,7 @@ LAB_800bb730:
         else if (sVar1 < 0xd) {
           if (sVar1 == 10) {
             if (e->ra_ix == 0) {
-              e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x390);
+              err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x390);
               //(*error)("TexAnim Processor Alert: Call Stack Underflow at (%d)",e->pc);
             }
             n = e->ra_ix;
@@ -616,16 +614,16 @@ LAB_800bb730:
           }
           else if (sVar1 == 0xb) {
             if (0xf < e->rep_ix) {
-              e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x398);
+              err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x398);
               //(*error)("TexAnim Processor Alert: Too Many Nested Repeat Loops at (%d)",e->pc);
             }
-            e->rep_count[e->rep_ix] = (int)*(short *)(p[1].name + e->pc * 2 + -8);
-            if (*(short *)(p[1].name + e->pc * 2 + -6) != 0) {
-              lVar3 = NuRand(0);
+            e->rep_count[e->rep_ix] = (int)p->code[e->pc + 1];
+            if (*(short *)(p[1].name + e->pc * 2 + -8) != 0) {
+              rand = NuRand(0);
               e->rep_count[e->rep_ix] =
                    e->rep_count[e->rep_ix] +
-                   (lVar3 - (lVar3 / (int)*(short *)(p[1].name + e->pc * 2 + -6)) *
-                            (int)*(short *)(p[1].name + e->pc * 2 + -6));
+                   (rand - (rand / (int)*(short *)(p[1].name + e->pc * 2 + -8)) *
+                           (int)*(short *)(p[1].name + e->pc * 2 + -8));
             }
             iVar2 = e->rep_ix;
             n = e->pc + 3;
@@ -638,17 +636,17 @@ LAB_800bb730:
           if (sVar1 == 0xe) goto LAB_800bb748;
           if (sVar1 < 0xe) {
             if (e->rep_ix == 0) {
-              e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x3b0);
+              err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nutexanm.c",0x3b0);
               //(*error)("TexAnim Processor Alert: UNTILTEX without REPEAT at (%d)",e->pc);
             }
-            n = EvalVars((int)*(short *)(p[1].name + e->pc * 2 + -8),e->tex_ix,
-                         (int)*(short *)(p[1].name + e->pc * 2 + -6));
+            n = EvalVars((int)p->code[e->pc + 1],e->tex_ix,
+                         (int)*(short *)(p[1].name + e->pc * 2 + -8));
             if ((n == 0) && (n = e->rep_ix, e->rep_count[n + -1] != 0)) goto LAB_800bb730;
             e->pc = e->pc + 3;
             e->rep_ix = e->rep_ix + -1;
           }
           else if (sVar1 == 0xf) {
-            NuTexAnimXCall((int)*(short *)(p[1].name + n * 2 + -8),e);
+            NuTexAnimXCall((int)p->code[n + 1],e);
             n = e->pc + 2;
             goto LAB_800bb76c;
           }
@@ -1090,9 +1088,8 @@ LAB_800ba56c:
 int LabTabFind(char *txt)
 
 {
-  int len;
+  uint len;
   int cmp;
-  NUERRORFUNC *error;
   char (*tab) [64];
   int i;
   
@@ -1104,7 +1101,7 @@ int LabTabFind(char *txt)
   if (0 < labtabcnt) {
     tab = labtab;
     do {
-      cmp = strcasecmp(tab,txt);
+      cmp = strcasecmp((char *)tab,txt);
       if (cmp == 0) {
         return i;
       }
@@ -1170,10 +1167,10 @@ void pftaTex(nufpar_s *fp)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 0;
+  prog->code[eop] = 0;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)tid;
+  prog->code[eop] = (short)tid;
   return;
 }
 
@@ -1192,16 +1189,16 @@ void pftaTexAdj(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 1;
+  prog->code[eop] = 1;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)tid;
+  prog->code[eop] = (short)tid;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)mi;
+  prog->code[eop] = (short)mi;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)ma;
+  prog->code[eop] = (short)ma;
   return;
 }
 
@@ -1218,13 +1215,13 @@ void pftaWait(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 2;
+  prog->code[eop] = 2;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)fcnt;
+  prog->code[eop] = (short)fcnt;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)rcnt;
+  prog->code[eop] = (short)rcnt;
   return;
 }
 
@@ -1241,13 +1238,13 @@ void pftaRate(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 5;
+  prog->code[eop] = 5;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)fcnt;
+  prog->code[eop] = (short)fcnt;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)rcnt;
+  prog->code[eop] = (short)rcnt;
   return;
 }
 
@@ -1315,10 +1312,10 @@ void pftaGoto(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 7;
+  prog->code[eop] = 7;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)lab;
+  prog->code[eop] = (short)lab;
   return;
 }
 
@@ -1335,10 +1332,10 @@ void pftaXRef(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 0xf;
+  prog->code[eop] = 0xf;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)lab;
+  prog->code[eop] = (short)lab;
   return;
 }
 
@@ -1358,16 +1355,16 @@ void pftaBtex(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 9;
+  prog->code[eop] = 9;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)cc;
+  prog->code[eop] = (short)cc;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)tid;
+  prog->code[eop] = (short)tid;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)lab;
+  prog->code[eop] = (short)lab;
   return;
 }
 
@@ -1383,10 +1380,10 @@ void pftaGosub(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 8;
+  prog->code[eop] = 8;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)lab;
+  prog->code[eop] = (short)lab;
   return;
 }
 
@@ -1399,7 +1396,7 @@ void pftaRet(nufpar_s *fp)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 10;
+  prog->code[eop] = 10;
   return;
 }
 
@@ -1420,13 +1417,13 @@ void pftaRepeat(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 0xb;
+  prog->code[eop] = 0xb;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)randval;
+  prog->code[eop] = (short)randval;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)cnt;
+  prog->code[eop] = (short)cnt;
   return;
 }
 
@@ -1439,7 +1436,7 @@ void pftaRepend(nufpar_s *fp)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 0xc;
+  prog->code[eop] = 0xc;
   return;
 }
 
@@ -1456,13 +1453,13 @@ void pftaUntiltex(nufpar_s *fpar)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 0xd;
+  prog->code[eop] = 0xd;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)cc;
+  prog->code[eop] = (short)cc;
   eop = prog->eop;
   prog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = (short)tid;
+  prog->code[eop] = (short)tid;
   return;
 }
 
@@ -1475,7 +1472,7 @@ void pftaEnd(nufpar_s *fp)
   prog = parprog;
   eop = parprog->eop;
   parprog->eop = eop + 1;
-  prog->xdef_addrs[eop + 0x24] = 0xe;
+  prog->code[eop] = 0xe;
   return;
 }
 
