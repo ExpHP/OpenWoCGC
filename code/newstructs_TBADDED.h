@@ -1,29 +1,1178 @@
-typedef unsigned char   undefined;
+typedef struct __GXData_struct __GXData_struct, *P__GXData_struct;
 
-typedef unsigned char    bool;
-typedef unsigned char    byte;
-typedef unsigned int    dword;
-typedef int    int3;
-typedef long long    longlong;
-typedef unsigned long long    qword;
-typedef unsigned char    uchar;
-typedef unsigned int    uint;
-typedef unsigned long    ulong;
-typedef unsigned long long    ulonglong;
-typedef unsigned char    undefined1;
-typedef unsigned short    undefined2;
-typedef unsigned int    undefined3;
-typedef unsigned int    undefined4;
-typedef unsigned long long    undefined5;
-typedef unsigned long long    undefined6;
-typedef unsigned long long    undefined7;
-typedef unsigned long long    undefined8;
-typedef unsigned short    ushort;
-typedef unsigned short    word;
-typedef enum enum_1092 {
-    LIO_WAIT=0,
-    LIO_NOWAIT=1
-} enum_1092;
+typedef struct _GXTexRegion _GXTexRegion, *P_GXTexRegion;
+
+typedef struct GXTlutRegion GXTlutRegion, *PGXTlutRegion;
+
+typedef enum _GXAttrType {
+    GX_NONE=0,
+    GX_DIRECT=1,
+    GX_INDEX8=2,
+    GX_INDEX16=3
+} _GXAttrType;
+
+typedef enum _GXPerf0 {
+    GX_PERF0_VERTICES=0,
+    GX_PERF0_CLIP_VTX=1,
+    GX_PERF0_CLIP_CLKS=2,
+    GX_PERF0_XF_WAIT_IN=3,
+    GX_PERF0_XF_WAIT_OUT=4,
+    GX_PERF0_XF_XFRM_CLKS=5,
+    GX_PERF0_XF_LIT_CLKS=6,
+    GX_PERF0_XF_BOT_CLKS=7,
+    GX_PERF0_XF_REGLD_CLKS=8,
+    GX_PERF0_XF_REGRD_CLKS=9,
+    GX_PERF0_CLIP_RATIO=10,
+    GX_PERF0_TRIANGLES=11,
+    GX_PERF0_TRIANGLES_CULLED=12,
+    GX_PERF0_TRIANGLES_PASSED=13,
+    GX_PERF0_TRIANGLES_SCISSORED=14,
+    GX_PERF0_TRIANGLES_0TEX=15,
+    GX_PERF0_TRIANGLES_1TEX=16,
+    GX_PERF0_TRIANGLES_2TEX=17,
+    GX_PERF0_TRIANGLES_3TEX=18,
+    GX_PERF0_TRIANGLES_4TEX=19,
+    GX_PERF0_TRIANGLES_5TEX=20,
+    GX_PERF0_TRIANGLES_6TEX=21,
+    GX_PERF0_TRIANGLES_7TEX=22,
+    GX_PERF0_TRIANGLES_8TEX=23,
+    GX_PERF0_TRIANGLES_0CLR=24,
+    GX_PERF0_TRIANGLES_1CLR=25,
+    GX_PERF0_TRIANGLES_2CLR=26,
+    GX_PERF0_QUAD_0CVG=27,
+    GX_PERF0_QUAD_NON0CVG=28,
+    GX_PERF0_QUAD_1CVG=29,
+    GX_PERF0_QUAD_2CVG=30,
+    GX_PERF0_QUAD_3CVG=31,
+    GX_PERF0_QUAD_4CVG=32,
+    GX_PERF0_AVG_QUAD_CNT=33,
+    GX_PERF0_CLOCKS=34,
+    GX_PERF0_NONE=35
+} _GXPerf0;
+
+typedef enum _GXPerf1 {
+    GX_PERF1_TEXELS=0,
+    GX_PERF1_TX_IDLE=1,
+    GX_PERF1_TX_REGS=2,
+    GX_PERF1_TX_MEMSTALL=3,
+    GX_PERF1_TC_CHECK1_2=4,
+    GX_PERF1_TC_CHECK3_4=5,
+    GX_PERF1_TC_CHECK5_6=6,
+    GX_PERF1_TC_CHECK7_8=7,
+    GX_PERF1_TC_MISS=8,
+    GX_PERF1_VC_ELEMQ_FULL=9,
+    GX_PERF1_VC_MISSQ_FULL=10,
+    GX_PERF1_VC_MEMREQ_FULL=11,
+    GX_PERF1_VC_STATUS7=12,
+    GX_PERF1_VC_MISSREP_FULL=13,
+    GX_PERF1_VC_STREAMBUF_LOW=14,
+    GX_PERF1_VC_ALL_STALLS=15,
+    GX_PERF1_VERTICES=16,
+    GX_PERF1_FIFO_REQ=17,
+    GX_PERF1_CALL_REQ=18,
+    GX_PERF1_VC_MISS_REQ=19,
+    GX_PERF1_CP_ALL_REQ=20,
+    GX_PERF1_CLOCKS=21,
+    GX_PERF1_NONE=22
+} _GXPerf1;
+
+struct GXTlutRegion {
+    uint dummy[4];
+};
+
+struct _GXTexRegion {
+    uint dummy[4];
+};
+
+struct __GXData_struct {
+    ushort vNumNot;
+    ushort bpSentNot;
+    ushort vNum;
+    ushort vLim;
+    ulong cpEnable;
+    ulong cpStatus;
+    ulong cpClr;
+    ulong vcdLo;
+    ulong vcdHi;
+    ulong vatA[8];
+    ulong vatB[8];
+    ulong vatC[8];
+    ulong lpSize;
+    ulong matIdxA;
+    ulong matIdxB;
+    ulong indexBase[4];
+    ulong indexStride[4];
+    ulong ambColor[2];
+    ulong matColor[2];
+    ulong suTs0[8];
+    ulong suTs1[8];
+    ulong suScis0;
+    ulong suScis1;
+    ulong tref[8];
+    ulong iref;
+    ulong bpMask;
+    ulong IndTexScale0;
+    ulong IndTexScale1;
+    ulong tevc[16];
+    ulong teva[16];
+    ulong tevKsel[8];
+    ulong cmode0;
+    ulong cmode1;
+    ulong zmode;
+    ulong peCtrl;
+    ulong cpDispSrc;
+    ulong cpDispSize;
+    ulong cpDispStride;
+    ulong cpDisp;
+    ulong cpTexSrc;
+    ulong cpTexSize;
+    ulong cpTexStride;
+    ulong cpTex;
+    uchar cpTexZ;
+    uchar unk_[3];
+    ulong genMode;
+    struct _GXTexRegion TexRegions[8];
+    struct _GXTexRegion TexRegionsCI[4];
+    ulong nextTexRgn;
+    ulong nextTexRgnCI;
+    struct GXTlutRegion TlutRegions[20];
+    struct _GXTexRegion * texRegion_Callback; /* (*texRegionCallback)(_GXTexObj*, _GXTexMapID) */
+    struct GXTlutRegion * tlut_reg;
+    enum _GXAttrType nrmType;
+    uchar hasNrms;
+    uchar hasBiNrms;
+    uchar unk[2];
+    ulong projType;
+    float projMtx[6];
+    float vpLeft;
+    float vpTop;
+    float vpWd;
+    float vpHt;
+    float vpNearz;
+    float vpFarz;
+    uchar fpRange;
+    uchar unk2[3];
+    float fgSideX;
+    ulong tImage0[8];
+    ulong tMode0[8];
+    ulong texmapId[16];
+    ulong tcsManEnab;
+    ulong tevTcEnab;
+    enum _GXPerf0 perf0;
+    enum _GXPerf1 perf1;
+    ulong perfSel;
+    uchar inDispList;
+    uchar dlSaveContext;
+    uchar dirtyVat;
+    uchar unk3;
+    ulong dirtyState;
+};
+
+typedef struct _GS_VERTEX _GS_VERTEX, *P_GS_VERTEX;
+
+struct _GS_VERTEX {
+    float x;
+    float y;
+    float z;
+    float nx;
+    float ny;
+    float nz;
+    uint diffuse;
+    float u;
+    float v;
+};
+
+typedef struct _GS_VERTEXSKIN _GS_VERTEXSKIN, *P_GS_VERTEXSKIN;
+
+struct _GS_VERTEXSKIN {
+    float x;
+    float y;
+    float z;
+    float weights[2];
+    float indexes[3];
+    float nx;
+    float ny;
+    float nz;
+    int diffuse;
+    float u;
+    float v;
+};
+
+typedef struct _GS_VERTEXTL _GS_VERTEXTL, *P_GS_VERTEXTL;
+
+struct _GS_VERTEXTL {
+    float x;
+    float y;
+    float z;
+    float rhw;
+    uint diffuse;
+    float u;
+    float v;
+};
+
+typedef struct _GSMATRIX33 _GSMATRIX33, *P_GSMATRIX33;
+
+struct _GSMATRIX33 {
+    float _11;
+    float _12;
+    float _13;
+    float _14;
+    float _21;
+    float _22;
+    float _23;
+    float _24;
+    float _31;
+    float _32;
+    float _33;
+    float _34;
+};
+
+typedef enum _GXAlphaOp {
+    GX_AOP_AND=0,
+    GX_AOP_OR=1,
+    GX_AOP_XOR=2,
+    GX_AOP_XNOR=3,
+    GX_AOP_ALPHAOP=4
+} _GXAlphaOp;
+
+typedef enum _GXAttnFn {
+    GX_AF_SPEC=0,
+    GX_AF_SPOT=1,
+    GX_AF_NONE=2
+} _GXAttnFn;
+
+typedef enum _GXAttr {
+    GX_VA_PNMTXIDX=0,
+    GX_VA_TEX0MTXIDX=1,
+    GX_VA_TEX1MTXIDX=2,
+    GX_VA_TEX2MTXIDX=3,
+    GX_VA_TEX3MTXIDX=4,
+    GX_VA_TEX4MTXIDX=5,
+    GX_VA_TEX5MTXIDX=6,
+    GX_VA_TEX6MTXIDX=7,
+    GX_VA_TEX7MTXIDX=8,
+    GX_VA_POS=9,
+    GX_VA_NRM=10,
+    GX_VA_CLR0=11,
+    GX_VA_CLR1=12,
+    GX_VA_TEX0=13,
+    GX_VA_TEX1=14,
+    GX_VA_TEX2=15,
+    GX_VA_TEX3=16,
+    GX_VA_TEX4=17,
+    GX_VA_TEX5=18,
+    GX_VA_TEX6=19,
+    GX_VA_TEX7=20,
+    GX_POS_MTX_ARRAY=21,
+    GX_NRM_MTX_ARRAY=22,
+    GX_TEX_MTX_ARRAY=23,
+    GX_LIGHT_ARRAY=24,
+    GX_VA_NBT=25,
+    GX_VA_MAX_ATTR=26,
+    GX_VA_NULL=255
+} _GXAttr;
+
+typedef enum _GXBlendFactor {
+    GX_BL_ZERO=0,
+    GX_BL_ONE=1,
+    GX_BL_SRCCLR=2,
+    GX_BL_INVSRCCLR=3,
+    GX_BL_SRCALPHA=4,
+    GX_BL_INVSRCALPHA=5,
+    GX_BL_DSTALPHA=6,
+    GX_BL_INVDSTALPHA=7,
+    GX_BL_DSTCLR=8,
+    GX_BL_INVDSTCLR=9
+} _GXBlendFactor;
+
+typedef enum _GXBlendMode {
+    GX_BM_NONE=0,
+    GX_BM_BLEND=1,
+    GX_BM_LOGIC=2,
+    GX_BM_SUBTRACT=3,
+    GX_MAX_BLENDMODE=4
+} _GXBlendMode;
+
+typedef enum _GXChannelID {
+    GX_COLOR0=0,
+    GX_COLOR1=1,
+    GX_ALPHA0=2,
+    GX_ALPHA1=3,
+    GX_COLOR0A0=4,
+    GX_COLOR1A1=5,
+    GX_COLOR_ZERO=6,
+    GX_ALPHA_BUMP=7,
+    GX_ALPHA_BUMPN=8,
+    GX_COLOR_NULL=255
+} _GXChannelID;
+
+typedef enum _GXClipMode {
+    GX_CLIP_ENABLE=0,
+    GX_CLIP_DISABLE=1
+} _GXClipMode;
+
+typedef struct _GXColor _GXColor, *P_GXColor;
+
+struct _GXColor {
+    uchar r;
+    uchar g;
+    uchar b;
+    uchar a;
+};
+
+typedef enum _GXColorSrc {
+    GX_SRC_REG=0,
+    GX_SRC_VTX=1
+} _GXColorSrc;
+
+typedef enum _GXCompare {
+    GX_NEVER=0,
+    GX_LESS=1,
+    GX_EQUAL=2,
+    GX_LEQUAL=3,
+    GX_GREATER=4,
+    GX_NEQUAL=5,
+    GX_GEQUAL=6,
+    GX_ALWAYS=7
+} _GXCompare;
+
+typedef enum _GXCompCnt {
+    GX_CLR_RGB=0,
+    GX_CLR_RGBA=0,
+    GX_NRM_XYZ=0,
+    GX_POS_XY=0,
+    GX_POS_XYZ=0,
+    GX_TEX_S=0,
+    GX_NRM_NBT=1,
+    GX_TEX_ST=1,
+    GX_NRM_NBT3=2
+} _GXCompCnt;
+
+typedef enum _GXCompType {
+    GX_RGB565=0,
+    GX_U8=0,
+    GX_RGB8=1,
+    GX_S8=1,
+    GX_RGBX8=2,
+    GX_U16=2,
+    GX_RGBA4=3,
+    GX_S16=3,
+    GX_F32=4,
+    GX_RGBA6=4,
+    GX_RGBA8=5
+} _GXCompType;
+
+typedef enum _GXDiffuseFn {
+    GX_DF_NONE=0,
+    GX_DF_SIGN=1,
+    GX_DF_CLAMP=2
+} _GXDiffuseFn;
+
+typedef struct _GXLightObj _GXLightObj, *P_GXLightObj;
+
+struct _GXLightObj {
+    uint dummy[16];
+};
+
+typedef enum _GXLogicOp {
+    GX_LO_CLEAR=0,
+    GX_LO_AND=1,
+    GX_LO_REVAND=2,
+    GX_LO_COPY=3,
+    GX_LO_INVAND=4,
+    GX_LO_NOOP=5,
+    GX_LO_XOR=6,
+    GX_LO_OR=7,
+    GX_LO_NOR=8,
+    GX_LO_EQUIV=9,
+    GX_LO_INV=10,
+    GX_LO_REVOR=11,
+    GX_LO_INVCOPY=12,
+    GX_LO_INVOR=13,
+    GX_LO_NAND=14,
+    GX_LO_SET=15
+} _GXLogicOp;
+
+typedef enum _GXPrimitive {
+    GX_QUADS=128,
+    GX_TRIANGLES=144,
+    GX_TRIANGLESTRIP=152,
+    GX_TRIANGLEFAN=160,
+    GX_LINES=168,
+    GX_LINESTRIP=176,
+    GX_POINTS=184
+} _GXPrimitive;
+
+typedef struct _GXRenderModeObj _GXRenderModeObj, *P_GXRenderModeObj;
+
+typedef enum viTVmode {
+    VI_TVMODE_NTSC_INT=0,
+    VI_TVMODE_NTSC_DS=1,
+    VI_TVMODE_NTSC_PROG=2,
+    VI_TVMODE_PAL_INT=3,
+    VI_TVMODE_PAL_DS=4,
+    VI_TVMODE_EURGB60_INT=5,
+    VI_TVMODE_EURGB60_DS=6,
+    VI_TVMODE_MPAL_INT=7,
+    VI_TVMODE_MPAL_DS=8,
+    VI_TVMODE_DEBUG_INT=9,
+    VI_TVMODE_DEBUG_PAL_INT=16,
+    VI_TVMODE_DEBUG_PAL_DS=17
+} viTVmode;
+
+typedef enum xFBmode {
+    VI_XFBMODE_SF=0,
+    VI_XFBMODE_DF=1
+} xFBmode;
+
+struct _GXRenderModeObj {
+    enum viTVmode viTVmode;
+    ushort fbWidth;
+    ushort efbHeight;
+    ushort xfbHeight;
+    ushort viXOrigin;
+    ushort viYOrigin;
+    ushort viWidth;
+    ushort viHeight;
+    uchar unk[2];
+    enum xFBmode xFBmode;
+    uchar field_rendering;
+    uchar aa;
+    uchar sample_pattern[2][12];
+    uchar vfilter[7];
+    uchar unk2[3];
+};
+
+typedef enum _GXTevAlphaArg {
+    GX_CA_APREV=0,
+    GX_CA_A0=1,
+    GX_CA_A1=2,
+    GX_CA_A2=3,
+    GX_CA_TEXA=4,
+    GX_CA_RASA=5,
+    GX_CA_KONST=6,
+    GX_CA_ONE=6,
+    GX_CA_ZERO=6
+} _GXTevAlphaArg;
+
+typedef enum _GXTevBias {
+    GX_TB_ZERO=0,
+    GX_TB_ADDHALF=1,
+    GX_TB_SUBHALF=2,
+    GX_MAX_TEVBIAS=3
+} _GXTevBias;
+
+typedef enum _GXTevColorArg {
+    GX_CC_CPREV=0,
+    GX_CC_APREV=1,
+    GX_CC_C0=2,
+    GX_CC_A0=3,
+    GX_CC_C1=4,
+    GX_CC_A1=5,
+    GX_CC_C2=6,
+    GX_CC_A2=7,
+    GX_CC_TEXC=8,
+    GX_CC_TEXA=9,
+    GX_CC_RASC=10,
+    GX_CC_RASA=11,
+    GX_CC_ONE=12,
+    GX_CC_HALF=13,
+    GX_CC_KONST=14,
+    GX_CC_QUARTER=14,
+    GX_CC_ZERO=15,
+    GX_CC_TEXRRR=16,
+    GX_CC_TEXGGG=17,
+    GX_CC_TEXBBB=18
+} _GXTevColorArg;
+
+typedef enum _GXTevMode {
+    GX_MODULATE=0,
+    GX_DECAL=1,
+    GX_BLEND=2,
+    GX_REPLACE=3,
+    GX_PASSCLR=4
+} _GXTevMode;
+
+typedef enum _GXTevRegID {
+    GX_TEVPREV=0,
+    GX_TEVREG0=1,
+    GX_TEVREG1=2,
+    GX_TEVREG2=3,
+    GX_MAX_TEVREG=4
+} _GXTevRegID;
+
+typedef enum _GXTevStageID {
+    GX_TEVSTAGE0=0,
+    GX_TEVSTAGE1=1,
+    GX_TEVSTAGE2=2,
+    GX_TEVSTAGE3=3,
+    GX_TEVSTAGE4=4,
+    GX_TEVSTAGE5=5,
+    GX_TEVSTAGE6=6,
+    GX_TEVSTAGE7=7,
+    GX_TEVSTAGE8=8,
+    GX_TEVSTAGE9=9,
+    GX_TEVSTAGE10=10,
+    GX_TEVSTAGE11=11,
+    GX_TEVSTAGE12=12,
+    GX_TEVSTAGE13=13,
+    GX_TEVSTAGE14=14,
+    GX_TEVSTAGE15=15,
+    GX_MAX_TEVSTAGE=16
+} _GXTevStageID;
+
+typedef enum _GXTevSwapSel {
+    GX_TEV_SWAP0=0,
+    GX_TEV_SWAP1=1,
+    GX_TEV_SWAP2=2,
+    GX_TEV_SWAP3=3,
+    GX_MAX_TEVSWAP=4
+} _GXTevSwapSel;
+
+typedef enum _GXTexCoordID {
+    GX_TEXCOORD0=0,
+    GX_TEXCOORD1=1,
+    GX_TEXCOORD2=2,
+    GX_TEXCOORD3=3,
+    GX_TEXCOORD4=4,
+    GX_TEXCOORD5=5,
+    GX_TEXCOORD6=6,
+    GX_TEXCOORD7=7,
+    GX_MAX_TEXCOORD=8,
+    GX_TEXCOORD_NULL=255
+} _GXTexCoordID;
+
+typedef enum _GXTexFmt {
+    GX_TF_I4=0,
+    GX_TF_I8=1,
+    GX_TF_IA4=2,
+    GX_TF_IA8=3,
+    GX_TF_RGB565=4,
+    GX_TF_RGB5A3=5,
+    GX_TF_RGBA8=6,
+    GX_TF_CMPR=14,
+    GX_TF_Z8=17,
+    GX_TF_Z16=19,
+    GX_TF_Z24X8=22,
+    GX_CTF_R4=32,
+    GX_CTF_RA4=34,
+    GX_CTF_RA8=35,
+    GX_CTF_YUVA8=38,
+    GX_CTF_A8=39,
+    GX_TF_A8=39,
+    GX_CTF_R8=40,
+    GX_CTF_G8=41,
+    GX_CTF_B8=42,
+    GX_CTF_RG8=43,
+    GX_CTF_GB8=44,
+    GX_CTF_Z4=48,
+    GX_CTF_Z8M=57,
+    GX_CTF_Z8L=58,
+    GX_CTF_Z16L=60
+} _GXTexFmt;
+
+typedef enum _GXTexGenSrc {
+    GX_TG_POS=0,
+    GX_TG_NRM=1,
+    GX_TG_BINRM=2,
+    GX_TG_TANGENT=3,
+    GX_TG_TEX0=4,
+    GX_TG_TEX1=5,
+    GX_TG_TEX2=6,
+    GX_TG_TEX3=7,
+    GX_TG_TEX4=8,
+    GX_TG_TEX5=9,
+    GX_TG_TEX6=10,
+    GX_TG_TEX7=11,
+    GX_TG_TEXCOORD0=12,
+    GX_TG_TEXCOORD1=13,
+    GX_TG_TEXCOORD2=14,
+    GX_TG_TEXCOORD3=15,
+    GX_TG_TEXCOORD4=16,
+    GX_TG_TEXCOORD5=17,
+    GX_TG_TEXCOORD6=18,
+    GX_TG_COLOR0=19,
+    GX_TG_COLOR1=20
+} _GXTexGenSrc;
+
+typedef enum _GXTexGenType {
+    GX_TG_MTX3x4=0,
+    GX_TG_MTX2x4=1,
+    GX_TG_BUMP0=2,
+    GX_TG_BUMP1=3,
+    GX_TG_BUMP2=4,
+    GX_TG_BUMP3=5,
+    GX_TG_BUMP4=6,
+    GX_TG_BUMP5=7,
+    GX_TG_BUMP6=8,
+    GX_TG_BUMP7=9,
+    GX_TG_SRTG=10
+} _GXTexGenType;
+
+typedef enum _GXTexMapID {
+    GX_TEXMAP0=0,
+    GX_TEXMAP1=1,
+    GX_TEXMAP2=2,
+    GX_TEXMAP3=3,
+    GX_TEXMAP4=4,
+    GX_TEXMAP5=5,
+    GX_TEXMAP6=6,
+    GX_TEXMAP7=7,
+    GX_MAX_TEXMAP=8,
+    GX_TEXMAP_NULL=255,
+    GX_TEX_DISABLE=256
+} _GXTexMapID;
+
+typedef enum _GXTexMtx {
+    GX_TEXMTX0=30,
+    GX_TEXMTX1=33,
+    GX_TEXMTX2=36,
+    GX_TEXMTX3=39,
+    GX_TEXMTX4=42,
+    GX_TEXMTX5=45,
+    GX_TEXMTX6=48,
+    GX_TEXMTX7=51,
+    GX_TEXMTX8=54,
+    GX_TEXMTX9=57,
+    GX_IDENTITY=60
+} _GXTexMtx;
+
+typedef struct _GXTexObj _GXTexObj, *P_GXTexObj;
+
+struct _GXTexObj {
+    ulong dummy[8];
+};
+
+typedef struct _GXTlutObj _GXTlutObj, *P_GXTlutObj;
+
+struct _GXTlutObj {
+    ulong dummy[3];
+};
+
+typedef enum _GXVtxFmt {
+    GX_VTXFMT0=0,
+    GX_VTXFMT1=1,
+    GX_VTXFMT2=2,
+    GX_VTXFMT3=3,
+    GX_VTXFMT4=4,
+    GX_VTXFMT5=5,
+    GX_VTXFMT6=6,
+    GX_VTXFMT7=7,
+    GX_MAX_VTXFMT=8
+} _GXVtxFmt;
+
+typedef enum _GXZTexOp {
+    GX_ZT_DISABLE=0,
+    GX_ZT_ADD=1,
+    GX_ZT_REPLACE=2,
+    GX_MAX_ZTEXOP=3
+} _GXZTexOp;
+
+typedef struct _PERFTIMER _PERFTIMER, *P_PERFTIMER;
+
+struct _PERFTIMER {
+    char * name;
+    ulong start;
+    ulong stop;
+    ulong elapsed;
+    ulong average;
+};
+
+typedef enum DMTexFlt {
+    DMTF_POINTSAMPLE=0,
+    DMTF_BILERP=1
+} DMTexFlt;
+
+typedef enum GXAnisotropy {
+    GX_ANISO_1=0,
+    GX_ANISO_2=1,
+    GX_ANISO_4=2,
+    GX_MAX_ANISOTROPY=3
+} GXAnisotropy;
+
+typedef uchar GXBool;
+
+typedef struct GXColorOLD GXColorOLD, *PGXColorOLD;
+
+typedef uchar uint8_t;
+
+struct GXColorOLD {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+};
+
+typedef struct GXFifoObj GXFifoObj, *PGXFifoObj;
+
+struct GXFifoObj {
+    uint8_t pad[25];
+};
+
+typedef struct GXFogAdjTable GXFogAdjTable, *PGXFogAdjTable;
+
+struct GXFogAdjTable {
+    ushort _00[10];
+};
+
+typedef enum GXFogType {
+    GX_FOG_NONE=0,
+    GX_FOG_LINEAR=2,
+    GX_FOG_EXPONENT=4,
+    GX_FOG_EXPONENT2=5,
+    GX_FOG_REVERSEEXP=6,
+    GX_FOG_REVERSEXP2=7
+} GXFogType;
+
+typedef enum GXIndTexScale {
+    GX_IND_TEX_SCALE_0=0
+} GXIndTexScale;
+
+typedef enum GXIndTexStageID {
+    GX_IND_TEX_STAGE_ID_0=0,
+    GX_IND_TEX_STAGE_ID_1=1,
+    GX_IND_TEX_STAGE_ID_2=2,
+    GX_IND_TEX_STAGE_ID_3=3
+} GXIndTexStageID;
+
+typedef struct GXInit GXInit, *PGXInit;
+
+struct GXInit {
+    char field0_0x0[128];
+};
+
+typedef struct GXLightObj GXLightObj, *PGXLightObj;
+
+struct GXLightObj {
+    float z;
+    undefined field1_0x4;
+    undefined field2_0x5;
+    undefined field3_0x6;
+    undefined field4_0x7;
+    float x;
+    float y;
+};
+
+typedef enum GXProjectionType {
+    GX_PERSPECTIVE=0,
+    GX_ORTHOGRAPHIC =1
+} GXProjectionType;
+
+typedef enum GXSpotFn {
+    GX_SP_OFF=0,
+    GX_SP_FLAT=1,
+    GX_SP_COS=2,
+    GX_SP_COS2=3,
+    GX_SP_SHARP=4,
+    GX_SP_RING1=5,
+    GX_SP_RING2=6
+} GXSpotFn;
+
+typedef enum GXTevOp {
+    GX_TEV_ADD=0,
+    GX_TEV_SUB=1,
+    GX_TEV_COMP_R8_GT=8,
+    GX_TEV_COMP_R8_EQ=9,
+    GX_TEV_COMP_GR16_GT=10,
+    GX_TEV_COMP_GR16_EQ=11,
+    GX_TEV_COMP_BGR24_GT=12,
+    GX_TEV_COMP_BGR24_EQ=13,
+    GX_TEV_COMP_A8_GT=14,
+    GX_TEV_COMP_RGB8_GT=14,
+    GX_TEV_COMP_A8_EQ=15,
+    GX_TEV_COMP_RGB8_EQ=15
+} GXTevOp;
+
+typedef enum GXTevScale {
+    GX_CS_SCALE_1=0,
+    GX_CS_SCALE_2=1,
+    GX_CS_SCALE_4=2,
+    GX_CS_DIVIDE_2=3,
+    GX_MAX_TEVSCALE=4
+} GXTevScale;
+
+typedef enum GXTexCacheSize {
+    GX_TEXCACHE_32K=1,
+    GX_TEXCACHE_128K=2,
+    GX_TEXCACHE_512K=3,
+    GX_TEXCACHE_NONE=4
+} GXTexCacheSize;
+
+typedef enum GXTexFilter {
+    GX_NEAR=0,
+    GX_LINEAR=1,
+    GX_NEAR_MIP_NEAR=2,
+    GX_LIN_MIP_NEAR=3,
+    GX_NEAR_MIP_LIN=4,
+    GX_LIN_MIP_LIN=5
+} GXTexFilter;
+
+typedef enum GXTexFmt {
+    GX_TF_I4=0,
+    GX_TF_I8=1,
+    GX_TF_A8=2,
+    GX_TF_IA4=3,
+    GX_TF_IA8=4,
+    GX_TF_RGB565=5,
+    GX_TF_RGB5A3=6,
+    GX_TF_RGBA8=7,
+    GX_TF_CMPR=8,
+    GX_TF_Z8=9,
+    GX_TF_Z16=10,
+    GX_TF_Z24X8=11,
+    GX_CTF_R4=12,
+    GX_CTF_RA4=13,
+    GX_CTF_RA8=14,
+    GX_CTF_A8=15,
+    GX_CTF_R8=16,
+    GX_CTF_G8=17,
+    GX_CTF_B8=18,
+    GX_CTF_RG8=19,
+    GX_CTF_GB8=20,
+    GX_CTF_Z4=21,
+    GX_CTF_Z8M=22,
+    GX_CTF_Z8L=23,
+    GX_CTF_Z16L=24
+} GXTexFmt;
+
+typedef enum GXTexMtxType {
+    GX_MTX3x4=0,
+    GX_MTX2x4=1
+} GXTexMtxType;
+
+typedef struct GXTexObj GXTexObj, *PGXTexObj;
+
+struct GXTexObj {
+    uint field0_0x0;
+    uint field1_0x4;
+    uint field2_0x8;
+    uint field3_0xc;
+    undefined field4_0x10;
+    undefined field5_0x11;
+    undefined field6_0x12;
+    undefined field7_0x13;
+    uint field8_0x14;
+    undefined field9_0x18;
+    undefined field10_0x19;
+    undefined field11_0x1a;
+    undefined field12_0x1b;
+    ushort field13_0x1c;
+    undefined field14_0x1e;
+    byte field15_0x1f;
+};
+
+typedef struct GXTexRegion GXTexRegion, *PGXTexRegion;
+
+struct GXTexRegion {
+    char padding[14];
+};
+
+typedef enum GXTexWrapMode {
+    GX_CLAMP=0,
+    GX_REPEAT=1,
+    GX_MIRROR=2,
+    GX_MAX_TEXWRAPMODE=3
+} GXTexWrapMode;
+
+typedef enum GXTlutSize {
+    GX_TLUT_16=0,
+    GX_TLUT_32=1,
+    GX_TLUT_64=2,
+    GX_TLUT_128=3,
+    GX_TLUT_256=4,
+    GX_TLUT_512=5,
+    GX_TLUT_1K=6,
+    GX_TLUT_2K=7,
+    GX_TLUT_4K=8,
+    GX_TLUT_8K=9,
+    GX_TLUT_16K=10
+} GXTlutSize;
+
+typedef struct Heap Heap, *PHeap;
+
+typedef struct HeapCell HeapCell, *PHeapCell;
+
+struct HeapCell {
+    struct HeapCell * prev;
+    struct HeapCell * next;
+    uint size;
+};
+
+struct Heap {
+    int size;
+    struct HeapCell * free;
+    struct HeapCell * allocated;
+};
+
+typedef int OSHeapHandle;
+
+typedef struct _AXPB _AXPB, *P_AXPB;
+
+typedef struct _AXPBMIX _AXPBMIX, *P_AXPBMIX;
+
+typedef struct _AXPBITD _AXPBITD, *P_AXPBITD;
+
+typedef struct _AXPBUPDATE _AXPBUPDATE, *P_AXPBUPDATE;
+
+typedef struct _AXPBDPOP _AXPBDPOP, *P_AXPBDPOP;
+
+typedef struct _AXPBVE _AXPBVE, *P_AXPBVE;
+
+typedef struct _AXPBFIR _AXPBFIR, *P_AXPBFIR;
+
+typedef struct _AXPBADDR _AXPBADDR, *P_AXPBADDR;
+
+typedef struct _AXPBADPCM _AXPBADPCM, *P_AXPBADPCM;
+
+typedef struct _AXPBSRC _AXPBSRC, *P_AXPBSRC;
+
+typedef struct _AXPBADPCMLOOP _AXPBADPCMLOOP, *P_AXPBADPCMLOOP;
+
+struct _AXPBADPCM {
+    ushort a[2][8];
+    ushort gain;
+    ushort pred_scale;
+    ushort yn1;
+    ushort yn2;
+};
+
+struct _AXPBVE {
+    ushort currentVolume;
+    short currentDelta;
+};
+
+struct _AXPBSRC {
+    ushort ratioHi;
+    ushort ratioLo;
+    ushort currentAddressFrac;
+    ushort last_samples[4];
+};
+
+struct _AXPBITD {
+    ushort flag;
+    ushort bufferHi;
+    ushort bufferLo;
+    ushort shiftL;
+    ushort shiftR;
+    ushort targetShiftL;
+    ushort targetShiftR;
+};
+
+struct _AXPBFIR {
+    ushort numCoefs;
+    ushort coefsHi;
+    ushort coefsLo;
+};
+
+struct _AXPBMIX {
+    ushort vL;
+    ushort vDeltaL;
+    ushort vR;
+    ushort vDeltaR;
+    ushort vAuxAL;
+    ushort vDeltaAuxAL;
+    ushort vAuxAR;
+    ushort vDeltaAuxAR;
+    ushort vAuxBL;
+    ushort vDeltaAuxBL;
+    ushort vAuxBR;
+    ushort vDeltaAuxBR;
+    ushort vAuxBS;
+    ushort vDeltaAuxBS;
+    ushort vS;
+    ushort vDeltaS;
+    ushort vAuxAS;
+    ushort vDeltaAuxAS;
+};
+
+struct _AXPBDPOP {
+    short aL;
+    short aAuxAL;
+    short aAuxBL;
+    short aR;
+    short aAuxAR;
+    short aAuxBR;
+    short aS;
+    short aAuxAS;
+    short aAuxBS;
+};
+
+struct _AXPBADDR {
+    ushort loopFlag;
+    ushort format;
+    ushort loopAddressHi;
+    ushort loopAddressLo;
+    ushort endAddressHi;
+    ushort endAddressLo;
+    ushort currentAddressHi;
+    ushort currentAddressLo;
+};
+
+struct _AXPBUPDATE {
+    ushort updNum[5];
+    ushort dataHi;
+    ushort dataLo;
+};
+
+struct _AXPBADPCMLOOP {
+    ushort loop_pred_scale;
+    ushort loop_yn1;
+    ushort loop_yn2;
+};
+
+struct _AXPB {
+    ushort nextHi;
+    ushort nextLo;
+    ushort currHi;
+    ushort currLo;
+    ushort srcSelect;
+    ushort coefSelect;
+    ushort mixerCtrl;
+    ushort state;
+    ushort type;
+    struct _AXPBMIX mix;
+    struct _AXPBITD itd;
+    struct _AXPBUPDATE update;
+    struct _AXPBDPOP dpop;
+    struct _AXPBVE ve;
+    struct _AXPBFIR fir;
+    struct _AXPBADDR addr;
+    struct _AXPBADPCM adpcm;
+    struct _AXPBSRC src;
+    struct _AXPBADPCMLOOP adpcmLoop;
+    ushort pad[3];
+};
+
+typedef struct _AXPBITDBUFFER _AXPBITDBUFFER, *P_AXPBITDBUFFER;
+
+struct _AXPBITDBUFFER {
+    short data[32];
+};
+
+typedef struct _AXPBU _AXPBU, *P_AXPBU;
+
+struct _AXPBU {
+    ushort data[128];
+};
+
+typedef struct _AXVPB _AXVPB, *P_AXVPB;
+
+struct _AXVPB {
+    void * next;
+    void * prev;
+    void * next1;
+    uint priority;
+    void * callback;
+    uint userContext;
+    uint index;
+    uint sync;
+    uint depop;
+    uint updateMS;
+    uint updateCounter;
+    uint updateTotal;
+    ushort * updateWrite;
+    ushort updateData[128];
+    void * itdBuffer;
+    struct _AXPB pb;
+};
+
+typedef struct adpcm adpcm, *Padpcm;
+
+struct adpcm {
+    struct _AXPBADPCM adpcm;
+    struct _AXPBADPCMLOOP adpcmloop;
+};
+
+typedef struct sp_entry sp_entry, *Psp_entry;
+
+struct sp_entry {
+    uint type;
+    uint sampleRate;
+    uint loopAddr;
+    uint loopEndAddr;
+    uint endAddr;
+    uint currentAddr;
+    struct adpcm * adpcm;
+};
+
+typedef struct SS_Voices SS_Voices, *PSS_Voices;
+
+struct SS_Voices {
+    struct _AXVPB * ax_voice;
+    struct adpcm * sp_entry;
+    int sfxid;
+};
+
+typedef struct bootInfo bootInfo, *PbootInfo;
+
+struct bootInfo { /* DVDInit */
+    uint x0[8];
+    uint boot_magic;
+};
+
+typedef struct DiskInfo DiskInfo, *PDiskInfo;
+
+typedef struct DVDDiskID DVDDiskID, *PDVDDiskID;
+
+struct DVDDiskID {
+    undefined field0_0x0;
+    undefined field1_0x1;
+    undefined field2_0x2;
+    undefined field3_0x3;
+    undefined field4_0x4;
+    undefined field5_0x5;
+    undefined field6_0x6;
+    undefined field7_0x7;
+    undefined field8_0x8;
+    undefined field9_0x9;
+    undefined field10_0xa;
+    undefined field11_0xb;
+    undefined field12_0xc;
+    undefined field13_0xd;
+    undefined field14_0xe;
+    undefined field15_0xf;
+    undefined field16_0x10;
+    undefined field17_0x11;
+    undefined field18_0x12;
+    undefined field19_0x13;
+    undefined field20_0x14;
+    undefined field21_0x15;
+    undefined field22_0x16;
+    undefined field23_0x17;
+    undefined field24_0x18;
+    undefined field25_0x19;
+    undefined field26_0x1a;
+    undefined field27_0x1b;
+    undefined field28_0x1c;
+    undefined field29_0x1d;
+    undefined field30_0x1e;
+    undefined field31_0x1f;
+};
+
+struct DiskInfo {
+    struct DVDDiskID diskID;
+    uint8_t filler20[32];
+    void * FSTLocationInRam;
+    uint FSTMaxLength;
+};
+
+typedef struct DVDQueue_sub DVDQueue_sub, *PDVDQueue_sub;
+
+struct DVDQueue_sub {
+    struct DVDQueue_sub * unk0;
+    struct DVDQueue_sub * unk4;
+};
+
+typedef struct GS_FrameBufferCopy GS_FrameBufferCopy, *PGS_FrameBufferCopy;
+
+struct GS_FrameBufferCopy {
+    struct _GXTexObj tobj;
+    uchar * data;
+    int top;
+    int left;
+    int width;
+    int height;
+};
 
 typedef struct instNUGCUTCAM_s instNUGCUTCAM_s, *PinstNUGCUTCAM_s;
 
@@ -115,7 +1264,7 @@ typedef struct nugspline_s nugspline_s, *Pnugspline_s;
 
 typedef struct nuinstanim_s nuinstanim_s, *Pnuinstanim_s;
 
-typedef struct NuAnimData_s NuAnimData_s, *PNuAnimData_s;
+typedef struct nuAnimData_s nuAnimData_s, *PnuAnimData_s;
 
 typedef struct nutexanim_s nutexanim_s, *Pnutexanim_s;
 
@@ -136,11 +1285,11 @@ typedef enum gobjtype_s {
 
 typedef struct nugeom_s nugeom_s, *Pnugeom_s;
 
-typedef struct NuFaceOnGeom NuFaceOnGeom, *PNuFaceOnGeom;
+typedef struct nufaceongeom_s nufaceongeom_s, *Pnufaceongeom_s;
 
 typedef struct nuinstflags_s nuinstflags_s, *Pnuinstflags_s;
 
-typedef struct nuanimdatachunks_s nuanimdatachunks_s, *Pnuanimdatachunks_s;
+typedef struct nuanimdatachunk_s nuanimdatachunk_s, *Pnuanimdatachunk_s;
 
 typedef struct nutexanimenv_s nutexanimenv_s, *Pnutexanimenv_s;
 
@@ -154,11 +1303,11 @@ typedef enum nuvtxtype_e {
 
 typedef struct nuprim_s nuprim_s, *Pnuprim_s;
 
-typedef struct NuSkin NuSkin, *PNuSkin;
+typedef struct nuskin_s nuskin_s, *Pnuskin_s;
 
 typedef struct NUVTXSKININFO_s NUVTXSKININFO_s, *PNUVTXSKININFO_s;
 
-typedef struct NuBlendShape NuBlendShape, *PNuBlendShape;
+typedef struct NUBLENDGEOM_s NUBLENDGEOM_s, *PNUBLENDGEOM_s;
 
 typedef enum nufaceontype_s {
     NUFACEON_FACEON=0,
@@ -194,8 +1343,26 @@ typedef struct nuplane_s nuplane_s, *Pnuplane_s;
 struct nugspline_s {
     short len;
     short ptsize;
-    char * * name;
+    char * name;
     char * pts;
+};
+
+struct NUBLENDGEOM_s {
+    int nblends;
+    struct nuvec_s * * blend_offsets;
+    int * ix;
+    struct nuvec_s * offsets;
+    struct nuvec_s * ooffsets;
+    int hVB; /* GS_Buffer * */
+    int blendindex[10];
+};
+
+struct nuanimdatachunk_s {
+    int numnodes;
+    int num_valid_animcurvesets;
+    struct nuanimcurveset_s * * animcurveset;
+    struct nuanimkey_s * keys;
+    struct nuanimcurve_s * curves;
 };
 
 struct nutexanimenv_s { /* NuTexAnimEnvCreate */
@@ -212,17 +1379,7 @@ struct nutexanimenv_s { /* NuTexAnimEnvCreate */
     struct numtl_s * mtl;
     short * tids;
     int tex_ix;
-    int dynalloc;
-};
-
-struct NuBlendShape {
-    int nblends;
-    struct nuvec_s * * blend_offsets;
-    int * ix;
-    struct nuvec_s * offsets;
-    struct nuvec_s * ooffsets;
-    int hVB; /* GS_Buffer * */
-    int blendindex[10];
+    int unk;
 };
 
 struct nuplane_s {
@@ -240,7 +1397,22 @@ struct nufaceon_s {
 };
 
 struct numtx_s {
-    float mtx[4][4];
+    float _00;
+    float _01;
+    float _02;
+    float _03;
+    float _10;
+    float _11;
+    float _12;
+    float _13;
+    float _20;
+    float _21;
+    float _22;
+    float _23;
+    float _30;
+    float _31;
+    float _32;
+    float _33;
 };
 
 struct nuinstflags_s {
@@ -264,12 +1436,12 @@ struct nuinstance_s {
 };
 
 struct nugscn_s { /* used in nusceneload */
-    uint tids;
-    uint numtid;
-    struct numtl_s * mtls;
+    short * tids;
+    int numtid;
+    struct numtl_s * * mtls;
     int nummtl;
     int numgobj;
-    struct nugobj_s * gobjs;
+    struct nugobj_s * * gobjs;
     int numinstance;
     struct nuinstance_s * instances;
     int numspecial;
@@ -282,7 +1454,7 @@ struct nugscn_s { /* used in nusceneload */
     struct nuspecial_s * exspecials;
     int exallocix;
     struct nuinstanim_s * instanimblock;
-    struct NuAnimData_s * * instanimdata;
+    struct nuAnimData_s * * instanimdata;
     int numinstanims;
     int numinstanceixs;
     short * instanceixs;
@@ -296,14 +1468,6 @@ struct nugscn_s { /* used in nusceneload */
     short * instancelightix;
 };
 
-struct nuspecial_s {
-    struct numtx_s mtx;
-    struct nuinstance_s * instance;
-    char * name;
-    struct nuspecialflags * flags;
-    int pad;
-};
-
 struct nuspecialflags {
     undefined field0_0x0;
     undefined field1_0x1;
@@ -311,6 +1475,21 @@ struct nuspecialflags {
     int ext_onscreen:1;
     int ext_vis:1;
     int ext:1;
+};
+
+struct nuspecial_s {
+    struct numtx_s mtx;
+    struct nuinstance_s * instance;
+    char * name;
+    struct nuspecialflags flags;
+    int pad;
+};
+
+struct nuAnimData_s {
+    float time;
+    char * node_name;
+    int nchunks;
+    struct nuanimdatachunk_s * * chunks;
 };
 
 struct nuhspecial_s {
@@ -359,16 +1538,27 @@ struct nutexanimprog_s {
     short xdef_addrs[32];
     int xdef_cnt;
     short eop;
-    short dynalloc;
+    int dynalloc:1;
+    undefined field12_0x1b7;
     short code;
 };
 
 struct nuanimcurveset_s {
     int flags;
     float * constants;
-    struct nuanimcurve_s * set;
+    struct nuanimcurveset_s * set;
     char ncurves;
     char pad[3];
+};
+
+struct nufaceongeom_s {
+    struct nufaceongeom_s * next;
+    struct numtl_s * mtl;
+    int mtl_id;
+    enum nufaceontype_s faceon_type;
+    struct nufaceon_s * faceons;
+    int nfaceons;
+    float faceon_radius;
 };
 
 struct nucolour3_s {
@@ -382,7 +1572,7 @@ struct nugobj_s {
     struct nugobj_s * syslast;
     enum gobjtype_s type;
     struct nugeom_s * geom;
-    struct NuFaceOnGeom * faceon_geom;
+    struct nufaceongeom_s * faceon_geom;
     float bounding_radius_from_origin;
     float bounding_rsq_from_origin;
     struct nuvec_s bounding_box_min;
@@ -414,16 +1604,6 @@ struct numtlattrib_s {
     uint alpha:2;
 };
 
-struct NuFaceOnGeom {
-    struct NuFaceOnGeom * next;
-    struct numtl_s * mtl;
-    int mtl_id;
-    enum nufaceontype_s faceon_type;
-    struct nufaceon_s * faceons;
-    int nfaceons;
-    float faceon_radius;
-};
-
 struct nuprim_s {
     struct nuprim_s * next;
     enum nuprimtype_e type;
@@ -453,13 +1633,13 @@ struct nuinstanim_s {
     uint backwards:1;
     uint waiting:1;
     uint playing:1;
-    char ipad[8];
+    int ipad[2];
     uchar anim_ix;
     char pad[3];
 };
 
-struct NuSkin {
-    struct NuSkin * next;
+struct nuskin_s {
+    struct nuskin_s * next;
     int vtxoffset;
     int vtxcnt;
     int mtxcnt;
@@ -477,9 +1657,9 @@ struct nugeom_s {
     int hVB; /* GS_Buffer * */
     void * basisvbptr;
     struct nuprim_s * prim;
-    struct NuSkin * skin;
+    struct nuskin_s * skin;
     struct NUVTXSKININFO_s * vtxskininfo;
-    struct NuBlendShape * blendgeom;
+    struct NUBLENDGEOM_s * blendgeom;
 };
 
 struct numtl_s {
@@ -505,21 +1685,6 @@ struct numtl_s {
     float dv;
     float su;
     float sv;
-};
-
-struct nuanimdatachunks_s {
-    int numnodes;
-    int num_valid_animcurvesets;
-    struct nuanimcurveset_s * animcurveset;
-    struct nuanimkey_s * keys;
-    struct nuanimcurve_s * curves; /* b57c */
-};
-
-struct NuAnimData_s {
-    float time;
-    char * node_name;
-    int nchunks;
-    struct nuanimdatachunks_s * * chunks;
 };
 
 struct nuanimkey_s {
@@ -553,6 +1718,8 @@ typedef struct NUGCUTBBOX_s NUGCUTBBOX_s, *PNUGCUTBBOX_s;
 
 typedef struct NUGCUTTRIGGERSYS_S NUGCUTTRIGGERSYS_S, *PNUGCUTTRIGGERSYS_S;
 
+typedef struct instNUTRIGGERSYS_s instNUTRIGGERSYS_s, *PinstNUTRIGGERSYS_s;
+
 typedef struct instNUGCUTTRIGGER_s instNUGCUTTRIGGER_s, *PinstNUGCUTTRIGGER_s;
 
 typedef struct NUGCUTCAM_s NUGCUTCAM_s, *PNUGCUTCAM_s;
@@ -571,7 +1738,13 @@ typedef struct NUGCUTLOCATORTYPE_s NUGCUTLOCATORTYPE_s, *PNUGCUTLOCATORTYPE_s;
 
 typedef struct NUGCUTTRIGGER_s NUGCUTTRIGGER_s, *PNUGCUTTRIGGER_s;
 
-typedef enum direction {
+typedef struct NUTRIGGERSYS_s NUTRIGGERSYS_s, *PNUTRIGGERSYS_s;
+
+typedef struct instNUTRIGGER_s instNUTRIGGER_s, *PinstNUTRIGGER_s;
+
+typedef struct nuanimcurve2_s nuanimcurve2_s, *Pnuanimcurve2_s;
+
+typedef enum locdir {
     LOCATOR_NO_DIRECTION=0,
     LOCATOR_UP=1,
     LOCATOR_DOWN=2,
@@ -581,7 +1754,11 @@ typedef enum direction {
     LOCATOR_NEGY=6,
     LOCATOR_Z=7,
     LOCATOR_NEGZ=8
-} direction;
+} locdir;
+
+typedef union adata adata, *Padata;
+
+typedef struct nuanimcurvedata_s nuanimcurvedata_s, *Pnuanimcurvedata_s;
 
 struct NUGCUTTRIGGER_s {
     short ix;
@@ -609,11 +1786,19 @@ struct NUGCUTSCENE_s {
 };
 
 struct nuanimdata2_s {
-    float field0_0x0;
-    short field1_0x4;
-    short field2_0x6;
-    short field3_0x8;
-    short field4_0xa;
+    float endframe;
+    short nnodes;
+    short ncurves;
+    short nchunks;
+    short pad;
+    struct nuanimcurve2_s * curves;
+    char * curveflags;
+    char * curvesetflags;
+};
+
+union adata {
+    float constant;
+    struct nuanimcurvedata_s * curvedata;
 };
 
 struct NUGCUTBBOX_s {
@@ -689,9 +1874,30 @@ struct instNUGCUTSCENE_s {
     void * endfn;
 };
 
+struct NUTRIGGERSYS_s {
+    int ntriggers;
+    struct NUGCUTTRIGGER_s triggers;
+};
+
+struct nuanimcurve2_s {
+    union adata data;
+};
+
 struct instNUGCUTTRIGGERSYS_s {
-    struct instNUGCUTTRIGGERSYS_s * itriggersys;
+    struct instNUTRIGGERSYS_s * itriggersys;
     struct instNUGCUTTRIGGER_s * itriggers;
+};
+
+struct instNUTRIGGERSYS_s {
+    struct instNUTRIGGERSYS_s * next;
+    struct instNUTRIGGERSYS_s * prev;
+    struct NUTRIGGERSYS_s * triggersys;
+    struct instNUTRIGGER_s * itriggers;
+    void * scenemanager;
+    int is_disabled:1;
+    undefined field6_0x15;
+    undefined field7_0x16;
+    undefined field8_0x17;
 };
 
 struct NUGCUTLOCATORTYPE_s {
@@ -707,6 +1913,12 @@ struct NUGCUTLOCATORSYS_s {
     uchar nlocators;
     uchar ntypes;
     char pad[2];
+};
+
+struct nuanimcurvedata_s {
+    uint * mask;
+    ushort * key_ixs;
+    void * key_array;
 };
 
 struct NUGCUTRIGIDSYS_s {
@@ -728,7 +1940,7 @@ struct NUGCUTLOCATOR_s {
     struct nuvec_s pivot;
     float rate;
     struct nuanimdata2_s * anim;
-    enum direction direction;
+    enum locdir direction;
     uchar flags;
     uchar locator_type;
     uchar joint_ix;
@@ -750,6 +1962,12 @@ struct NUGCUTRIGID_s {
     char pad;
 };
 
+struct instNUTRIGGER_s {
+    short hitpoints;
+    uchar enableflags;
+    char flags;
+};
+
 struct NUGCUTCHARSYS_s {
     struct NUGCUTCHAR_s * chars;
     ushort nchars;
@@ -765,6 +1983,23 @@ struct locdataFN {
     struct NUGCUTLOCATOR_s * field3_0xc;
     float field4_0x10;
     struct numtx_s * field5_0x14;
+};
+
+typedef struct _REMAPTABLE _REMAPTABLE, *P_REMAPTABLE;
+
+struct _REMAPTABLE {
+    char * name;
+    uchar * remap;
+};
+
+typedef struct nusound_filename_info_s nusound_filename_info_s, *Pnusound_filename_info_s;
+
+struct nusound_filename_info_s {
+    char Filename[32];
+    int Pitch;
+    int LoopInfo;
+    int Type;
+    int ID;
 };
 
 typedef struct _D3DCOLORVALUE _D3DCOLORVALUE, *P_D3DCOLORVALUE;
@@ -801,6 +2036,65 @@ struct _D3DLIGHT8 {
     float Phi;
 };
 
+typedef struct _D3DMATERIAL8 _D3DMATERIAL8, *P_D3DMATERIAL8;
+
+struct _D3DMATERIAL8 {
+    struct _D3DCOLORVALUE Diffuse;
+    struct _D3DCOLORVALUE Ambient;
+    struct _D3DCOLORVALUE Specular;
+    struct _D3DCOLORVALUE Emissive;
+    float Power;
+};
+
+typedef enum _D3DTEXTURESTAGESTATETYPE {
+    D3DTSS_ADDRESSU=0,
+    D3DTSS_ADDRESSV=1,
+    D3DTSS_ADDRESSW=2,
+    D3DTSS_MAGFILTER=3,
+    D3DTSS_MINFILTER=4,
+    D3DTSS_MIPFILTER=5,
+    D3DTSS_MIPMAPLODBIAS=6,
+    D3DTSS_MAXMIPLEVEL=7,
+    D3DTSS_MAXANISOTROPY=8,
+    D3DTSS_COLORKEYOP=9,
+    D3DTSS_COLORSIGN=10,
+    D3DTSS_ALPHAKILL=11,
+    D3DTSS_COLOROP=12,
+    D3DTSS_DEFERRED_TEXTURE_STATE_MAX=12,
+    D3DTSS_COLORARG0=13,
+    D3DTSS_COLORARG1=14,
+    D3DTSS_COLORARG2=15,
+    D3DTSS_ALPHAOP=16,
+    D3DTSS_ALPHAARG0=17,
+    D3DTSS_ALPHAARG1=18,
+    D3DTSS_ALPHAARG2=19,
+    D3DTSS_RESULTARG=20,
+    D3DTSS_TEXTURETRANSFORMFLAGS=21,
+    D3DTSS_BUMPENVMAT00=22,
+    D3DTSS_DEFERRED_MAX=22,
+    D3DTSS_BUMPENVMAT01=23,
+    D3DTSS_BUMPENVMAT11=24,
+    D3DTSS_BUMPENVMAT10=25,
+    D3DTSS_BUMPENVLSCALE=26,
+    D3DTSS_BUMPENVLOFFSET=27,
+    D3DTSS_TEXCOORDINDEX=28,
+    D3DTSS_BORDERCOLOR=29,
+    D3DTSS_COLORKEYCOLOR=30,
+    D3DTSS_MAX=31,
+    D3DTSS_FORCE_DWORD=2147483647
+} _D3DTEXTURESTAGESTATETYPE;
+
+typedef struct _D3DVIEWPORT8 _D3DVIEWPORT8, *P_D3DVIEWPORT8;
+
+struct _D3DVIEWPORT8 {
+    uint X;
+    uint Y;
+    uint Width;
+    uint Height;
+    float MinZ;
+    float MaxZ;
+};
+
 typedef struct _GS_TEXTURE _GS_TEXTURE, *P_GS_TEXTURE;
 
 typedef enum gs_texturetype_e {
@@ -833,20 +2127,8 @@ typedef enum gs_texturetype_e {
     GS_TEX_NUMTEXTURETYPES=26
 } gs_texturetype_e;
 
-typedef struct _GXTexObj _GXTexObj, *P_GXTexObj;
-
-typedef struct _GXTlutObj _GXTlutObj, *P_GXTlutObj;
-
-struct _GXTexObj {
-    ulong dummy[8];
-};
-
-struct _GXTlutObj {
-    ulong dummy[3];
-};
-
 struct _GS_TEXTURE {
-    uint Flags;
+    int Flags;
     enum gs_texturetype_e Format;
     uint Width;
     uint Height;
@@ -856,6 +2138,23 @@ struct _GS_TEXTURE {
     uint Pad;
     struct _GXTexObj Tex;
     struct _GXTlutObj Tlut;
+};
+
+typedef struct _GS_VECTOR3 _GS_VECTOR3, *P_GS_VECTOR3;
+
+struct _GS_VECTOR3 {
+    float x;
+    float y;
+    float z;
+};
+
+typedef struct _GS_VECTOR4 _GS_VECTOR4, *P_GS_VECTOR4;
+
+struct _GS_VECTOR4 {
+    float x;
+    float y;
+    float z;
+    float w;
 };
 
 typedef struct _GS_VIEWPORT _GS_VIEWPORT, *P_GS_VIEWPORT;
@@ -869,53 +2168,25 @@ struct _GS_VIEWPORT {
     float MaxZ;
 };
 
-typedef struct _GXColor _GXColor, *P_GXColor;
+typedef struct _GSMATRIX _GSMATRIX, *P_GSMATRIX;
 
-struct _GXColor {
-    uchar r;
-    uchar g;
-    uchar b;
-    uchar a;
-};
-
-typedef struct _GXRenderModeObj _GXRenderModeObj, *P_GXRenderModeObj;
-
-typedef enum viTVmode {
-    VI_TVMODE_NTSC_INT=0,
-    VI_TVMODE_NTSC_DS=1,
-    VI_TVMODE_NTSC_PROG=2,
-    VI_TVMODE_PAL_INT=3,
-    VI_TVMODE_PAL_DS=4,
-    VI_TVMODE_EURGB60_INT=5,
-    VI_TVMODE_EURGB60_DS=6,
-    VI_TVMODE_MPAL_INT=7,
-    VI_TVMODE_MPAL_DS=8,
-    VI_TVMODE_DEBUG_INT=9,
-    VI_TVMODE_DEBUG_PAL_INT=16,
-    VI_TVMODE_DEBUG_PAL_DS=17
-} viTVmode;
-
-typedef enum xFBmode {
-    VI_XFBMODE_SF=0,
-    VI_XFBMODE_DF=1
-} xFBmode;
-
-struct _GXRenderModeObj {
-    enum viTVmode viTVmode;
-    ushort fbWidth;
-    ushort efbHeight;
-    ushort xfbHeight;
-    ushort viXOrigin;
-    ushort viYOrigin;
-    ushort viWidth;
-    ushort viHeight;
-    uchar unk[2];
-    enum xFBmode xFBmode;
-    uchar field_rendering;
-    uchar aa;
-    uchar sample_pattern[2][12];
-    uchar vfilter[7];
-    uchar unk2[3];
+struct _GSMATRIX {
+    float _00;
+    float _01;
+    float _02;
+    float _03;
+    float _10;
+    float _11;
+    float _12;
+    float _13;
+    float _20;
+    float _21;
+    float _22;
+    float _23;
+    float _30;
+    float _31;
+    float _32;
+    float _33;
 };
 
 typedef struct _LIGHTLIST _LIGHTLIST, *P_LIGHTLIST;
@@ -1033,6 +2304,30 @@ typedef enum Actions_ {
     MAXACTIONS=67
 } Actions_;
 
+typedef struct ADeb ADeb, *PADeb;
+
+struct ADeb {
+    short character;
+    short action;
+    float time;
+    float time2;
+    uint flags;
+    ushort locators;
+    uchar gdeb;
+    char count;
+    uchar random;
+    uchar xrot;
+    char type;
+    char target;
+    short sfx;
+    uchar rumble;
+    uchar buzz;
+    char unk[4];
+    ulonglong levbits;
+    float min;
+    float max;
+};
+
 typedef struct AI_s AI_s, *PAI_s;
 
 struct AI_s {
@@ -1083,6 +2378,23 @@ struct AI_s {
     uchar hits;
 };
 
+typedef struct AITab AITab, *PAITab;
+
+struct AITab {
+    char ai_type;
+    char status;
+    char pad1;
+    char pad2;
+    char pad3;
+    char iRAIL;
+    short iALONG;
+    float fALONG;
+    float time;
+    float delay;
+    struct nuvec_s pos[8];
+    struct nuvec_s origin;
+};
+
 typedef struct AIType AIType, *PAIType;
 
 typedef struct creatcmd_s creatcmd_s, *Pcreatcmd_s;
@@ -1101,7 +2413,43 @@ struct AIType {
     float delay;
 };
 
+typedef struct alpslot alpslot, *Palpslot;
+
+struct alpslot {
+    float t;
+    float a;
+};
+
 typedef ushort angle;
+
+typedef struct anim_parameters_s anim_parameters_s, *Panim_parameters_s;
+
+struct anim_parameters_s {
+    int objid;
+    int usedpart;
+    int usedsound;
+    int trigger_type;
+    int trigger_id;
+    float trigger_var;
+    float trigger_wait;
+    char particle_name[16][8];
+    int particle_type[8];
+    int particle_rate[8];
+    int particle_switch[8];
+    struct nuvec_s particle_offset[8];
+    short particle_emitrotz[8];
+    short particle_emitroty[8];
+    float sound_last_time;
+    char sound_name[16][8];
+    int sound_id[8];
+    int sound_type[8];
+    float sound_time[8];
+    struct nuvec_s sound_offset[8];
+    int terrplatid;
+    float playergrav;
+    float tension;
+    float damping;
+};
 
 typedef struct anim_s anim_s, *Panim_s;
 
@@ -1134,94 +2482,35 @@ struct AnimList {
     ulonglong levbits;
 };
 
-typedef struct Anm_datachunk Anm_datachunk, *PAnm_datachunk;
+typedef struct ATLASSTRUCT ATLASSTRUCT, *PATLASSTRUCT;
 
-struct Anm_datachunk {
-    uint field0_0x0;
-    uint field1_0x4;
-    void * field2_0x8;
-    uint field3_0xc;
-    char field4_0x10[4];
-};
+typedef struct creature_s creature_s, *Pcreature_s;
 
-/*****************************WIP******************************************/
-typedef struct astruct_1_TERRAIN astruct_1_TERRAIN, *Pastruct_1_TERRAIN;
+typedef struct MYDRAW MYDRAW, *PMYDRAW;
 
-struct astruct_1_TERRAIN {
-    float * struct_0x0;
-    void * field1_0x4;
-    char field2_0x8[64];
-};
-/******************************************************************************/
+typedef struct Quat Quat, *PQuat;
 
-typedef struct BlockInfo BlockInfo, *PBlockInfo;
+typedef struct obj_s obj_s, *Pobj_s;
 
-typedef struct nuiffhdr_s nuiffhdr_s, *Pnuiffhdr_s;
+typedef struct NEWBUGGY NEWBUGGY, *PNEWBUGGY;
 
-struct nuiffhdr_s {
-    int blk;
-    int size;
-};
+typedef struct Moveinfo_s Moveinfo_s, *PMoveinfo_s;
 
-struct BlockInfo {
-    struct nuiffhdr_s hdr;
-    int pos;
-};
+typedef struct Nearest_Light_s Nearest_Light_s, *PNearest_Light_s;
 
-typedef struct CamMtx CamMtx, *PCamMtx;
-
-struct CamMtx {
-    struct numtx_s m;
-    struct numtx_s m0;
-    struct nuvec_s vX;
-    struct nuvec_s vY;
-    struct nuvec_s vZ;
-    struct nuvec_s pos;
-    struct nuvec_s oldpos;
-    struct nuvec_s newpos;
-    struct nuvec_s pos2;
-    struct nuvec_s seek;
-    float distance;
-    float ahead;
-    float judder;
-    float blend_time;
-    float blend_duration;
-    int xrot;
-    int yrot;
-    int zrot;
-    ushort old_xrot;
-    ushort new_xrot;
-    ushort old_yrot;
-    ushort new_yrot;
-    ushort old_zrot;
-    ushort new_zrot;
-    ushort hdg_to_player;
-    short route;
-    short i0;
-    short i1;
-    char mode;
-    char iRAIL;
-    short iALONG;
-    ushort angle;
-    char vertical;
-    char pad1;
-};
-
-typedef struct cdata_s cdata_s, *Pcdata_s;
-
-struct cdata_s { /* CharacterData */
-    char * path;
-    char * file;
-    char * name;
-    struct AnimList * anim;
-    float radius;
-    struct nuvec_s min;
-    struct nuvec_s max;
-    float scale;
-    float shadow_scale;
-};
+typedef struct rumble_s rumble_s, *Prumble_s;
 
 typedef struct CharacterModel CharacterModel, *PCharacterModel;
+
+typedef struct NUJOINTANIM_s NUJOINTANIM_s, *PNUJOINTANIM_s;
+
+typedef struct mask mask, *Pmask;
+
+typedef struct RPos_s RPos_s, *PRPos_s;
+
+typedef union type_s_name type_s_name, *Ptype_s_name;
+
+typedef struct pdir_s pdir_s, *Ppdir_s;
 
 typedef struct NUHGOBJ_s NUHGOBJ_s, *PNUHGOBJ_s;
 
@@ -1249,6 +2538,13 @@ typedef enum NUCOLLISIONTYPES {
     NUCOLLISIONSPHERETYPE=1
 } NUCOLLISIONTYPES;
 
+struct pdir_s {
+    int Index;
+    struct nuvec_s Direction;
+    struct nucolour3_s Colour;
+    float Distance;
+};
+
 struct NUELLIPSOID_s {
     struct nuvec_s centre;
     struct nuvec_s y_axis;
@@ -1261,11 +2557,28 @@ struct NUCOLLISIONHDR_s {
     void * data;
 };
 
+union type_s_name {
+    uchar chrs;
+    ushort all;
+};
+
 struct nuvec4_s {
     float x;
     float y;
     float z;
     float w;
+};
+
+struct Quat {
+    struct nuvec_s v;
+    float w;
+};
+
+struct rumble_s {
+    uchar buzz;
+    uchar power;
+    uchar frame;
+    uchar frames;
 };
 
 struct NUSHADOWDATA_s {
@@ -1280,200 +2593,37 @@ struct NUSHADOWDATA_s {
 
 struct NULAYERDATA_s {
     char * name;
-    struct nugobj_s * gobjs;
+    struct nugobj_s * * gobjs;
     struct nugobj_s * skin_gobj;
-    struct nugobj_s * blend_gobjs;
+    struct nugobj_s * * blend_gobjs;
     struct nugobj_s * blend_skin_gobj;
 };
 
-struct NUCOLLISIONDATA_s {
-    uint nitems;
-    struct NUCOLLISIONHDR_s * hdrs;
+struct Nearest_Light_s {
+    int AmbIndex;
+    struct nuvec_s AmbCol;
+    float ambientdist;
+    int CurLoopIndex;
+    struct pdir_s dir1;
+    struct pdir_s dir2;
+    struct pdir_s dir3;
+    struct pdir_s * pDir1st;
+    struct pdir_s * pDir2nd;
+    struct pdir_s * pDir3rd;
+    int glbambindex;
+    int negativeindex;
+    float negativedist;
+    struct pdir_s glbdirectional;
 };
 
-struct NUSHADOWMESH_s {
-    struct nuvec4_s * normals;
-    struct nuvec4_s * verts;
-};
-
-struct CharacterModel {
-    struct NUHGOBJ_s * hobj;
-    struct NuAnimData_s * anmdata[118];
-    struct AnimList * animlist[118];
-    struct NuAnimData_s * fanmdata[118];
-    struct AnimList * fanimlist[118];
-    int shadhdr;
-    short character;
-    char pad1;
-    char pad2;
-    struct NUPOINTOFINTEREST_s * pLOCATOR[16];
-};
-
-struct NUPOINTOFINTEREST_s {
-    struct numtx_s offset;
-    char * name;
-    uchar parent_joint_ix;
-    uchar pad[11];
-};
-
-struct NUHGOBJ_s {
-    short * tids;
-    int numtid;
-    struct numtl_s * mtls;
-    int nummtl;
-    struct NUJOINTDATA_s * joints;
-    struct numtx_s * T;
-    struct numtx_s * INV_WT;
-    uchar * joint_ixs;
-    struct NULAYERDATA_s * layers;
-    struct NUPOINTOFINTEREST_s * points_of_interest;
-    uchar * poi_ixs;
-    char * string_table;
-    int string_table_size;
-    float tbrdist;
-    struct NUSHADOWDATA_s * shadow_data;
-    float sphere_radius;
-    float sphere_yoff;
-    struct nuvec_s min;
-    struct nuvec_s max;
-    float cylinder_yoff;
-    float cylinder_height;
-    float cylinder_radius;
-    struct NUCOLLISIONDATA_s * collision_data;
-    int numtexanims;
-    struct nutexanim_s * texanims;
-    short * texanim_tids;
-    uchar num_joints;
-    uchar num_joint_ixs;
-    uchar num_layers;
-    uchar num_points_of_interest;
-    uchar num_poi_ixs;
-    uchar shadowoff;
-    char pad[2];
-};
-
-struct NUJOINTDATA_s {
-    struct numtx_s orient;
-    struct nuvec_s locator_offset;
-    char * name;
-    int parent_ix;
-    char flags;
-    char pad[11];
-};
-
-struct NUCYLINDERS_s {
-    struct nuvec_s centre;
-    struct nuvec_s y_axis;
-    struct nuvec4_s x_axis;
-    struct nuvec4_s z_axis;
-    char pad[8];
-};
-
-typedef struct chars chars, *Pchars;
-
-struct chars {
-    struct NUHGOBJ_s * obj;
-    char * path;
-    char * name;
-};
-
-typedef struct CocoMoveInfo CocoMoveInfo, *PCocoMoveInfo;
-
-struct CocoMoveInfo {
-    float IDLESPEED;
-    float TIPTOESPEED;
-    float WALKSPEED;
-    float RUNSPEED;
-    float SPRINTSPEED;
-    float SLIDESPEED;
-    float CRAWLSPEED;
-    float DANGLESPEED;
-    float WADESPEED;
-    float JUMPHEIGHT;
-    float DANGLEGAP;
-    short JUMPFRAMES0;
-    short JUMPFRAMES1;
-    short JUMPFRAMES2;
-    short STARJUMPFRAMES;
-    short SOMERSAULTFRAMES;
-    short SPINFRAMES;
-    short SPINRESETFRAMES;
-    short SUPERSPINFRAMES;
-    short SUPERSPINWAITFRAMES;
-    short SLAMWAITFRAMES;
-    short SLIDEFRAMES;
-    short CROUCHINGFRAMES;
-    short JUMPLANDFRAMES;
-    short spad;
-};
-
-typedef struct CrashMoveInfo CrashMoveInfo, *PCrashMoveInfo;
-
-struct CrashMoveInfo {
-    float IDLESPEED;
-    float TIPTOESPEED;
-    float WALKSPEED;
-    float RUNSPEED;
-    float SPRINTSPEED;
-    float SLIDESPEED;
-    float CRAWLSPEED;
-    float DANGLESPEED;
-    float WADESPEED;
-    float JUMPHEIGHT;
-    float DANGLEGAP;
-    short JUMPFRAMES0;
-    short JUMPFRAMES1;
-    short JUMPFRAMES2;
-    short STARJUMPFRAMES;
-    short SOMERSAULTFRAMES;
-    short SPINFRAMES;
-    short SPINRESETFRAMES;
-    short SUPERSPINFRAMES;
-    short SUPERSPINWAITFRAMES;
-    short SLAMWAITFRAMES;
-    short SLIDEFRAMES;
-    short CROUCHINGFRAMES;
-    short JUMPLANDFRAMES;
-    short spad;
-};
-
-typedef struct creature_s creature_s, *Pcreature_s;
-
-typedef struct obj_s obj_s, *Pobj_s;
-
-typedef struct NEWBUGGY NEWBUGGY, *PNEWBUGGY;
-
-typedef struct Moveinfo_s Moveinfo_s, *PMoveinfo_s;
-
-typedef struct Nearest_Light_s Nearest_Light_s, *PNearest_Light_s;
-
-typedef struct rumble_s rumble_s, *Prumble_s;
-
-typedef struct mask mask, *Pmask;
-
-typedef struct RPos_s RPos_s, *PRPos_s;
-
-typedef union type_s_name type_s_name, *Ptype_s_name;
-
-typedef struct pdir_s pdir_s, *Ppdir_s;
-
-struct pdir_s {
-    int Index;
-    struct nuvec_s Direction;
-    struct nucolour3_s Colour;
-    float Distance;
-};
-
-union type_s_name {
-    uchar chrs;
-    ushort all;
-};
-
-struct rumble_s {
-    uchar buzz;
-    uchar power;
-    uchar frame;
-    uchar frames;
+struct MYDRAW {
+    struct anim_s Anim;
+    struct CharacterModel * Model;
+    int Character;
+    int NumJoints;
+    struct NUJOINTANIM_s * JointList;
+    struct nuvec_s * Position;
+    struct Nearest_Light_s Nearest_Light;
 };
 
 struct Moveinfo_s {
@@ -1519,23 +2669,6 @@ struct RPos_s {
     char pad2;
     char pad3;
     struct nuvec_s pos;
-};
-
-struct Nearest_Light_s {
-    int AmbIndex;
-    struct nuvec_s AmbCol;
-    float ambientdist;
-    int CurLoopIndex;
-    struct pdir_s dir1;
-    struct pdir_s dir2;
-    struct pdir_s dir3;
-    struct pdir_s * pDir1st;
-    struct pdir_s * pDir2nd;
-    struct pdir_s * pDir3rd;
-    int glbambindex;
-    int negativeindex;
-    float negativedist;
-    struct pdir_s glbdirectional;
 };
 
 struct mask {
@@ -1667,8 +2800,102 @@ struct obj_s {
     uchar touch;
 };
 
+struct NUCOLLISIONDATA_s {
+    uint nitems;
+    struct NUCOLLISIONHDR_s * hdrs;
+};
+
+struct NUSHADOWMESH_s {
+    struct nuvec4_s * normals;
+    struct nuvec4_s * verts;
+};
+
 struct NEWBUGGY {
     void * a; /* struct TODO */
+};
+
+struct CharacterModel {
+    struct NUHGOBJ_s * hobj;
+    struct nuAnimData_s * anmdata[118];
+    struct AnimList * animlist[118];
+    struct nuAnimData_s * fanmdata[118];
+    struct AnimList * fanimlist[118];
+    int shadhdr;
+    short character;
+    char pad1;
+    char pad2;
+    struct NUPOINTOFINTEREST_s * pLOCATOR[16];
+};
+
+struct NUPOINTOFINTEREST_s {
+    struct numtx_s offset;
+    char * name;
+    uchar parent_joint_ix;
+    uchar pad[11];
+};
+
+struct ATLASSTRUCT {
+    struct creature_s * Cre;
+    int Whacko;
+    int Type;
+    int Dead;
+    int HitPoints;
+    int DestHitPoints;
+    int HitPointCounter;
+    int DrawCrunch;
+    int DrawShell;
+    float InhibitControlTimer;
+    int NumAttacks;
+    int Action;
+    int LastAction;
+    float ActionTimer;
+    float ActionTimer2;
+    int BeenHit;
+    int CantBeHit;
+    float RollSpeed;
+    float RollAccTimer;
+    struct MYDRAW Shell;
+    struct MYDRAW Crunch;
+    struct nuvec_s Position;
+    struct nuvec_s OldPosition;
+    struct nuvec_s LastPosition;
+    struct nuvec_s TargetPosition;
+    struct nuvec_s Velocity;
+    struct nuvec_s OldVelocity;
+    struct nuvec_s Resolved;
+    struct nuvec_s Force;
+    float Radius;
+    float AngleX;
+    float AngleY;
+    float AngleZ;
+    float InputAng;
+    float InputMag;
+    struct Quat Quat;
+    struct Quat ThisQuat;
+    struct Quat FrameQuat[4];
+    struct Quat LastQuat;
+    int LastHit;
+    int Axis;
+    struct nuvec_s LastNormal;
+    struct nuvec_s StoreLastNormal;
+    float DebugAxisTurn;
+    float DebugAngY;
+    float D[7];
+    int OnGround;
+    int PlatformId;
+    struct nuvec_s PlatformNormal;
+    float ShadowY;
+    int SurfaceType;
+    int TrailSurfaceType;
+    int BigDrop;
+    int Embedded;
+    int Rock;
+    int RockNum;
+    float CrunchY;
+    float DestCrunchY;
+    short * TerrHandle;
+    float BoostTimer;
+    struct nuvec_s InterestPoint;
 };
 
 struct creature_s {
@@ -1731,6 +2958,435 @@ struct creature_s {
     char pad1;
 };
 
+struct NUJOINTANIM_s {
+    float rx;
+    float ry;
+    float rz;
+    float tx;
+    float ty;
+    float tz;
+    float sx;
+    float sy;
+    float sz;
+    short max_rx;
+    short max_ry;
+    short max_rz;
+    short min_rx;
+    short min_ry;
+    short min_rz;
+    uchar joint_id;
+    uchar flags;
+    uchar pad[2];
+};
+
+struct NUHGOBJ_s {
+    short * tids;
+    int numtid;
+    struct numtl_s * * mtls;
+    int nummtl;
+    struct NUJOINTDATA_s * joints;
+    struct numtx_s * T;
+    struct numtx_s * INV_WT;
+    uchar * joint_ixs;
+    struct NULAYERDATA_s * layers;
+    struct NUPOINTOFINTEREST_s * points_of_interest;
+    uchar * poi_ixs;
+    char * string_table;
+    int string_table_size;
+    float tbrdist;
+    struct NUSHADOWDATA_s * shadow_data;
+    float sphere_radius;
+    float sphere_yoff;
+    struct nuvec_s min;
+    struct nuvec_s max;
+    float cylinder_yoff;
+    float cylinder_height;
+    float cylinder_radius;
+    struct NUCOLLISIONDATA_s * collision_data;
+    int numtexanims;
+    struct nutexanim_s * texanims;
+    short * texanim_tids;
+    uchar num_joints;
+    uchar num_joint_ixs;
+    uchar num_layers;
+    uchar num_points_of_interest;
+    uchar num_poi_ixs;
+    uchar shadowoff;
+    char pad[2];
+};
+
+struct NUJOINTDATA_s {
+    struct numtx_s orient;
+    struct nuvec_s locator_offset;
+    char * name;
+    int parent_ix;
+    char flags;
+    char pad[11];
+};
+
+struct NUCYLINDERS_s {
+    struct nuvec_s centre;
+    struct nuvec_s y_axis;
+    struct nuvec4_s x_axis;
+    struct nuvec4_s z_axis;
+    char pad[8];
+};
+
+typedef struct Award Award, *PAward;
+
+struct Award {
+    float time;
+    ushort yrot;
+    ushort got;
+    char level;
+    char wait;
+    char pad1;
+    char pad2;
+    struct nuvec_s oldpos0;
+    struct nuvec_s oldpos1;
+    struct nuvec_s newpos;
+};
+
+typedef struct BATTLESHIPSTRUCT BATTLESHIPSTRUCT, *PBATTLESHIPSTRUCT;
+
+struct BATTLESHIPSTRUCT {
+    int Active;
+    struct MYDRAW MainDraw;
+    struct numtx_s Locator[16];
+    struct nuvec_s Position;
+    float AngleY;
+    float TiltX;
+    float TiltZ;
+    float DestTiltX;
+    float DestTiltZ;
+    float DestY;
+    float Seek;
+    int Seen;
+    int HitPoints;
+    float FireTimer[2];
+    struct nuvec_s GooScale;
+    struct nuvec_s DestGooScale;
+    struct nuvec_s BaseGooScale;
+    float GooSpeed;
+    struct nuvec_s GooTimer;
+    int KillMeNow;
+};
+
+typedef struct BlockInfo BlockInfo, *PBlockInfo;
+
+typedef struct nuiffhdr_s nuiffhdr_s, *Pnuiffhdr_s;
+
+struct nuiffhdr_s {
+    int blk;
+    int size;
+};
+
+struct BlockInfo {
+    struct nuiffhdr_s hdr;
+    int pos;
+};
+
+typedef struct Bridges Bridges, *PBridges;
+
+struct Bridges { /* NEED TEST */
+    struct numtx_s field0_0x0[9]; /* not sure */
+    struct numtx_s field1_0x240[9]; /* not sure */
+    struct numtx_s field2_0x480[24]; /* not sure */
+    struct nuinstance_s * field3_0xa80[24]; /* not sure */
+    struct nuinstance_s * field4_0xae0;
+    struct nuvec_s field5_0xae4;
+    float field6_0xaf0;
+    struct nuvec_s field7_0xaf4[4]; /* not sure */
+    char field8_0xb24;
+    char field9_0xb25;
+    char field10_0xb26;
+    char field11_0xb27;
+    int field12_0xb28;
+    short field13_0xb2c;
+    short field14_0xb2e;
+    float field15_0xb30;
+    float field16_0xb34;
+    float field17_0xb38;
+    float field18_0xb3c;
+    float field19_0xb40;
+    float field20_0xb44;
+    float field21_0xb48;
+};
+
+typedef struct BUGSAVE BUGSAVE, *PBUGSAVE;
+
+struct BUGSAVE {
+    struct Quat Orientation;
+    short x;
+    short y;
+    short z;
+    short FrontWheelAng;
+    float WheelLength; /* unk type */
+};
+
+typedef struct CamMtx CamMtx, *PCamMtx;
+
+struct CamMtx {
+    struct numtx_s m;
+    struct numtx_s m0;
+    struct nuvec_s vX;
+    struct nuvec_s vY;
+    struct nuvec_s vZ;
+    struct nuvec_s pos;
+    struct nuvec_s oldpos;
+    struct nuvec_s newpos;
+    struct nuvec_s pos2;
+    struct nuvec_s seek;
+    float distance;
+    float ahead;
+    float judder;
+    float blend_time;
+    float blend_duration;
+    int xrot;
+    int yrot;
+    int zrot;
+    ushort old_xrot;
+    ushort new_xrot;
+    ushort old_yrot;
+    ushort new_yrot;
+    ushort old_zrot;
+    ushort new_zrot;
+    ushort hdg_to_player;
+    short route;
+    short i0;
+    short i1;
+    char mode;
+    char iRAIL;
+    short iALONG;
+    ushort angle;
+    char vertical;
+    char pad1;
+};
+
+typedef struct cdata_s cdata_s, *Pcdata_s;
+
+struct cdata_s { /* CharacterData */
+    char * path;
+    char * file;
+    char * name;
+    struct AnimList * anim;
+    float radius;
+    struct nuvec_s min;
+    struct nuvec_s max;
+    float scale;
+    float shadow_scale;
+};
+
+typedef struct chars chars, *Pchars;
+
+struct chars {
+    struct NUHGOBJ_s * obj;
+    char * path;
+    char * name;
+};
+
+typedef struct Chase Chase, *PChase;
+
+typedef struct event event, *Pevent;
+
+struct event {
+    struct nugspline_s * spl;
+    struct nuhspecial_s obj[24];
+};
+
+struct Chase {
+    struct nugspline_s * spl_START;
+    float time;
+    float duration;
+    struct nugspline_s * spl_CHASER[6];
+    struct nuvec_s pos[6];
+    struct RPos_s RPos[6];
+    struct anim_s anim[6];
+    struct nuhspecial_s obj[6];
+    short character[6];
+    short action[6];
+    ushort xrot[6];
+    ushort yrot[6];
+    ushort zrot[6];
+    struct event event[24][6];
+    struct nugspline_s * spl_MISC[4][6];
+    struct Nearest_Light_s lights[6];
+    float scale[6];
+    uchar misc_phase[6];
+    char ok[6];
+    uchar cuboid;
+    char i;
+    char i_last;
+    char i_next;
+    char status;
+    char iRAIL;
+    short iALONG;
+    float fALONG;
+};
+
+typedef struct CocoMoveInfo CocoMoveInfo, *PCocoMoveInfo;
+
+struct CocoMoveInfo {
+    float IDLESPEED;
+    float TIPTOESPEED;
+    float WALKSPEED;
+    float RUNSPEED;
+    float SPRINTSPEED;
+    float SLIDESPEED;
+    float CRAWLSPEED;
+    float DANGLESPEED;
+    float WADESPEED;
+    float JUMPHEIGHT;
+    float DANGLEGAP;
+    short JUMPFRAMES0;
+    short JUMPFRAMES1;
+    short JUMPFRAMES2;
+    short STARJUMPFRAMES;
+    short SOMERSAULTFRAMES;
+    short SPINFRAMES;
+    short SPINRESETFRAMES;
+    short SUPERSPINFRAMES;
+    short SUPERSPINWAITFRAMES;
+    short SLAMWAITFRAMES;
+    short SLIDEFRAMES;
+    short CROUCHINGFRAMES;
+    short JUMPLANDFRAMES;
+    short spad;
+};
+
+typedef struct colslot colslot, *Pcolslot;
+
+struct colslot {
+    float t;
+    float r;
+    float g;
+    float b;
+};
+
+typedef struct Cradat Cradat, *PCradat;
+
+typedef struct crateA crateA, *PcrateA;
+
+typedef struct crate_s crate_s, *Pcrate_s;
+
+struct crate_s {
+    int id;
+    char type[4];
+    struct nuvec_s pos;
+    struct crate_s * linked;
+    struct crate_s * trigger;
+    ushort orientation;
+    short offx;
+    short offy;
+    short offz;
+    short ccindex;
+    char draw;
+    char cpad1;
+};
+
+struct Cradat {
+    struct crateA * crate;
+    char type1;
+    char type2;
+    char type3;
+    char type4;
+};
+
+struct crateA {
+    struct crate_s * model;
+    struct nuvec_s pos0;
+    struct nuvec_s pos;
+    float oldy;
+    float shadow;
+    float mom;
+    float timer;
+    float duration;
+    char on;
+    char iRAIL;
+    short iALONG;
+    float fALONG;
+    ushort flags;
+    char type1;
+    char type2;
+    char type3;
+    char type4;
+    char newtype;
+    char subtype;
+    char i;
+    char metal_count;
+    char appeared;
+    char in_range;
+    short dx;
+    short dy;
+    short dz;
+    short iU;
+    short iD;
+    short iN;
+    short iS;
+    short iE;
+    short iW;
+    short trigger;
+    char counter;
+    char anim_cycle;
+    short index;
+    float anim_time;
+    float anim_duration;
+    float anim_speed;
+    ushort xrot0;
+    ushort zrot0;
+    ushort xrot;
+    ushort zrot;
+    ushort surface_xrot;
+    ushort surface_zrot;
+    short character;
+    short action;
+    struct nuvec_s colbox[2];
+};
+
+typedef struct CrashMoveInfo CrashMoveInfo, *PCrashMoveInfo;
+
+struct CrashMoveInfo {
+    float IDLESPEED;
+    float TIPTOESPEED;
+    float WALKSPEED;
+    float RUNSPEED;
+    float SPRINTSPEED;
+    float SLIDESPEED;
+    float CRAWLSPEED;
+    float DANGLESPEED;
+    float WADESPEED;
+    float JUMPHEIGHT;
+    float DANGLEGAP;
+    short JUMPFRAMES0;
+    short JUMPFRAMES1;
+    short JUMPFRAMES2;
+    short STARJUMPFRAMES;
+    short SOMERSAULTFRAMES;
+    short SPINFRAMES;
+    short SPINRESETFRAMES;
+    short SUPERSPINFRAMES;
+    short SUPERSPINWAITFRAMES;
+    short SLAMWAITFRAMES;
+    short SLIDEFRAMES;
+    short CROUCHINGFRAMES;
+    short JUMPLANDFRAMES;
+    short spad;
+};
+
+typedef struct CrateGroup_s CrateGroup_s, *PCrateGroup_s;
+
+struct CrateGroup_s {
+    struct nuvec_s origin;
+    float radius;
+    short iCrate;
+    short nCrates;
+    ushort angle;
+    char pad1;
+    char pad2;
+    struct nuvec_s minclip;
+    struct nuvec_s maxclip;
+};
+
 typedef struct Credit_s Credit_s, *PCredit_s;
 
 struct Credit_s {
@@ -1779,14 +3435,6 @@ struct Cursor {
     char pad3;
 };
 
-typedef struct CutChar CutChar, *PCutChar;
-
-struct CutChar {
-    struct NUHGOBJ_s * HGobj;
-    char * path;
-    char * name;
-};
-
 typedef struct cutscenedesc_s cutscenedesc_s, *Pcutscenedesc_s;
 
 struct cutscenedesc_s {
@@ -1804,6 +3452,12 @@ struct D3DBaseTexture {
     int Lock;
     int Format;
     int Size;
+};
+
+typedef struct D3DDevice D3DDevice, *PD3DDevice;
+
+struct D3DDevice {
+    undefined field0_0x0;
 };
 
 typedef struct D3DSurface D3DSurface, *PD3DSurface;
@@ -1824,21 +3478,36 @@ struct D3DTexture {
     undefined field1_0x1;
     undefined field2_0x2;
     undefined field3_0x3;
+    undefined field4_0x4;
+    undefined field5_0x5;
+    undefined field6_0x6;
+    undefined field7_0x7;
+    undefined field8_0x8;
+    undefined field9_0x9;
+    undefined field10_0xa;
+    undefined field11_0xb;
+    undefined field12_0xc;
+    undefined field13_0xd;
+    undefined field14_0xe;
+    undefined field15_0xf;
+    undefined field16_0x10;
+    undefined field17_0x11;
+    undefined field18_0x12;
+    undefined field19_0x13;
 };
 
-typedef union data data, *Pdata;
+typedef struct D3DXVECTOR2 D3DXVECTOR2, *PD3DXVECTOR2;
 
-typedef struct nuanimcurvedata_s nuanimcurvedata_s, *Pnuanimcurvedata_s;
-
-union data {
-    float constant;
-    struct nuanimcurvedata_s * curvedata;
+struct D3DXVECTOR2 {
+    float x;
+    float y;
 };
 
-struct nuanimcurvedata_s {
-    uint * mask;
-    ushort * key_ixs;
-    void * key_array;
+typedef struct datasetup_s datasetup_s, *Pdatasetup_s;
+
+struct datasetup_s {
+    struct nuvec_s vt[3];
+    int colour;
 };
 
 typedef struct DatFile DatFile, *PDatFile;
@@ -1880,44 +3549,258 @@ struct nudfnode_s {
     char * txt;
 };
 
-typedef struct DVDCommandBlock DVDCommandBlock, *PDVDCommandBlock;
+typedef struct debkeydatatype_s debkeydatatype_s, *Pdebkeydatatype_s;
 
-typedef struct DVDDiskID DVDDiskID, *PDVDDiskID;
+typedef struct rdata_s rdata_s, *Prdata_s;
 
-struct DVDDiskID {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
-    undefined field4_0x4;
-    undefined field5_0x5;
-    undefined field6_0x6;
-    undefined field7_0x7;
-    undefined field8_0x8;
-    undefined field9_0x9;
-    undefined field10_0xa;
-    undefined field11_0xb;
-    undefined field12_0xc;
-    undefined field13_0xd;
-    undefined field14_0xe;
-    undefined field15_0xf;
-    undefined field16_0x10;
-    undefined field17_0x11;
-    undefined field18_0x12;
-    undefined field19_0x13;
-    undefined field20_0x14;
-    undefined field21_0x15;
-    undefined field22_0x16;
-    undefined field23_0x17;
-    undefined field24_0x18;
-    undefined field25_0x19;
-    undefined field26_0x1a;
-    undefined field27_0x1b;
-    undefined field28_0x1c;
-    undefined field29_0x1d;
-    undefined field30_0x1e;
-    undefined field31_0x1f;
+typedef struct gensorttab gensorttab, *Pgensorttab;
+
+typedef struct debrissphere_s debrissphere_s, *Pdebrissphere_s;
+
+typedef struct debris_s debris_s, *Pdebris_s;
+
+struct debrissphere_s {
+    struct nuvec_s emit;
+    float t;
 };
+
+struct debkeydatatype_s {
+    struct rdata_s * chunks[128];
+    struct numtx_s rotmtx;
+    struct numtx_s emitrotmtx;
+    short count;
+    short type;
+    short active;
+    short debcount;
+    short disposed;
+    short pointer;
+    short reqcount;
+    short reqdebcount;
+    float x;
+    float y;
+    float z;
+    float toffx;
+    float toffy;
+    float toffz;
+    struct gensorttab * genptr;
+    void * gencode;
+    struct debkeydatatype_s * next;
+    struct debkeydatatype_s * prev;
+    short rotory;
+    short rotorz;
+    int instances;
+    short oncount;
+    short delay;
+    struct debrissphere_s spheres[8];
+    short sphere_next;
+    short sphere_next_emit;
+    int trigger_type;
+    int trigger_id;
+    float trigger_var;
+    short refrotz;
+    short refroty;
+    float refoff;
+    float refbounce;
+    short sound_next[4];
+    short group_id;
+    char unk[2];
+};
+
+struct gensorttab {
+    float x;
+    float y;
+    float z;
+    float time;
+    float mx;
+    float my;
+    float mz;
+    float etime;
+};
+
+struct debris_s {
+    float x;
+    float y;
+    float z;
+    float time;
+    float mx;
+    float my;
+    float mz;
+    float etime;
+};
+
+struct rdata_s {
+    int dmadata[2];
+    int unpackdata[2];
+    struct debris_s debris[32];
+};
+
+typedef enum debris_chunk_control_e {
+    DEBRIS_CHUNK_CONTROL_FREE=0,
+    DEBRIS_CHUNK_CONTROL_FREE_AND_UNLINK=1,
+    DEBRIS_CHUNK_CONTROL_SORT_DMA=2,
+    DEBRIS_CHUNK_CONTROL_RETURN_TO_STACK=3,
+    DEBRIS_CHUNK_CONTROL_CHANGE_COLOUR=4,
+    DEBRIS_CHUNK_CONTROL_DO_BOUNCEY=5,
+    DEBRIS_CHUNK_CONTROL_DO_BOUNCEXZ=6
+} debris_chunk_control_e;
+
+typedef struct debris_chunk_control_s debris_chunk_control_s, *Pdebris_chunk_control_s;
+
+struct debris_chunk_control_s {
+    struct rdata_s * chunk;
+    int delay;
+    enum debris_chunk_control_e action;
+    struct debkeydatatype_s * owner;
+    struct debris_chunk_control_s * next;
+    int ivariable;
+    float fvariable;
+    short type;
+    short refrotz;
+    short refroty;
+    float refoff;
+    float refbounce;
+};
+
+typedef struct debtab debtab, *Pdebtab;
+
+typedef struct wslot wslot, *Pwslot;
+
+typedef struct hslot hslot, *Phslot;
+
+typedef struct rotslot rotslot, *Protslot;
+
+typedef struct jibxslot jibxslot, *Pjibxslot;
+
+typedef struct jibyslot jibyslot, *Pjibyslot;
+
+typedef struct DmaDebTypePointer DmaDebTypePointer, *PDmaDebTypePointer;
+
+typedef struct sphereslot sphereslot, *Psphereslot;
+
+typedef struct sounds sounds, *Psounds;
+
+struct DmaDebTypePointer {
+    int DmaHeader[4];
+    float grav;
+    float gtime;
+    int DmaBody[4];
+    float u0;
+    float v0;
+    float u1;
+    float v1;
+    float u2;
+    float v2;
+    float u3;
+    float v3;
+    struct datasetup_s data[64];
+};
+
+struct sphereslot {
+    float t;
+    float r;
+};
+
+struct hslot {
+    float t;
+    float h;
+};
+
+struct jibyslot {
+    float t;
+    float y;
+};
+
+struct sounds {
+    int id;
+    int type;
+    int delay;
+};
+
+struct wslot {
+    float t;
+    float w;
+};
+
+struct rotslot {
+    float t;
+    float r;
+};
+
+struct jibxslot {
+    float t;
+    float x;
+};
+
+struct debtab {
+    char id[16];
+    char listid;
+    char pad1_unk;
+    short generate;
+    short debnum;
+    short ival_offset;
+    short ival_on;
+    short ival_on_ran;
+    short ival_off;
+    short ival_off_ran;
+    char gensort;
+    char gencode;
+    char mat;
+    char efftab;
+    float radius;
+    float cuton;
+    float cutoff;
+    float drawcutoff;
+    float emitmag;
+    struct nuvec_s variable_emit;
+    struct nuvec_s variable_emit_ranscale;
+    struct nuvec_s variable_start;
+    struct nuvec_s variable_start_ranscale;
+    float rsx;
+    float rsy;
+    float rsz;
+    float osx;
+    float osy;
+    float osz;
+    float rvx;
+    float rvy;
+    float rvz;
+    float ovx;
+    float ovy;
+    float ovz;
+    float grav;
+    float etime;
+    short uw;
+    char frames;
+    char rate;
+    float uvanim;
+    float jibxfreq;
+    float jibxamp;
+    float jibyfreq;
+    float jibyamp;
+    struct colslot colslot[8];
+    struct alpslot alpslot[8];
+    float minsize;
+    float maxsize;
+    struct wslot wslot[8];
+    struct hslot hslot[8];
+    float minrot;
+    float maxrot;
+    struct rotslot rotslot[8];
+    struct jibxslot jibxslot[8];
+    struct jibyslot jibyslot[8];
+    float u1;
+    float v1;
+    float u2;
+    float v2;
+    struct DmaDebTypePointer * dmadebtypeptr;
+    struct sphereslot sphereslot[8];
+    char numspheres;
+    char pad2_unk[3];
+    int variable_key;
+    struct sounds sounds[4];
+};
+
+typedef struct DVDCommandBlock DVDCommandBlock, *PDVDCommandBlock;
 
 struct DVDCommandBlock {
     struct DVDCommandBlock * next;
@@ -1935,7 +3818,7 @@ struct DVDCommandBlock {
 };
 
 
-/* WARNING! conflicting data type names: /auto_structs/DVDDiskID - /DVDDiskID */
+/* WARNING! conflicting data type names: /auto_structs/DVDDiskID - /auto_structs/GAMECUBE_SDK/DVDDiskID */
 
 typedef struct DVDFileInfo DVDFileInfo, *PDVDFileInfo;
 
@@ -1963,6 +3846,58 @@ typedef enum eCrashVehicleType {
     FireEngine=178
 } eCrashVehicleType;
 
+typedef struct edpp_ptldesc_s edpp_ptldesc_s, *Pedpp_ptldesc_s;
+
+struct edpp_ptldesc_s {
+    struct nuvec_s pos;
+    int type;
+    int handle;
+    short rotz;
+    short roty;
+    short emitrotz;
+    short emitroty;
+    int offset;
+    char name[16];
+    int trigger_type;
+    int trigger_id;
+    float trigger_var;
+    short refrotz;
+    short refroty;
+    float refoff;
+    float refbounce;
+    short group_id;
+    char unk[2];
+};
+
+typedef struct EnemyJeep EnemyJeep, *PEnemyJeep;
+
+typedef struct SIMWHEEL SIMWHEEL, *PSIMWHEEL;
+
+struct SIMWHEEL {
+    struct nuvec_s Position;
+    struct nuvec_s OldPosition;
+    float TrailWidth;
+    float Radius;
+    int Platform;
+    int SurfaceType;
+};
+
+struct EnemyJeep {
+    struct nuvec_s Position;
+    struct MYDRAW Draw;
+    float PlayBackTime;
+    int PlayBackMax;
+    struct NUJOINTANIM_s Joints[8];
+    struct numtx_s Locators[16];
+    int LocatorValidFrame;
+    struct SIMWHEEL TrailWheel[4];
+    float TimeLine;
+    char Active;
+    char DrawOn;
+    char TrailOn;
+    char Pad;
+};
+
 typedef struct fileinfo_s fileinfo_s, *Pfileinfo_s;
 
 struct fileinfo_s {
@@ -1976,6 +3911,67 @@ struct fileinfo_s {
     int buff;
 };
 
+typedef struct FIREBOSSSTRUCT FIREBOSSSTRUCT, *PFIREBOSSSTRUCT;
+
+typedef struct MYSPLINE MYSPLINE, *PMYSPLINE;
+
+typedef struct JEEPROCK JEEPROCK, *PJEEPROCK;
+
+struct MYSPLINE {
+    struct nugspline_s * Spline;
+    float Cur;
+    float Nex;
+    float Act;
+    float Inc;
+    struct nuvec_s CurPos;
+    struct nuvec_s NexPos;
+    float LookaheadDist;
+};
+
+struct FIREBOSSSTRUCT {
+    struct numtx_s Locator[16];
+    int DropSide;
+    float FootTime;
+    int HitPoints;
+    int Pass;
+    int Active;
+    float AngleY;
+    struct nuvec_s Position;
+    struct MYDRAW MainDraw;
+    struct MYDRAW ExplodeDraw;
+    struct MYSPLINE MainSpline;
+    int Seen;
+    float Speed;
+    int Action;
+    int LastAction;
+    float ActionTimer;
+    float ActionTimer2;
+    struct nuvec_s Vel;
+    int Dead;
+    struct numtx_s DrawMtx;
+    int BeenHitThisPass;
+    float BeenHitThisPassTimer;
+    struct JEEPROCK * Rock;
+};
+
+struct JEEPROCK {
+    struct nuvec_s Pos;
+    struct nuvec_s Vel;
+    int Active;
+    int Seen;
+    int Stuck;
+    int Explode;
+    int SmallDamage;
+    float Life;
+    struct ATLASSTRUCT Atlas;
+    int Grabbed;
+    int Mode;
+    float FlameTimer;
+    struct nuvec_s Scale;
+    int FireBlob;
+    int SmashMe;
+};
+
 typedef struct Font3DObjTab Font3DObjTab, *PFont3DObjTab;
 
 struct Font3DObjTab {
@@ -1984,6 +3980,15 @@ struct Font3DObjTab {
     char action;
     float anim_time;
     float scale;
+};
+
+typedef struct FootData FootData, *PFootData;
+
+struct FootData {
+    struct nuvec_s pnts[4];
+    short brightness;
+    char timer;
+    char gfx;
 };
 
 typedef int fxi;
@@ -2047,40 +4052,19 @@ struct Game_s {
     uchar pad_[3];
 };
 
+typedef struct GDeb GDeb, *PGDeb;
+
+struct GDeb {
+    int i;
+    char * name;
+    longlong levbits;
+};
+
 typedef struct ghg_inst_s ghg_inst_s, *Pghg_inst_s;
 
 struct ghg_inst_s {
     char * name;
     struct NUHGOBJ_s * scene;
-};
-
-typedef struct giftag giftag, *Pgiftag;
-
-struct giftag {
-    longlong NREG:4;
-    longlong FLG:2;
-    longlong PRIM:11;
-    longlong PRE:1;
-    longlong id:14;
-    longlong pad16:16;
-    longlong EOP:1;
-    longlong NLOOP:15;
-    longlong REGS15:4;
-    longlong REGS14:4;
-    longlong REGS13:4;
-    longlong REGS12:4;
-    longlong REGS11:4;
-    longlong REGS10:4;
-    longlong REGS9:4;
-    longlong REGS8:4;
-    longlong REGS7:4;
-    longlong REGS6:4;
-    longlong REGS5:4;
-    longlong REGS4:4;
-    longlong REGS3:4;
-    longlong REGS2:4;
-    longlong REGS1:4;
-    longlong REGS0:4;
 };
 
 typedef struct GLIDERSTRUCT GLIDERSTRUCT, *PGLIDERSTRUCT;
@@ -2102,50 +4086,50 @@ struct GLIDERSTRUCT {
     struct nuvec_s Resolved;
     struct nuvec_s RailPoint;
     float RailAngle;
-    float field16_0x70;
-    float field17_0x74;
-    float field18_0x78;
-    float field19_0x7c;
-    float field20_0x80;
-    float field21_0x84;
+    float TiltX;
+    float TiltZ;
+    float DestTiltX;
+    float DestTiltZ;
+    float AngleY;
+    float CamAngleY;
     float CamTiltX;
-    float field23_0x8c;
-    float field24_0x90;
-    float field25_0x94;
-    int field26_0x98;
-    float field27_0x9c;
-    float field28_0xa0;
-    int field29_0xa4;
-    int field30_0xa8;
-    float field31_0xac;
-    float field32_0xb0;
-    int field33_0xb4;
-    int field34_0xb8;
-    int field35_0xbc;
-    char field36_0xc0[16];
-    float field37_0xd0[16];
-    int field38_0x110;
-    int field39_0x114;
-    float field40_0x118;
-    float field41_0x11c;
-    float field42_0x120;
+    float CamTornRecoverTimer;
+    float InputX;
+    float InputZ;
+    int BarrelRoll;
+    float BarrelDelta;
+    float BarrelSpeedX;
+    int TerminalDive;
+    int TerminalDir;
+    float FireTimer;
+    float HitTimer;
+    int AutoPilot;
+    int ForceTurn;
+    int HitPoints;
+    char LocatorList[16];
+    float LocatorTime[16];
+    int InTornado;
+    int LastInTornado;
+    float InTornadoTime;
+    float TornadoSpin;
+    float InTornadoScale;
     struct nuvec_s ApparentPosition;
     struct nuvec_s ApparentVelocity;
     struct nuvec_s PositionStack[30];
     struct nuvec_s VelocityStack[30];
-    int field47_0x40c;
+    int StackIndx;
     float Speed;
-    float field49_0x414;
-    float field50_0x418;
-    float field51_0x41c;
-    float field52_0x420;
-    float field53_0x424;
+    float TargetSpeed;
+    float NotInFrontTimer;
+    float PullUpTimer;
+    float OverideTiltZ;
+    float TargetTimer;
     struct nuvec_s * MovingTargetPoint;
     struct nuvec_s * MovingTargetVel;
     int TargetOn;
-    float field57_0x434;
-    int field58_0x438;
-    float field59_0x43c;
+    float TargetedTime;
+    int TargetMoving;
+    float NextHitSoundTimer;
 };
 
 typedef struct GlobalTimer GlobalTimer, *PGlobalTimer;
@@ -2176,1237 +4160,170 @@ struct GS_Buffer {
     uint type;
 };
 
-typedef struct GX GX, *PGX;
+typedef struct hitdata hitdata, *Phitdata;
 
-typedef ushort uint16_t;
-
-typedef uint uint32_t;
-
-typedef uchar uint8_t;
-
-typedef struct GXTlutRegion GXTlutRegion, *PGXTlutRegion;
-
-struct GXTlutRegion {
-    uint padding;
+struct hitdata {
+    float minx;
+    float maxx;
+    float miny;
+    float maxy;
+    float minz;
+    float maxz;
+    struct nuvec_s pnts[4];
+    struct nuvec_s norm[2];
+    uchar info[4];
 };
 
-struct GX {
-    uint16_t field0_0x0;
-    uint16_t field1_0x2;
-    uint32_t field2_0x4;
-    uint32_t field3_0x8;
-    uint32_t field4_0xc;
-    uint32_t field5_0x10;
-    uint8_t field6_0x14;
-    uint32_t field7_0x15;
-    uint32_t field8_0x19;
-    uint32_t field9_0x1d;
-    uint8_t field10_0x21;
-    uint32_t field11_0x22;
-    uint32_t field12_0x26;
-    uint32_t field13_0x2a;
-    uint8_t field14_0x2e;
-    uint32_t field15_0x2f;
-    uint32_t field16_0x33;
-    uint32_t field17_0x37;
-    uint8_t field18_0x3b;
-    uint32_t field19_0x3c;
-    uint32_t field20_0x40;
-    uint32_t field21_0x44;
-    uint8_t field22_0x48;
-    uint32_t field23_0x49;
-    uint8_t field24_0x4d;
-    uint32_t field25_0x4e;
-    float field26_0x52;
-    float field27_0x56;
-    float field28_0x5a;
-    float field29_0x5e;
-    float field30_0x62;
-    float field31_0x66;
-    float field32_0x6a;
-    float field33_0x6e;
-    float field34_0x72;
-    float field35_0x76;
-    float field36_0x7a;
-    float field37_0x7e;
-    uint8_t field38_0x82;
-    float field39_0x83;
-    uint8_t field40_0x87;
-    uint32_t field41_0x88;
-    uint8_t field42_0x8c;
-    uint8_t field43_0x8d;
-    uint8_t field44_0x8e;
-    uint8_t field45_0x8f;
-    uint32_t field46_0x90;
-    undefined field47_0x94;
-    undefined field48_0x95;
-    undefined field49_0x96;
-    undefined field50_0x97;
-    undefined field51_0x98;
-    undefined field52_0x99;
-    undefined field53_0x9a;
-    undefined field54_0x9b;
-    undefined field55_0x9c;
-    undefined field56_0x9d;
-    undefined field57_0x9e;
-    undefined field58_0x9f;
-    undefined field59_0xa0;
-    undefined field60_0xa1;
-    undefined field61_0xa2;
-    undefined field62_0xa3;
-    undefined field63_0xa4;
-    undefined field64_0xa5;
-    undefined field65_0xa6;
-    undefined field66_0xa7;
-    undefined field67_0xa8;
-    undefined field68_0xa9;
-    undefined field69_0xaa;
-    undefined field70_0xab;
-    undefined field71_0xac;
-    undefined field72_0xad;
-    undefined field73_0xae;
-    undefined field74_0xaf;
-    undefined field75_0xb0;
-    undefined field76_0xb1;
-    undefined field77_0xb2;
-    undefined field78_0xb3;
-    undefined field79_0xb4;
-    undefined field80_0xb5;
-    undefined field81_0xb6;
-    undefined field82_0xb7;
-    undefined field83_0xb8;
-    undefined field84_0xb9;
-    undefined field85_0xba;
-    undefined field86_0xbb;
-    undefined field87_0xbc;
-    undefined field88_0xbd;
-    undefined field89_0xbe;
-    undefined field90_0xbf;
-    undefined field91_0xc0;
-    undefined field92_0xc1;
-    undefined field93_0xc2;
-    undefined field94_0xc3;
-    undefined field95_0xc4;
-    undefined field96_0xc5;
-    undefined field97_0xc6;
-    undefined field98_0xc7;
-    undefined field99_0xc8;
-    undefined field100_0xc9;
-    undefined field101_0xca;
-    undefined field102_0xcb;
-    undefined field103_0xcc;
-    undefined field104_0xcd;
-    undefined field105_0xce;
-    undefined field106_0xcf;
-    undefined field107_0xd0;
-    undefined field108_0xd1;
-    undefined field109_0xd2;
-    undefined field110_0xd3;
-    undefined field111_0xd4;
-    undefined field112_0xd5;
-    undefined field113_0xd6;
-    undefined field114_0xd7;
-    undefined field115_0xd8;
-    undefined field116_0xd9;
-    undefined field117_0xda;
-    undefined field118_0xdb;
-    undefined field119_0xdc;
-    undefined field120_0xdd;
-    undefined field121_0xde;
-    undefined field122_0xdf;
-    undefined field123_0xe0;
-    undefined field124_0xe1;
-    undefined field125_0xe2;
-    undefined field126_0xe3;
-    undefined field127_0xe4;
-    undefined field128_0xe5;
-    undefined field129_0xe6;
-    undefined field130_0xe7;
-    undefined field131_0xe8;
-    undefined field132_0xe9;
-    undefined field133_0xea;
-    undefined field134_0xeb;
-    undefined field135_0xec;
-    undefined field136_0xed;
-    undefined field137_0xee;
-    undefined field138_0xef;
-    undefined field139_0xf0;
-    undefined field140_0xf1;
-    undefined field141_0xf2;
-    undefined field142_0xf3;
-    undefined field143_0xf4;
-    undefined field144_0xf5;
-    undefined field145_0xf6;
-    undefined field146_0xf7;
-    undefined field147_0xf8;
-    undefined field148_0xf9;
-    undefined field149_0xfa;
-    undefined field150_0xfb;
-    undefined field151_0xfc;
-    undefined field152_0xfd;
-    undefined field153_0xfe;
-    undefined field154_0xff;
-    undefined field155_0x100;
-    undefined field156_0x101;
-    undefined field157_0x102;
-    undefined field158_0x103;
-    undefined field159_0x104;
-    undefined field160_0x105;
-    undefined field161_0x106;
-    undefined field162_0x107;
-    undefined field163_0x108;
-    undefined field164_0x109;
-    undefined field165_0x10a;
-    undefined field166_0x10b;
-    undefined field167_0x10c;
-    undefined field168_0x10d;
-    undefined field169_0x10e;
-    undefined field170_0x10f;
-    undefined field171_0x110;
-    undefined field172_0x111;
-    undefined field173_0x112;
-    undefined field174_0x113;
-    undefined field175_0x114;
-    undefined field176_0x115;
-    undefined field177_0x116;
-    undefined field178_0x117;
-    undefined field179_0x118;
-    undefined field180_0x119;
-    undefined field181_0x11a;
-    undefined field182_0x11b;
-    undefined field183_0x11c;
-    undefined field184_0x11d;
-    undefined field185_0x11e;
-    undefined field186_0x11f;
-    undefined field187_0x120;
-    undefined field188_0x121;
-    undefined field189_0x122;
-    undefined field190_0x123;
-    undefined field191_0x124;
-    undefined field192_0x125;
-    undefined field193_0x126;
-    undefined field194_0x127;
-    undefined field195_0x128;
-    undefined field196_0x129;
-    undefined field197_0x12a;
-    undefined field198_0x12b;
-    undefined field199_0x12c;
-    undefined field200_0x12d;
-    undefined field201_0x12e;
-    undefined field202_0x12f;
-    undefined field203_0x130;
-    undefined field204_0x131;
-    undefined field205_0x132;
-    undefined field206_0x133;
-    undefined field207_0x134;
-    undefined field208_0x135;
-    undefined field209_0x136;
-    undefined field210_0x137;
-    undefined field211_0x138;
-    undefined field212_0x139;
-    undefined field213_0x13a;
-    undefined field214_0x13b;
-    undefined field215_0x13c;
-    undefined field216_0x13d;
-    undefined field217_0x13e;
-    undefined field218_0x13f;
-    undefined field219_0x140;
-    undefined field220_0x141;
-    undefined field221_0x142;
-    undefined field222_0x143;
-    undefined field223_0x144;
-    undefined field224_0x145;
-    undefined field225_0x146;
-    undefined field226_0x147;
-    undefined field227_0x148;
-    undefined field228_0x149;
-    undefined field229_0x14a;
-    undefined field230_0x14b;
-    undefined field231_0x14c;
-    undefined field232_0x14d;
-    undefined field233_0x14e;
-    undefined field234_0x14f;
-    undefined field235_0x150;
-    undefined field236_0x151;
-    undefined field237_0x152;
-    undefined field238_0x153;
-    undefined field239_0x154;
-    undefined field240_0x155;
-    undefined field241_0x156;
-    undefined field242_0x157;
-    undefined field243_0x158;
-    undefined field244_0x159;
-    undefined field245_0x15a;
-    undefined field246_0x15b;
-    undefined field247_0x15c;
-    undefined field248_0x15d;
-    undefined field249_0x15e;
-    undefined field250_0x15f;
-    undefined field251_0x160;
-    undefined field252_0x161;
-    undefined field253_0x162;
-    undefined field254_0x163;
-    undefined field255_0x164;
-    undefined field256_0x165;
-    undefined field257_0x166;
-    undefined field258_0x167;
-    undefined field259_0x168;
-    undefined field260_0x169;
-    undefined field261_0x16a;
-    undefined field262_0x16b;
-    undefined field263_0x16c;
-    undefined field264_0x16d;
-    undefined field265_0x16e;
-    undefined field266_0x16f;
-    undefined field267_0x170;
-    undefined field268_0x171;
-    undefined field269_0x172;
-    undefined field270_0x173;
-    undefined field271_0x174;
-    undefined field272_0x175;
-    undefined field273_0x176;
-    undefined field274_0x177;
-    undefined field275_0x178;
-    undefined field276_0x179;
-    undefined field277_0x17a;
-    undefined field278_0x17b;
-    undefined field279_0x17c;
-    undefined field280_0x17d;
-    undefined field281_0x17e;
-    undefined field282_0x17f;
-    undefined field283_0x180;
-    undefined field284_0x181;
-    undefined field285_0x182;
-    undefined field286_0x183;
-    undefined field287_0x184;
-    undefined field288_0x185;
-    undefined field289_0x186;
-    undefined field290_0x187;
-    undefined field291_0x188;
-    undefined field292_0x189;
-    undefined field293_0x18a;
-    undefined field294_0x18b;
-    undefined field295_0x18c;
-    undefined field296_0x18d;
-    undefined field297_0x18e;
-    undefined field298_0x18f;
-    undefined field299_0x190;
-    undefined field300_0x191;
-    undefined field301_0x192;
-    undefined field302_0x193;
-    undefined field303_0x194;
-    undefined field304_0x195;
-    undefined field305_0x196;
-    undefined field306_0x197;
-    undefined field307_0x198;
-    undefined field308_0x199;
-    undefined field309_0x19a;
-    undefined field310_0x19b;
-    undefined field311_0x19c;
-    undefined field312_0x19d;
-    undefined field313_0x19e;
-    undefined field314_0x19f;
-    undefined field315_0x1a0;
-    undefined field316_0x1a1;
-    undefined field317_0x1a2;
-    undefined field318_0x1a3;
-    undefined field319_0x1a4;
-    undefined field320_0x1a5;
-    undefined field321_0x1a6;
-    undefined field322_0x1a7;
-    undefined field323_0x1a8;
-    undefined field324_0x1a9;
-    undefined field325_0x1aa;
-    undefined field326_0x1ab;
-    undefined field327_0x1ac;
-    undefined field328_0x1ad;
-    undefined field329_0x1ae;
-    undefined field330_0x1af;
-    undefined field331_0x1b0;
-    undefined field332_0x1b1;
-    undefined field333_0x1b2;
-    undefined field334_0x1b3;
-    undefined field335_0x1b4;
-    undefined field336_0x1b5;
-    undefined field337_0x1b6;
-    undefined field338_0x1b7;
-    undefined field339_0x1b8;
-    undefined field340_0x1b9;
-    undefined field341_0x1ba;
-    undefined field342_0x1bb;
-    undefined field343_0x1bc;
-    undefined field344_0x1bd;
-    undefined field345_0x1be;
-    undefined field346_0x1bf;
-    undefined field347_0x1c0;
-    undefined field348_0x1c1;
-    undefined field349_0x1c2;
-    undefined field350_0x1c3;
-    undefined field351_0x1c4;
-    undefined field352_0x1c5;
-    undefined field353_0x1c6;
-    undefined field354_0x1c7;
-    undefined field355_0x1c8;
-    undefined field356_0x1c9;
-    undefined field357_0x1ca;
-    undefined field358_0x1cb;
-    undefined field359_0x1cc;
-    undefined field360_0x1cd;
-    undefined field361_0x1ce;
-    undefined field362_0x1cf;
-    undefined field363_0x1d0;
-    undefined field364_0x1d1;
-    undefined field365_0x1d2;
-    undefined field366_0x1d3;
-    undefined field367_0x1d4;
-    undefined field368_0x1d5;
-    undefined field369_0x1d6;
-    undefined field370_0x1d7;
-    undefined field371_0x1d8;
-    undefined field372_0x1d9;
-    undefined field373_0x1da;
-    undefined field374_0x1db;
-    undefined field375_0x1dc;
-    undefined field376_0x1dd;
-    undefined field377_0x1de;
-    undefined field378_0x1df;
-    undefined field379_0x1e0;
-    undefined field380_0x1e1;
-    undefined field381_0x1e2;
-    undefined field382_0x1e3;
-    undefined field383_0x1e4;
-    undefined field384_0x1e5;
-    undefined field385_0x1e6;
-    undefined field386_0x1e7;
-    undefined field387_0x1e8;
-    undefined field388_0x1e9;
-    undefined field389_0x1ea;
-    undefined field390_0x1eb;
-    undefined field391_0x1ec;
-    undefined field392_0x1ed;
-    undefined field393_0x1ee;
-    undefined field394_0x1ef;
-    undefined field395_0x1f0;
-    undefined field396_0x1f1;
-    undefined field397_0x1f2;
-    undefined field398_0x1f3;
-    undefined field399_0x1f4;
-    undefined field400_0x1f5;
-    undefined field401_0x1f6;
-    undefined field402_0x1f7;
-    undefined field403_0x1f8;
-    undefined field404_0x1f9;
-    undefined field405_0x1fa;
-    undefined field406_0x1fb;
-    undefined field407_0x1fc;
-    undefined field408_0x1fd;
-    undefined field409_0x1fe;
-    undefined field410_0x1ff;
-    undefined field411_0x200;
-    undefined field412_0x201;
-    undefined field413_0x202;
-    undefined field414_0x203;
-    uint field415_0x204;
-    undefined field416_0x208;
-    undefined field417_0x209;
-    undefined field418_0x20a;
-    undefined field419_0x20b;
-    undefined field420_0x20c;
-    undefined field421_0x20d;
-    undefined field422_0x20e;
-    undefined field423_0x20f;
-    undefined field424_0x210;
-    undefined field425_0x211;
-    undefined field426_0x212;
-    undefined field427_0x213;
-    undefined field428_0x214;
-    undefined field429_0x215;
-    undefined field430_0x216;
-    undefined field431_0x217;
-    undefined field432_0x218;
-    undefined field433_0x219;
-    undefined field434_0x21a;
-    undefined field435_0x21b;
-    undefined field436_0x21c;
-    undefined field437_0x21d;
-    undefined field438_0x21e;
-    undefined field439_0x21f;
-    undefined field440_0x220;
-    undefined field441_0x221;
-    undefined field442_0x222;
-    undefined field443_0x223;
-    undefined field444_0x224;
-    undefined field445_0x225;
-    undefined field446_0x226;
-    undefined field447_0x227;
-    undefined field448_0x228;
-    undefined field449_0x229;
-    undefined field450_0x22a;
-    undefined field451_0x22b;
-    undefined field452_0x22c;
-    undefined field453_0x22d;
-    undefined field454_0x22e;
-    undefined field455_0x22f;
-    undefined field456_0x230;
-    undefined field457_0x231;
-    undefined field458_0x232;
-    undefined field459_0x233;
-    undefined field460_0x234;
-    undefined field461_0x235;
-    undefined field462_0x236;
-    undefined field463_0x237;
-    undefined field464_0x238;
-    undefined field465_0x239;
-    undefined field466_0x23a;
-    undefined field467_0x23b;
-    undefined field468_0x23c;
-    undefined field469_0x23d;
-    undefined field470_0x23e;
-    undefined field471_0x23f;
-    undefined field472_0x240;
-    undefined field473_0x241;
-    undefined field474_0x242;
-    undefined field475_0x243;
-    undefined field476_0x244;
-    undefined field477_0x245;
-    undefined field478_0x246;
-    undefined field479_0x247;
-    undefined field480_0x248;
-    undefined field481_0x249;
-    undefined field482_0x24a;
-    undefined field483_0x24b;
-    undefined field484_0x24c;
-    undefined field485_0x24d;
-    undefined field486_0x24e;
-    undefined field487_0x24f;
-    undefined field488_0x250;
-    undefined field489_0x251;
-    undefined field490_0x252;
-    undefined field491_0x253;
-    undefined field492_0x254;
-    undefined field493_0x255;
-    undefined field494_0x256;
-    undefined field495_0x257;
-    undefined field496_0x258;
-    undefined field497_0x259;
-    undefined field498_0x25a;
-    undefined field499_0x25b;
-    undefined field500_0x25c;
-    undefined field501_0x25d;
-    undefined field502_0x25e;
-    undefined field503_0x25f;
-    undefined field504_0x260;
-    undefined field505_0x261;
-    undefined field506_0x262;
-    undefined field507_0x263;
-    undefined field508_0x264;
-    undefined field509_0x265;
-    undefined field510_0x266;
-    undefined field511_0x267;
-    undefined field512_0x268;
-    undefined field513_0x269;
-    undefined field514_0x26a;
-    undefined field515_0x26b;
-    undefined field516_0x26c;
-    undefined field517_0x26d;
-    undefined field518_0x26e;
-    undefined field519_0x26f;
-    undefined field520_0x270;
-    undefined field521_0x271;
-    undefined field522_0x272;
-    undefined field523_0x273;
-    undefined field524_0x274;
-    undefined field525_0x275;
-    undefined field526_0x276;
-    undefined field527_0x277;
-    undefined field528_0x278;
-    undefined field529_0x279;
-    undefined field530_0x27a;
-    undefined field531_0x27b;
-    undefined field532_0x27c;
-    undefined field533_0x27d;
-    undefined field534_0x27e;
-    undefined field535_0x27f;
-    undefined field536_0x280;
-    undefined field537_0x281;
-    undefined field538_0x282;
-    undefined field539_0x283;
-    undefined field540_0x284;
-    undefined field541_0x285;
-    undefined field542_0x286;
-    undefined field543_0x287;
-    undefined field544_0x288;
-    undefined field545_0x289;
-    undefined field546_0x28a;
-    undefined field547_0x28b;
-    undefined field548_0x28c;
-    undefined field549_0x28d;
-    undefined field550_0x28e;
-    undefined field551_0x28f;
-    undefined field552_0x290;
-    undefined field553_0x291;
-    undefined field554_0x292;
-    undefined field555_0x293;
-    undefined field556_0x294;
-    undefined field557_0x295;
-    undefined field558_0x296;
-    undefined field559_0x297;
-    undefined field560_0x298;
-    undefined field561_0x299;
-    undefined field562_0x29a;
-    undefined field563_0x29b;
-    undefined field564_0x29c;
-    undefined field565_0x29d;
-    undefined field566_0x29e;
-    undefined field567_0x29f;
-    undefined field568_0x2a0;
-    undefined field569_0x2a1;
-    undefined field570_0x2a2;
-    undefined field571_0x2a3;
-    undefined field572_0x2a4;
-    undefined field573_0x2a5;
-    undefined field574_0x2a6;
-    undefined field575_0x2a7;
-    undefined field576_0x2a8;
-    undefined field577_0x2a9;
-    undefined field578_0x2aa;
-    undefined field579_0x2ab;
-    undefined field580_0x2ac;
-    undefined field581_0x2ad;
-    undefined field582_0x2ae;
-    undefined field583_0x2af;
-    undefined field584_0x2b0;
-    undefined field585_0x2b1;
-    undefined field586_0x2b2;
-    undefined field587_0x2b3;
-    undefined field588_0x2b4;
-    undefined field589_0x2b5;
-    undefined field590_0x2b6;
-    undefined field591_0x2b7;
-    undefined field592_0x2b8;
-    undefined field593_0x2b9;
-    undefined field594_0x2ba;
-    undefined field595_0x2bb;
-    undefined field596_0x2bc;
-    undefined field597_0x2bd;
-    undefined field598_0x2be;
-    undefined field599_0x2bf;
-    undefined field600_0x2c0;
-    undefined field601_0x2c1;
-    undefined field602_0x2c2;
-    undefined field603_0x2c3;
-    undefined field604_0x2c4;
-    undefined field605_0x2c5;
-    undefined field606_0x2c6;
-    undefined field607_0x2c7;
-    undefined field608_0x2c8;
-    undefined field609_0x2c9;
-    undefined field610_0x2ca;
-    undefined field611_0x2cb;
-    undefined field612_0x2cc;
-    undefined field613_0x2cd;
-    undefined field614_0x2ce;
-    undefined field615_0x2cf;
-    struct GXTlutRegion tlut_reg_2;
-    undefined field617_0x2d4;
-    undefined field618_0x2d5;
-    undefined field619_0x2d6;
-    undefined field620_0x2d7;
-    undefined field621_0x2d8;
-    undefined field622_0x2d9;
-    undefined field623_0x2da;
-    undefined field624_0x2db;
-    undefined field625_0x2dc;
-    undefined field626_0x2dd;
-    undefined field627_0x2de;
-    undefined field628_0x2df;
-    undefined field629_0x2e0;
-    undefined field630_0x2e1;
-    undefined field631_0x2e2;
-    undefined field632_0x2e3;
-    undefined field633_0x2e4;
-    undefined field634_0x2e5;
-    undefined field635_0x2e6;
-    undefined field636_0x2e7;
-    undefined field637_0x2e8;
-    undefined field638_0x2e9;
-    undefined field639_0x2ea;
-    undefined field640_0x2eb;
-    undefined field641_0x2ec;
-    undefined field642_0x2ed;
-    undefined field643_0x2ee;
-    undefined field644_0x2ef;
-    undefined field645_0x2f0;
-    undefined field646_0x2f1;
-    undefined field647_0x2f2;
-    undefined field648_0x2f3;
-    undefined field649_0x2f4;
-    undefined field650_0x2f5;
-    undefined field651_0x2f6;
-    undefined field652_0x2f7;
-    undefined field653_0x2f8;
-    undefined field654_0x2f9;
-    undefined field655_0x2fa;
-    undefined field656_0x2fb;
-    undefined field657_0x2fc;
-    undefined field658_0x2fd;
-    undefined field659_0x2fe;
-    undefined field660_0x2ff;
-    undefined field661_0x300;
-    undefined field662_0x301;
-    undefined field663_0x302;
-    undefined field664_0x303;
-    undefined field665_0x304;
-    undefined field666_0x305;
-    undefined field667_0x306;
-    undefined field668_0x307;
-    undefined field669_0x308;
-    undefined field670_0x309;
-    undefined field671_0x30a;
-    undefined field672_0x30b;
-    undefined field673_0x30c;
-    undefined field674_0x30d;
-    undefined field675_0x30e;
-    undefined field676_0x30f;
-    undefined field677_0x310;
-    undefined field678_0x311;
-    undefined field679_0x312;
-    undefined field680_0x313;
-    undefined field681_0x314;
-    undefined field682_0x315;
-    undefined field683_0x316;
-    undefined field684_0x317;
-    undefined field685_0x318;
-    undefined field686_0x319;
-    undefined field687_0x31a;
-    undefined field688_0x31b;
-    undefined field689_0x31c;
-    undefined field690_0x31d;
-    undefined field691_0x31e;
-    undefined field692_0x31f;
-    undefined field693_0x320;
-    undefined field694_0x321;
-    undefined field695_0x322;
-    undefined field696_0x323;
-    undefined field697_0x324;
-    undefined field698_0x325;
-    undefined field699_0x326;
-    undefined field700_0x327;
-    undefined field701_0x328;
-    undefined field702_0x329;
-    undefined field703_0x32a;
-    undefined field704_0x32b;
-    undefined field705_0x32c;
-    undefined field706_0x32d;
-    undefined field707_0x32e;
-    undefined field708_0x32f;
-    undefined field709_0x330;
-    undefined field710_0x331;
-    undefined field711_0x332;
-    undefined field712_0x333;
-    undefined field713_0x334;
-    undefined field714_0x335;
-    undefined field715_0x336;
-    undefined field716_0x337;
-    undefined field717_0x338;
-    undefined field718_0x339;
-    undefined field719_0x33a;
-    undefined field720_0x33b;
-    undefined field721_0x33c;
-    undefined field722_0x33d;
-    undefined field723_0x33e;
-    undefined field724_0x33f;
-    undefined field725_0x340;
-    undefined field726_0x341;
-    undefined field727_0x342;
-    undefined field728_0x343;
-    undefined field729_0x344;
-    undefined field730_0x345;
-    undefined field731_0x346;
-    undefined field732_0x347;
-    undefined field733_0x348;
-    undefined field734_0x349;
-    undefined field735_0x34a;
-    undefined field736_0x34b;
-    undefined field737_0x34c;
-    undefined field738_0x34d;
-    undefined field739_0x34e;
-    undefined field740_0x34f;
-    undefined field741_0x350;
-    undefined field742_0x351;
-    undefined field743_0x352;
-    undefined field744_0x353;
-    undefined field745_0x354;
-    undefined field746_0x355;
-    undefined field747_0x356;
-    undefined field748_0x357;
-    undefined field749_0x358;
-    undefined field750_0x359;
-    undefined field751_0x35a;
-    undefined field752_0x35b;
-    undefined field753_0x35c;
-    undefined field754_0x35d;
-    undefined field755_0x35e;
-    undefined field756_0x35f;
-    undefined field757_0x360;
-    undefined field758_0x361;
-    undefined field759_0x362;
-    undefined field760_0x363;
-    undefined field761_0x364;
-    undefined field762_0x365;
-    undefined field763_0x366;
-    undefined field764_0x367;
-    undefined field765_0x368;
-    undefined field766_0x369;
-    undefined field767_0x36a;
-    undefined field768_0x36b;
-    undefined field769_0x36c;
-    undefined field770_0x36d;
-    undefined field771_0x36e;
-    undefined field772_0x36f;
-    undefined field773_0x370;
-    undefined field774_0x371;
-    undefined field775_0x372;
-    undefined field776_0x373;
-    undefined field777_0x374;
-    undefined field778_0x375;
-    undefined field779_0x376;
-    undefined field780_0x377;
-    undefined field781_0x378;
-    undefined field782_0x379;
-    undefined field783_0x37a;
-    undefined field784_0x37b;
-    undefined field785_0x37c;
-    undefined field786_0x37d;
-    undefined field787_0x37e;
-    undefined field788_0x37f;
-    undefined field789_0x380;
-    undefined field790_0x381;
-    undefined field791_0x382;
-    undefined field792_0x383;
-    undefined field793_0x384;
-    undefined field794_0x385;
-    undefined field795_0x386;
-    undefined field796_0x387;
-    undefined field797_0x388;
-    undefined field798_0x389;
-    undefined field799_0x38a;
-    undefined field800_0x38b;
-    undefined field801_0x38c;
-    undefined field802_0x38d;
-    undefined field803_0x38e;
-    undefined field804_0x38f;
-    undefined field805_0x390;
-    undefined field806_0x391;
-    undefined field807_0x392;
-    undefined field808_0x393;
-    undefined field809_0x394;
-    undefined field810_0x395;
-    undefined field811_0x396;
-    undefined field812_0x397;
-    undefined field813_0x398;
-    undefined field814_0x399;
-    undefined field815_0x39a;
-    undefined field816_0x39b;
-    undefined field817_0x39c;
-    undefined field818_0x39d;
-    undefined field819_0x39e;
-    undefined field820_0x39f;
-    undefined field821_0x3a0;
-    undefined field822_0x3a1;
-    undefined field823_0x3a2;
-    undefined field824_0x3a3;
-    undefined field825_0x3a4;
-    undefined field826_0x3a5;
-    undefined field827_0x3a6;
-    undefined field828_0x3a7;
-    undefined field829_0x3a8;
-    undefined field830_0x3a9;
-    undefined field831_0x3aa;
-    undefined field832_0x3ab;
-    undefined field833_0x3ac;
-    undefined field834_0x3ad;
-    undefined field835_0x3ae;
-    undefined field836_0x3af;
-    undefined field837_0x3b0;
-    undefined field838_0x3b1;
-    undefined field839_0x3b2;
-    undefined field840_0x3b3;
-    undefined field841_0x3b4;
-    undefined field842_0x3b5;
-    undefined field843_0x3b6;
-    undefined field844_0x3b7;
-    undefined field845_0x3b8;
-    undefined field846_0x3b9;
-    undefined field847_0x3ba;
-    undefined field848_0x3bb;
-    undefined field849_0x3bc;
-    undefined field850_0x3bd;
-    undefined field851_0x3be;
-    undefined field852_0x3bf;
-    undefined field853_0x3c0;
-    undefined field854_0x3c1;
-    undefined field855_0x3c2;
-    undefined field856_0x3c3;
-    undefined field857_0x3c4;
-    undefined field858_0x3c5;
-    undefined field859_0x3c6;
-    undefined field860_0x3c7;
-    undefined field861_0x3c8;
-    undefined field862_0x3c9;
-    undefined field863_0x3ca;
-    undefined field864_0x3cb;
-    undefined field865_0x3cc;
-    undefined field866_0x3cd;
-    undefined field867_0x3ce;
-    undefined field868_0x3cf;
-    struct GXTlutRegion * tlut_reg;
-    undefined field870_0x3d4;
-    undefined field871_0x3d5;
-    undefined field872_0x3d6;
-    undefined field873_0x3d7;
-    undefined field874_0x3d8;
-    undefined field875_0x3d9;
-    undefined field876_0x3da;
-    undefined field877_0x3db;
-    undefined field878_0x3dc;
-    undefined field879_0x3dd;
-    undefined field880_0x3de;
-    undefined field881_0x3df;
-    undefined field882_0x3e0;
-    undefined field883_0x3e1;
-    undefined field884_0x3e2;
-    undefined field885_0x3e3;
-    undefined field886_0x3e4;
-    undefined field887_0x3e5;
-    undefined field888_0x3e6;
-    undefined field889_0x3e7;
-    undefined field890_0x3e8;
-    undefined field891_0x3e9;
-    undefined field892_0x3ea;
-    undefined field893_0x3eb;
-    undefined field894_0x3ec;
-    undefined field895_0x3ed;
-    undefined field896_0x3ee;
-    undefined field897_0x3ef;
-    undefined field898_0x3f0;
-    undefined field899_0x3f1;
-    undefined field900_0x3f2;
-    undefined field901_0x3f3;
-    undefined field902_0x3f4;
-    undefined field903_0x3f5;
-    undefined field904_0x3f6;
-    undefined field905_0x3f7;
-    undefined field906_0x3f8;
-    undefined field907_0x3f9;
-    undefined field908_0x3fa;
-    undefined field909_0x3fb;
-    undefined field910_0x3fc;
-    undefined field911_0x3fd;
-    undefined field912_0x3fe;
-    undefined field913_0x3ff;
-    undefined field914_0x400;
-    undefined field915_0x401;
-    undefined field916_0x402;
-    undefined field917_0x403;
-    undefined field918_0x404;
-    undefined field919_0x405;
-    undefined field920_0x406;
-    undefined field921_0x407;
-    undefined field922_0x408;
-    undefined field923_0x409;
-    undefined field924_0x40a;
-    undefined field925_0x40b;
-    undefined field926_0x40c;
-    undefined field927_0x40d;
-    undefined field928_0x40e;
-    undefined field929_0x40f;
-    undefined field930_0x410;
-    undefined field931_0x411;
-    undefined field932_0x412;
-    undefined field933_0x413;
-    undefined field934_0x414;
-    undefined field935_0x415;
-    undefined field936_0x416;
-    undefined field937_0x417;
-    undefined field938_0x418;
-    undefined field939_0x419;
-    undefined field940_0x41a;
-    undefined field941_0x41b;
-    undefined field942_0x41c;
-    undefined field943_0x41d;
-    undefined field944_0x41e;
-    undefined field945_0x41f;
-    undefined field946_0x420;
-    undefined field947_0x421;
-    undefined field948_0x422;
-    undefined field949_0x423;
-    undefined field950_0x424;
-    undefined field951_0x425;
-    undefined field952_0x426;
-    undefined field953_0x427;
-    undefined field954_0x428;
-    undefined field955_0x429;
-    undefined field956_0x42a;
-    undefined field957_0x42b;
-    undefined field958_0x42c;
-    undefined field959_0x42d;
-    undefined field960_0x42e;
-    undefined field961_0x42f;
-    undefined field962_0x430;
-    undefined field963_0x431;
-    undefined field964_0x432;
-    undefined field965_0x433;
-    undefined field966_0x434;
-    undefined field967_0x435;
-    undefined field968_0x436;
-    undefined field969_0x437;
-    undefined field970_0x438;
-    undefined field971_0x439;
-    undefined field972_0x43a;
-    undefined field973_0x43b;
-    undefined field974_0x43c;
-    undefined field975_0x43d;
-    undefined field976_0x43e;
-    undefined field977_0x43f;
-    undefined field978_0x440;
-    undefined field979_0x441;
-    undefined field980_0x442;
-    undefined field981_0x443;
-    undefined field982_0x444;
-    undefined field983_0x445;
-    undefined field984_0x446;
-    undefined field985_0x447;
-    undefined field986_0x448;
-    undefined field987_0x449;
-    undefined field988_0x44a;
-    undefined field989_0x44b;
-    undefined field990_0x44c;
-    undefined field991_0x44d;
-    undefined field992_0x44e;
-    undefined field993_0x44f;
-    undefined field994_0x450;
-    undefined field995_0x451;
-    undefined field996_0x452;
-    undefined field997_0x453;
-    undefined field998_0x454;
-    undefined field999_0x455;
-    undefined field1000_0x456;
-    undefined field1001_0x457;
-    undefined field1002_0x458;
-    undefined field1003_0x459;
-    undefined field1004_0x45a;
-    undefined field1005_0x45b;
-    undefined field1006_0x45c;
-    undefined field1007_0x45d;
-    undefined field1008_0x45e;
-    undefined field1009_0x45f;
-    undefined field1010_0x460;
-    undefined field1011_0x461;
-    undefined field1012_0x462;
-    undefined field1013_0x463;
-    undefined field1014_0x464;
-    undefined field1015_0x465;
-    undefined field1016_0x466;
-    undefined field1017_0x467;
-    undefined field1018_0x468;
-    undefined field1019_0x469;
-    undefined field1020_0x46a;
-    undefined field1021_0x46b;
-    undefined field1022_0x46c;
-    undefined field1023_0x46d;
-    undefined field1024_0x46e;
-    undefined field1025_0x46f;
-    undefined field1026_0x470;
-    undefined field1027_0x471;
-    undefined field1028_0x472;
-    undefined field1029_0x473;
-    undefined field1030_0x474;
-    undefined field1031_0x475;
-    undefined field1032_0x476;
-    undefined field1033_0x477;
-    undefined field1034_0x478;
-    undefined field1035_0x479;
-    undefined field1036_0x47a;
-    undefined field1037_0x47b;
-    undefined field1038_0x47c;
-    undefined field1039_0x47d;
-    undefined field1040_0x47e;
-    undefined field1041_0x47f;
-    undefined field1042_0x480;
-    undefined field1043_0x481;
-    undefined field1044_0x482;
-    undefined field1045_0x483;
-    undefined field1046_0x484;
-    undefined field1047_0x485;
-    undefined field1048_0x486;
-    undefined field1049_0x487;
-    undefined field1050_0x488;
-    undefined field1051_0x489;
-    undefined field1052_0x48a;
-    undefined field1053_0x48b;
-    undefined field1054_0x48c;
-    undefined field1055_0x48d;
-    undefined field1056_0x48e;
-    undefined field1057_0x48f;
-    undefined field1058_0x490;
-    undefined field1059_0x491;
-    undefined field1060_0x492;
-    undefined field1061_0x493;
-    undefined field1062_0x494;
-    undefined field1063_0x495;
-    undefined field1064_0x496;
-    undefined field1065_0x497;
-    undefined field1066_0x498;
-    undefined field1067_0x499;
-    undefined field1068_0x49a;
-    undefined field1069_0x49b;
-    undefined field1070_0x49c;
-    undefined field1071_0x49d;
-    undefined field1072_0x49e;
-    undefined field1073_0x49f;
-    undefined field1074_0x4a0;
-    undefined field1075_0x4a1;
-    undefined field1076_0x4a2;
-    undefined field1077_0x4a3;
-    undefined field1078_0x4a4;
-    undefined field1079_0x4a5;
-    undefined field1080_0x4a6;
-    undefined field1081_0x4a7;
-    undefined field1082_0x4a8;
-    undefined field1083_0x4a9;
-    undefined field1084_0x4aa;
-    undefined field1085_0x4ab;
-    undefined field1086_0x4ac;
-    undefined field1087_0x4ad;
-    undefined field1088_0x4ae;
-    undefined field1089_0x4af;
-    undefined field1090_0x4b0;
-    undefined field1091_0x4b1;
-    undefined field1092_0x4b2;
-    undefined field1093_0x4b3;
-    undefined field1094_0x4b4;
-    undefined field1095_0x4b5;
-    undefined field1096_0x4b6;
-    undefined field1097_0x4b7;
-    undefined field1098_0x4b8;
-    undefined field1099_0x4b9;
-    undefined field1100_0x4ba;
-    undefined field1101_0x4bb;
-    undefined field1102_0x4bc;
-    undefined field1103_0x4bd;
-    undefined field1104_0x4be;
-    undefined field1105_0x4bf;
-    undefined field1106_0x4c0;
-    undefined field1107_0x4c1;
-    undefined field1108_0x4c2;
-    undefined field1109_0x4c3;
-    undefined field1110_0x4c4;
-    undefined field1111_0x4c5;
-    undefined field1112_0x4c6;
-    undefined field1113_0x4c7;
-    undefined field1114_0x4c8;
-    undefined field1115_0x4c9;
-    undefined field1116_0x4ca;
-    undefined field1117_0x4cb;
-    undefined field1118_0x4cc;
-    undefined field1119_0x4cd;
-    undefined field1120_0x4ce;
-    undefined field1121_0x4cf;
-    undefined field1122_0x4d0;
-    undefined field1123_0x4d1;
-    undefined field1124_0x4d2;
-    undefined field1125_0x4d3;
-    undefined field1126_0x4d4;
-    undefined field1127_0x4d5;
-    undefined field1128_0x4d6;
-    undefined field1129_0x4d7;
-    undefined field1130_0x4d8;
-    undefined field1131_0x4d9;
-    undefined field1132_0x4da;
-    undefined field1133_0x4db;
-    undefined field1134_0x4dc;
-    undefined field1135_0x4dd;
-    undefined field1136_0x4de;
-    undefined field1137_0x4df;
-    undefined field1138_0x4e0;
-    undefined field1139_0x4e1;
-    undefined field1140_0x4e2;
-    undefined field1141_0x4e3;
-    undefined field1142_0x4e4;
-    undefined field1143_0x4e5;
-    undefined field1144_0x4e6;
-    undefined field1145_0x4e7;
-    undefined field1146_0x4e8;
-    undefined field1147_0x4e9;
-    undefined field1148_0x4ea;
-    undefined field1149_0x4eb;
-    undefined field1150_0x4ec;
-    undefined field1151_0x4ed;
-    undefined field1152_0x4ee;
-    undefined field1153_0x4ef;
-    undefined field1154_0x4f0;
-    undefined field1155_0x4f1;
-    undefined field1156_0x4f2;
-    undefined field1157_0x4f3;
-    uint field1158_0x4f4;
+typedef struct JEEPBALLOON JEEPBALLOON, *PJEEPBALLOON;
+
+struct JEEPBALLOON {
+    struct nuvec_s Pos;
+    struct nuvec_s Vel;
+    int Active;
+    int Seen;
+    int Explode;
+    int SmallDamage;
+    float Life;
+    short AngY;
+    short unk;
 };
 
-typedef struct GXColor GXColor, *PGXColor;
+typedef struct JEEPSTRUCT JEEPSTRUCT, *PJEEPSTRUCT;
 
-struct GXColor {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
-};
+typedef struct POINTANG POINTANG, *PPOINTANG;
 
-typedef struct GXFifoObj GXFifoObj, *PGXFifoObj;
+typedef struct VEHICLE VEHICLE, *PVEHICLE;
 
-struct GXFifoObj {
-    uint8_t pad[25];
-};
-
-typedef struct GXLightObj GXLightObj, *PGXLightObj;
-
-struct GXLightObj {
-    float z;
-    undefined field1_0x4;
-    undefined field2_0x5;
-    undefined field3_0x6;
-    undefined field4_0x7;
+struct POINTANG {
     float x;
     float y;
+    float z;
+    int Ang;
 };
 
-typedef struct GXTexObj GXTexObj, *PGXTexObj;
-
-struct GXTexObj {
-    uint field0_0x0;
-    uint field1_0x4;
-    uint field2_0x8;
-    uint field3_0xc;
-    undefined field4_0x10;
-    undefined field5_0x11;
-    undefined field6_0x12;
-    undefined field7_0x13;
-    uint field8_0x14;
-    undefined field9_0x18;
-    undefined field10_0x19;
-    undefined field11_0x1a;
-    undefined field12_0x1b;
-    ushort field13_0x1c;
-    undefined field14_0x1e;
-    byte field15_0x1f;
+struct VEHICLE {
+    struct nuvec_s ActualWheelPosition[4];
+    struct nuvec_s OldWheelPosition[4];
+    int BigSpin[4];
+    struct nuvec_s ActualPosition;
+    struct nuvec_s Resolved;
+    struct nuvec_s Velocity;
+    struct nuvec_s WheelAxis[3];
+    float FrontWheelSpeedAdj;
+    short aTargetAngle;
+    short aTarSurfRotX;
+    short aTarSurfRotZ;
+    short aActualAngle;
+    short aActSurfRotX;
+    short aActSurfRotZ;
+    short ActFrontRotX;
+    short ActRearRotX;
+    short TarFrontRotX;
+    short TarRearRotX;
+    int AnyOnGroundBits;
+    int AllOnGroundBits;
+    int AllTouchingGroundBits;
+    int AnyTouchingGroundBits;
+    struct nuvec_s AirNormal;
+    struct nuvec_s SurfaceNormal;
+    short * TerrHandle;
+    int FrontWheelGroundBits;
 };
 
-typedef struct GXTexRegion GXTexRegion, *PGXTexRegion;
-
-struct GXTexRegion {
-    char padding[14];
+struct JEEPSTRUCT {
+    struct creature_s * Cre;
+    struct MYDRAW ChassisDraw;
+    struct numtx_s ChassisLocators[16];
+    struct numtx_s DrawMtx;
+    struct NUJOINTANIM_s Joints[8];
+    struct SIMWHEEL TrailWheel[4];
+    struct POINTANG RestartPoint;
+    float DownHoleTimer;
+    int DownHole;
+    int Dropped;
+    struct nuvec_s RestartCamPos;
+    struct nuvec_s RestartCamObj;
+    float FireBossTurnTimer;
+    float WheelHeight[4];
+    float TimeLine;
+    int FireBossDir;
+    int CantMove;
+    int Quick;
+    float MaxSpeed;
+    float MySpeed;
+    float DefaultSpeed;
+    float StartSpeed;
+    float StartSpeedTimer;
+    int Active;
+    short aWRot[4];
+    short aFrontWheelAng;
+    short aOldFrontWheelAng;
+    struct nuvec_s Pos;
+    short aAngleY;
+    short aMovementAng;
+    short aSurfRotX;
+    short aSurfRotZ;
+    float TiltSeekTime;
+    short aTiltX;
+    short aTiltZ;
+    short aDestTiltX;
+    short aDestTiltZ;
+    short aInputAng;
+    char unk1[2];
+    float InputSpeed;
+    int WheelSpin;
+    short aDeltaAng;
+    short aLastDeltaAng;
+    short aLastDeltaAngA;
+    short aOldChassisAngleY;
+    short aChassisAngleY;
+    short aChassisTargetAngleY;
+    int aChassisAngMom;
+    float Accelerator;
+    float AccelerationForce;
+    float CentrefugalForce;
+    float Traction;
+    float GroundTractionAcc;
+    float TurnSin;
+    short aBaseMoveAng;
+    char unk2[2];
+    float CentRailDist;
+    float BoostOnTimer;
+    float BoostTimer;
+    int Finished;
+    float CarryOnRecordTime;
+    float FloorHeight;
+    int TerrainType;
+    struct MYSPLINE Spline;
+    float FireTimer;
+    struct VEHICLE Move;
 };
 
-typedef struct LDATA LDATA, *PLDATA;
+typedef struct JeepTrail JeepTrail, *PJeepTrail;
+
+struct JeepTrail {
+    struct nuvec_s pos1;
+    struct nuvec_s pos2;
+    int intensity;
+    int RealIntensity;
+};
+
+typedef struct Kaboom Kaboom, *PKaboom;
+
+struct Kaboom {
+    ushort type;
+    short i;
+    struct nuvec_s pos;
+    float radius0;
+    float radius1;
+    float time;
+    float duration;
+    ushort yrot;
+    char pad2;
+    char pad3;
+};
+
+typedef struct LDATA_s LDATA_s, *PLDATA_s;
 
 typedef struct pCHASE pCHASE, *PpCHASE;
 
@@ -3440,7 +4357,7 @@ struct pCHASE {
     float duration;
 };
 
-struct LDATA {
+struct LDATA_s {
     char * filepath;
     uchar * cList; /* modelList */
     struct pCHASE * pChase;
@@ -3467,6 +4384,24 @@ struct LDATA {
     uchar hazeb;
     uchar hazea;
     int totalsize;
+};
+
+typedef struct LgtLaserData LgtLaserData, *PLgtLaserData;
+
+struct LgtLaserData { /* NuLgtArcLaserData */
+    struct nuvec_s start;
+    struct nuvec_s target;
+    struct nuvec_s lasdir;
+    float sizew;
+    float sizel;
+    float sizewob;
+    float arcsize;
+    uchar type;
+    uchar p1;
+    uchar p2;
+    uchar p3;
+    int col;
+    int seed;
 };
 
 typedef struct Lights Lights, *PLights;
@@ -3512,6 +4447,35 @@ typedef struct nuivec_s nuivec_s, *Pnuivec_s;
 
 typedef struct nuivec4_s nuivec4_s, *Pnuivec4_s;
 
+typedef struct scegiftag scegiftag, *Pscegiftag;
+
+struct scegiftag {
+    longlong NREG:4;
+    longlong FLG:2;
+    longlong PRIM:11;
+    longlong PRE:1;
+    longlong id:14;
+    longlong pad16:16;
+    longlong EOP:1;
+    longlong NLOOP:15;
+    longlong REGS15:4;
+    longlong REGS14:4;
+    longlong REGS13:4;
+    longlong REGS12:4;
+    longlong REGS11:4;
+    longlong REGS10:4;
+    longlong REGS9:4;
+    longlong REGS8:4;
+    longlong REGS7:4;
+    longlong REGS6:4;
+    longlong REGS5:4;
+    longlong REGS4:4;
+    longlong REGS3:4;
+    longlong REGS2:4;
+    longlong REGS1:4;
+    longlong REGS0:4;
+};
+
 struct nuivec4_s {
     int x;
     int y;
@@ -3542,7 +4506,7 @@ union variptr_u {
     uint * viftag;
     uint intaddr;
     struct _sceDmaTag * dmatag;
-    struct giftag * gifTag;
+    struct scegiftag * gifTag;
 };
 
 struct memexternal_s {
@@ -3562,82 +4526,25 @@ typedef enum nufilemode_e {
 struct MemFile {
     char * start;
     char * end;
-    char * position;
-    int unused;
-    enum nufilemode_e open;
+    char * currpos;
+    enum nufilemode_e mode;
+    int used;
 };
 
-typedef struct MineCartMoveInfo MineCartMoveInfo, *PMineCartMoveInfo;
+typedef struct NewWumpa NewWumpa, *PNewWumpa;
 
-struct MineCartMoveInfo {
-    float IDLESPEED;
-    float TIPTOESPEED;
-    float WALKSPEED;
-    float RUNSPEED;
-    float SPRINTSPEED;
-    float SLIDESPEED;
-    float CRAWLSPEED;
-    float DANGLESPEED;
-    float WADESPEED;
-    float JUMPHEIGHT;
-    float DANGLEGAP;
-    short JUMPFRAMES0;
-    short JUMPFRAMES1;
-    short JUMPFRAMES2;
-    short STARJUMPFRAMES;
-    short SOMERSAULTFRAMES;
-    short SPINFRAMES;
-    short SPINRESETFRAMES;
-    short SUPERSPINFRAMES;
-    short SUPERSPINWAITFRAMES;
-    short SLAMWAITFRAMES;
-    short SLIDEFRAMES;
-    short CROUCHINGFRAMES;
-    short JUMPLANDFRAMES;
-    short spad;
-};
-
-typedef struct MineTubMoveInfo MineTubMoveInfo, *PMineTubMoveInfo;
-
-struct MineTubMoveInfo {
-    float IDLESPEED;
-    float TIPTOESPEED;
-    float WALKSPEED;
-    float RUNSPEED;
-    float SPRINTSPEED;
-    float SLIDESPEED;
-    float CRAWLSPEED;
-    float DANGLESPEED;
-    float WADESPEED;
-    float JUMPHEIGHT;
-    float DANGLEGAP;
-    short JUMPFRAMES0;
-    short JUMPFRAMES1;
-    short JUMPFRAMES2;
-    short STARJUMPFRAMES;
-    short SOMERSAULTFRAMES;
-    short SPINFRAMES;
-    short SPINRESETFRAMES;
-    short SUPERSPINFRAMES;
-    short SUPERSPINWAITFRAMES;
-    short SLAMWAITFRAMES;
-    short SLIDEFRAMES;
-    short CROUCHINGFRAMES;
-    short JUMPLANDFRAMES;
-    short spad;
-};
-
-typedef struct MYSPLINE MYSPLINE, *PMYSPLINE;
-
-struct MYSPLINE {
-    struct nugspline_s * Spline;
-    float Cur;
-    float Nex;
-    float Act;
-    float Inc;
-    struct nuvec_s CurPos;
-    struct nuvec_s NexPos;
-    float LookaheadDist;
+struct NewWumpa {
+    struct nuvec_s world_pos;
+    struct nuvec_s screen_pos;
+    float screen_scale;
+    uchar count;
+    uchar delay;
+    char transformed;
+    char bonus;
+    char active;
+    char pad1;
+    char pad2;
+    char pad3;
 };
 
 typedef struct nuangvec_s nuangvec_s, *Pnuangvec_s;
@@ -3647,6 +4554,38 @@ struct nuangvec_s {
     int y;
     int z;
 };
+
+typedef struct NUANIMDATAHDR_s NUANIMDATAHDR_s, *PNUANIMDATAHDR_s;
+
+struct NUANIMDATAHDR_s {
+    int version;
+    int address_offset;
+    struct nuAnimData_s * animdata;
+};
+
+typedef struct NUANIMKEYBIG_s NUANIMKEYBIG_s, *PNUANIMKEYBIG_s;
+
+struct NUANIMKEYBIG_s {
+    float time;
+    float dtime;
+    float val;
+    float grad;
+};
+
+typedef struct NUANIMKEYINTEGER_s NUANIMKEYINTEGER_s, *PNUANIMKEYINTEGER_s;
+
+struct NUANIMKEYINTEGER_s {
+    float val;
+    float time;
+};
+
+typedef enum NUANIMKEYTYPES_e {
+    NUANIMKEYTYPE_NONE=0,
+    NUANIMKEYTYPE_BIG=1,
+    NUANIMKEYTYPE_SMALL=2,
+    NUANIMKEYTYPE_INTEGER=3,
+    NUANIMKEYTYPE_BOOLEAN=4
+} NUANIMKEYTYPES_e;
 
 typedef struct nuanimtime_s nuanimtime_s, *Pnuanimtime_s;
 
@@ -3691,14 +4630,14 @@ struct NUCUTSCENE_s { /* 0x1f13f */
     float length;
     char * string_table;
     struct NUCUTSCENECAMERA_s * cameras[10];
-    struct NuAnimData_s * camera_anim;
+    struct nuAnimData_s * camera_anim;
     float * camera_change_times;
     uchar * camera_changes;
     int numgobj;
     struct nugobj_s * gobjs;
     int numinstance;
     struct nuinstance_s * instances;
-    struct NuAnimData_s * instance_animdata;
+    struct nuAnimData_s * instance_animdata;
     int numhgobj;
     struct NUHGOBJ_s * hgobj;
     int numhinstance;
@@ -3719,8 +4658,8 @@ struct NUCUTSCENE_s { /* 0x1f13f */
 struct NUHINSTANCE_s {
     struct numtx_s mtx;
     struct NUHGOBJ_s * hgobj;
-    struct NuAnimData_s * animdata;
-    struct NuAnimData_s * blendweightanimdata;
+    struct nuAnimData_s * animdata;
+    struct nuAnimData_s * blendweightanimdata;
     char pad[4];
 };
 
@@ -3822,7 +4761,7 @@ struct nurndritem_s {
     enum nurndritemtype_s type;
     int flags;
     short lights_index;
-    short field4_0xe;
+    char unk[2];
 };
 
 struct nugeomitem_s {
@@ -3832,29 +4771,6 @@ struct nugeomitem_s {
     float * * blendvals;
     short instancelights_index[3];
     short hShader;
-};
-
-typedef struct NUJOINTANIM_s NUJOINTANIM_s, *PNUJOINTANIM_s;
-
-struct NUJOINTANIM_s {
-    float rx;
-    float ry;
-    float rz;
-    float tx;
-    float ty;
-    float tz;
-    float sx;
-    float sy;
-    float sz;
-    short max_rx;
-    short max_ry;
-    short max_rz;
-    short min_rx;
-    short min_ry;
-    short min_rz;
-    uchar joint_id;
-    uchar flags;
-    uchar pad[2];
 };
 
 typedef struct nulight_s nulight_s, *Pnulight_s;
@@ -3889,6 +4805,19 @@ struct nulnkhdr_s {
     struct nulnkhdr_s * prev;
     ushort id;
     ushort used;
+};
+
+typedef struct NUNODE_s NUNODE_s, *PNUNODE_s;
+
+struct NUNODE_s {
+    char * name;
+    uint id;
+    uint type;
+    int nchildren;
+    struct NUNODE_s * parent;
+    struct NUNODE_s * child;
+    struct NUNODE_s * next;
+    void * data;
 };
 
 typedef struct nunrand_s nunrand_s, *Pnunrand_s;
@@ -3980,24 +4909,68 @@ struct nureflect_s {
     struct numtx_s uvmtx;
 };
 
+typedef struct NuScene_old NuScene_old, *PNuScene_old;
+
+struct NuScene_old {
+    char __padding_0[4];
+    char __padding_4[4];
+    uint unsnum_8;
+    char __padding_C[4];
+    int word_10;
+    struct nugobj_s * * gobj_ptr;
+    int word_18;
+    int word_1C;
+    int word_20;
+    int word_24;
+    int word_28;
+    int word_2C;
+    int word_30;
+    int word_34;
+    struct NuScene_old * nextmaybe;
+    char __padding_3C[8];
+    char __padding_44[4];
+    struct nuAnimData_s * * AnimData;
+    int numAnim;
+    char __padding_50[20];
+    int word_64;
+    int word_68;
+    int word_6C;
+    char __padding_70[16];
+};
+
 typedef struct nuscene_s nuscene_s, *Pnuscene_s;
+
+typedef struct nuspline_s nuspline_s, *Pnuspline_s;
 
 struct nuscene_s { /* Nus */
     int nnodes;
-    char * names;
-    void * nodes; /* 1b980 */
+    char * * names;
+    struct NUNODE_s * * nodes;
     char * strings;
     int numtids; /* tex_count? */
     short * tids;
     int nummtls;
-    struct numtl_s * mtls;
+    struct numtl_s * * mtls;
     int numgobjs;
     struct nugobj_s * * gobjs;
     int numsplines;
-    void * splines; /* 1b5c4 */
+    struct nuspline_s * splines;
     struct nuvec_s * spline_cvs;
-    void * root_node; /* 1b980 */
+    struct NUNODE_s * root_node;
     struct nugscn_s * gscene;
+};
+
+struct nuspline_s {
+    char * name;
+    int ncvs;
+    struct nuvec_s * cvs;
+    float r;
+    float r2;
+    struct nuvec_s min;
+    struct nuvec_s max;
+    struct nuvec_s cntr;
+    float cntr_r;
+    float cntr_r2;
 };
 
 typedef enum nustencilmode_e {
@@ -4083,11 +5056,21 @@ struct nutexanimlist_s {
     struct nutexanimlist_s * prev;
 };
 
-typedef struct NUTRIGGERSYS_s NUTRIGGERSYS_s, *PNUTRIGGERSYS_s;
+typedef struct NuTexData_OLD NuTexData_OLD, *PNuTexData_OLD;
 
-struct NUTRIGGERSYS_s {
-    int ntriggers;
-    struct NUGCUTTRIGGER_s triggers;
+typedef uint uint32_t;
+
+typedef ushort uint16_t;
+
+struct NuTexData_OLD {
+    uint format;
+    uint32_t width;
+    uint32_t height;
+    uint32_t mode;
+    uint pixel_data;
+    uint palette;
+    uint16_t decal;
+    short unk_1;
 };
 
 typedef struct nuviewport_s nuviewport_s, *Pnuviewport_s;
@@ -4111,6 +5094,21 @@ struct nuviewport_s {
     float scis_h;
 };
 
+typedef struct nuvtx_lc1_s nuvtx_lc1_s, *Pnuvtx_lc1_s;
+
+struct nuvtx_lc1_s {
+    struct nuvec_s pnt;
+    int diffuse;
+    float tc[2];
+};
+
+typedef struct nuvtx_ps_s nuvtx_ps_s, *Pnuvtx_ps_s;
+
+struct nuvtx_ps_s {
+    struct nuvec_s pnt;
+    int diffuse;
+};
+
 typedef struct nuvtx_sk3tc1_s nuvtx_sk3tc1_s, *Pnuvtx_sk3tc1_s;
 
 struct nuvtx_sk3tc1_s {
@@ -4131,12 +5129,68 @@ struct nuvtx_tc1_s {
     float tc[2];
 };
 
+typedef struct nuvtx_tltc1_s nuvtx_tltc1_s, *Pnuvtx_tltc1_s;
+
+struct nuvtx_tltc1_s {
+    struct nuvec_s pnt;
+    float rhw;
+    int diffuse;
+    float tc[2];
+};
+
+typedef struct nuvtx_ts_s nuvtx_ts_s, *Pnuvtx_ts_s;
+
+struct nuvtx_ts_s {
+    struct nuvec_s vTangent;
+    struct nuvec_s vNormal;
+};
+
 typedef struct nuwateritem_s nuwateritem_s, *Pnuwateritem_s;
 
 struct nuwateritem_s {
     struct nuwateritem_s * next;
     struct nurndritem_s * hdr;
     struct nusysmtl_s * mtl;
+};
+
+typedef struct object_path_s object_path_s, *Pobject_path_s;
+
+struct object_path_s {
+    int objid;
+    float speed;
+    int oscillate;
+    int repeat;
+    float pause;
+    float usedway;
+    float usedtime;
+    float usedpart;
+    float usedsound;
+    float start_offset;
+    float terrplatid;
+    struct nuvec_s waypoint[8];
+    float waypoint_speed[8];
+    struct nuvec_s waypoint_rot[8];
+    int waypoint_time[8];
+    int trigger_type;
+    int trigger_id;
+    float trigger_var;
+    float trigger_wait;
+    char particle_name[16][8];
+    int particle_type[8];
+    int particle_rate[8];
+    int particle_switch[8];
+    struct nuvec_s particle_offset[8];
+    short particle_emitrotz[8];
+    short particle_emitroty[8];
+    float sound_last_time;
+    char sound_name[16][8];
+    int sound_id[8];
+    int sound_type[8];
+    float sound_time[8];
+    struct nuvec_s sound_offset[8];
+    float playergrav;
+    float tension;
+    float damping;
 };
 
 typedef struct ObjTab ObjTab, *PObjTab;
@@ -4151,6 +5205,87 @@ struct ObjTab {
     char * name;
     char unk[4];
     ulonglong levbits; /* unk_type */
+};
+
+typedef struct offlist offlist, *Pofflist;
+
+typedef struct TERRAINFLAGS_s TERRAINFLAGS_s, *PTERRAINFLAGS_s;
+
+struct TERRAINFLAGS_s {
+    uint rot;
+};
+
+struct offlist {
+    int offset;
+    struct nuvec_s translation;
+    short type;
+    short info;
+    short rx;
+    short ry;
+    short rz;
+    short pad;
+    struct nuvec_s rotation;
+    struct TERRAINFLAGS_s flags;
+    short prim;
+    short id;
+    int datapos;
+};
+
+typedef struct OppTub OppTub, *POppTub;
+
+struct OppTub {
+    struct creature_s * c;
+    char track;
+    char count;
+    uchar wait;
+    char laps;
+    float time;
+    float duration;
+    float lap_position;
+    char place;
+    uchar finished;
+    uchar finishframes;
+    uchar stall;
+    ushort old_xrot;
+    ushort old_yrot;
+    ushort old_zrot;
+    uchar boost;
+    char spark;
+};
+
+typedef struct PadRecData PadRecData, *PPadRecData;
+
+struct PadRecData {
+    uchar ok;
+    uchar read_id;
+    uchar buttons_hi;
+    uchar buttons_lo;
+    uchar r_alg_x;
+    uchar r_alg_y;
+    uchar l_alg_x;
+    uchar l_alg_y;
+    uchar l_algpad_r;
+    uchar l_algpad_l;
+    uchar l_algpad_u;
+    uchar l_algpad_d;
+    uchar r_algpad_u;
+    uchar r_algpad_r;
+    uchar r_algpad_d;
+    uchar r_algpad_l;
+    uchar l1_alg;
+    uchar r1_alg;
+    uchar l2_alg;
+    uchar r2_alg;
+};
+
+typedef struct PadRecInfo PadRecInfo, *PPadRecInfo;
+
+struct PadRecInfo {
+    int padpointer;
+    int padmode;
+    int padend;
+    int padsize;
+    struct PadRecData recdata[48000];
 };
 
 typedef struct PADStatus PADStatus, *PPADStatus;
@@ -4168,6 +5303,28 @@ struct PADStatus {
     short err;
 };
 
+typedef struct ParticleChunkRenderStack ParticleChunkRenderStack, *PParticleChunkRenderStack;
+
+struct ParticleChunkRenderStack {
+    struct rdata_s * chunk;
+    struct debtab * debinfo;
+    struct debkeydatatype_s * debdata;
+    struct numtx_s rotmtx;
+    float x;
+    float y;
+    float z;
+};
+
+typedef struct pCutAnim_s pCutAnim_s, *PpCutAnim_s;
+
+struct pCutAnim_s {
+    short character;
+    short action;
+    short sfx;
+    char i;
+    char pad1;
+};
+
 typedef struct PData PData, *PPData;
 
 struct PData {
@@ -4177,6 +5334,94 @@ struct PData {
     char pad2;
     char * name;
     int * description;
+};
+
+typedef struct PDeb PDeb, *PPDeb;
+
+typedef struct PDebInfo PDebInfo, *PPDebInfo;
+
+struct PDeb {
+    struct PDebInfo * info;
+    struct nuvec_s oldpos;
+    struct nuvec_s pos;
+    struct nuvec_s mom;
+    float time;
+    float oldscale;
+    float scale;
+    ushort locators;
+    ushort xrot;
+    ushort yrot;
+    ushort zrot;
+    char type;
+    char active;
+    char pad1;
+    char pad2;
+};
+
+struct PDebInfo {
+    int i_objtab;
+    float duration;
+    float gravity;
+};
+
+typedef struct PLANESTRUCT PLANESTRUCT, *PPLANESTRUCT;
+
+struct PLANESTRUCT {
+    struct nuvec_s Pos;
+    struct nuvec_s Vel;
+    float ActionTimer;
+    int ActionStatus;
+    int Active;
+    struct MYDRAW MainDraw;
+};
+
+typedef struct platattrib platattrib, *Pplatattrib;
+
+struct platattrib {
+    undefined field0_0x0;
+    undefined field1_0x1;
+    undefined field2_0x2;
+    uint hit:1;
+    uint rotate:1;
+};
+
+typedef struct platdata platdata, *Pplatdata;
+
+struct platdata {
+    struct numtx_s oldmtx;
+    struct numtx_s * curmtx;
+    short terrno;
+    short instance;
+    struct platattrib status;
+    short hitcnt;
+    short pad;
+    float plrgrav;
+    float ypos;
+    float yvel;
+    float tension;
+    float damp;
+};
+
+typedef struct plr_bonus_wumpas plr_bonus_wumpas, *Pplr_bonus_wumpas;
+
+struct plr_bonus_wumpas {
+    short count;
+    short draw;
+    char frame;
+    char wait;
+    uchar delay;
+    uchar item;
+};
+
+typedef struct plr_item plr_item, *Pplr_item;
+
+struct plr_item {
+    short count;
+    short draw;
+    char frame;
+    char wait;
+    uchar delay;
+    uchar item;
 };
 
 typedef struct PlrEvent PlrEvent, *PPlrEvent;
@@ -4191,6 +5436,34 @@ struct PlrEvent {
     float fALONG;
 };
 
+typedef struct pollist pollist, *Ppollist;
+
+struct pollist {
+    float x;
+    float y;
+    float z;
+    float x2;
+    float y2;
+    float z2;
+    short timer;
+    short pad;
+    struct hitdata * hitDat[512];
+};
+
+typedef struct Poly Poly, *PPoly;
+
+struct Poly {
+    float minx;
+    float maxx;
+    float miny;
+    float maxy;
+    float minz;
+    float maxz;
+    struct nuvec_s pnts[4];
+    struct nuvec_s norm[2];
+    uchar info[4];
+};
+
 typedef struct primdef_s primdef_s, *Pprimdef_s;
 
 struct primdef_s {
@@ -4201,6 +5474,23 @@ struct primdef_s {
     int nummtx;
     int sorted;
     int baseid;
+};
+
+typedef struct Projectile Projectile, *PProjectile;
+
+struct Projectile {
+    struct obj_s obj;
+    struct nuvec_s srcpos;
+    struct nuvec_s dstpos;
+    float time;
+    float duration;
+    char type;
+    char active;
+    short i_objtab;
+    char kill;
+    uchar owner_safety;
+    char pad1;
+    char pad2;
 };
 
 typedef struct pVTog pVTog, *PpVTog;
@@ -4221,13 +5511,6 @@ struct pVTog {
     ushort zrot;
     char pad1;
     char pad2;
-};
-
-typedef struct Quat Quat, *PQuat;
-
-struct Quat {
-    struct nuvec_s v;
-    float w;
 };
 
 typedef struct Rail Rail, *PRail;
@@ -4259,104 +5542,6 @@ struct rendertargetlist_s {
     struct D3DSurface * pddsStencilBuffer;
 };
 
-typedef struct s_CrateGroup s_CrateGroup, *Ps_CrateGroup;
-
-struct s_CrateGroup {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    undefined field3_0x3;
-    undefined field4_0x4;
-    undefined field5_0x5;
-    undefined field6_0x6;
-    undefined field7_0x7;
-    undefined field8_0x8;
-    undefined field9_0x9;
-    undefined field10_0xa;
-    undefined field11_0xb;
-    undefined field12_0xc;
-    undefined field13_0xd;
-    undefined field14_0xe;
-    undefined field15_0xf;
-    short field16_0x10;
-    short field17_0x12;
-    ushort tilt;
-    undefined field19_0x16;
-    undefined field20_0x17;
-    undefined field21_0x18;
-    undefined field22_0x19;
-    undefined field23_0x1a;
-    undefined field24_0x1b;
-    undefined field25_0x1c;
-    undefined field26_0x1d;
-    undefined field27_0x1e;
-    undefined field28_0x1f;
-    undefined field29_0x20;
-    undefined field30_0x21;
-    undefined field31_0x22;
-    undefined field32_0x23;
-    undefined field33_0x24;
-    undefined field34_0x25;
-    undefined field35_0x26;
-    undefined field36_0x27;
-    undefined field37_0x28;
-    undefined field38_0x29;
-    undefined field39_0x2a;
-    undefined field40_0x2b;
-    undefined field41_0x2c;
-    undefined field42_0x2d;
-    undefined field43_0x2e;
-    undefined field44_0x2f;
-    undefined field45_0x30;
-    undefined field46_0x31;
-    undefined field47_0x32;
-    undefined field48_0x33;
-    undefined field49_0x34;
-    undefined field50_0x35;
-    undefined field51_0x36;
-    undefined field52_0x37;
-    undefined field53_0x38;
-    undefined field54_0x39;
-    undefined field55_0x3a;
-    undefined field56_0x3b;
-    undefined field57_0x3c;
-    undefined field58_0x3d;
-    undefined field59_0x3e;
-    undefined field60_0x3f;
-    undefined field61_0x40;
-    undefined field62_0x41;
-    undefined field63_0x42;
-    undefined field64_0x43;
-    undefined field65_0x44;
-    undefined field66_0x45;
-    undefined field67_0x46;
-    undefined field68_0x47;
-    undefined field69_0x48;
-    undefined field70_0x49;
-    undefined field71_0x4a;
-    undefined field72_0x4b;
-    undefined field73_0x4c;
-    undefined field74_0x4d;
-    undefined field75_0x4e;
-    undefined field76_0x4f;
-    undefined field77_0x50;
-    undefined field78_0x51;
-    undefined field79_0x52;
-    undefined field80_0x53;
-    undefined field81_0x54;
-    undefined field82_0x55;
-    undefined field83_0x56;
-    undefined field84_0x57;
-    undefined field85_0x58;
-    undefined field86_0x59;
-    undefined field87_0x5a;
-    undefined field88_0x5b;
-    undefined field89_0x5c;
-    undefined field90_0x5d;
-    undefined field91_0x5e;
-    undefined field92_0x5f;
-};
-
 typedef struct scene_inst_s scene_inst_s, *Pscene_inst_s;
 
 struct scene_inst_s {
@@ -4372,12 +5557,95 @@ struct sceneinst_s {
     int inst_cnt;
 };
 
+typedef struct sceneptr sceneptr, *Psceneptr;
+
+struct sceneptr {
+    int count;
+    struct offlist offlist[512];
+};
+
+typedef struct setup_s setup_s, *Psetup_s;
+
+struct setup_s { /* UNK STRUCT */
+    int DmaHeader[4];
+    float grav;
+    float gtime;
+    int DmaBody[4];
+    float u0;
+    float v0;
+    float u1;
+    float v1;
+    float u2;
+    float v2;
+    float u3;
+    float v3;
+    struct datasetup_s data[64];
+};
+
+typedef enum shadertypes_e {
+    NO_SHADER=0,
+    WATER=1,
+    HEATHAZE=2,
+    GLASS=3,
+    WATERCAUSTICS=4,
+    SNOWCLOUD=5,
+    DEPTHBLEND=6,
+    SPECULAR=7,
+    LIGHTHAZE=8,
+    PROJTEX=9,
+    BRDFGOLD=10,
+    LIGHTS=11,
+    VOLUMESHADOW=12,
+    VOLUMESHADOW_BLENDSKIN=13,
+    VOLUMESHADOW_BLENDSKIN2=14,
+    BLENDSKIN=15,
+    BLENDSKIN2=16,
+    BLENDSKINGLASS=17,
+    BLENDSKINGLASS2=18,
+    BLENDSKINFUR=19,
+    BLENDSKINFUR2=20,
+    BUMPMAP=21,
+    BUMPMAPPOINTLIGHT=22,
+    ENVIRONMAP=23,
+    POINTLIGHT=24,
+    BLENDSKINPOINTLIGHT=25,
+    BLENDSKIN2POINTLIGHT=26,
+    DYNAMICWATER=27,
+    CALCNEIGHBOURFORCE=28,
+    CALCNEIGHBOURFORCE2=29,
+    APPLYFORCEORVELOCITY=30,
+    BLURFILTER=31,
+    CREATENORMALMAP=32,
+    XRAYGLASS=33,
+    DUMMY=34,
+    NUM_SHADER_TYPES=35,
+    RESET_SHADER=255
+} shadertypes_e;
+
+typedef struct ShadPolDat ShadPolDat, *PShadPolDat;
+
+struct ShadPolDat {
+    struct nuvec_s pos;
+    float size;
+    short shade;
+    short xrot;
+    short yrot;
+    short zrot;
+};
+
 typedef struct space space, *Pspace;
 
 struct space {
     int character;
     char unk[4];
     struct AnimList animlist[5];
+};
+
+typedef struct SphereData SphereData, *PSphereData;
+
+struct SphereData {
+    struct nuvec_s pos;
+    float radius;
 };
 
 typedef struct SplTab SplTab, *PSplTab;
@@ -4391,36 +5659,6 @@ struct SplTab {
     ulonglong levbits; /* unk_type */
 };
 
-typedef struct SwimmingMoveInfo SwimmingMoveInfo, *PSwimmingMoveInfo;
-
-struct SwimmingMoveInfo {
-    float IDLESPEED;
-    float TIPTOESPEED;
-    float WALKSPEED;
-    float RUNSPEED;
-    float SPRINTSPEED;
-    float SLIDESPEED;
-    float CRAWLSPEED;
-    float DANGLESPEED;
-    float WADESPEED;
-    float JUMPHEIGHT;
-    float DANGLEGAP;
-    short JUMPFRAMES0;
-    short JUMPFRAMES1;
-    short JUMPFRAMES2;
-    short STARJUMPFRAMES;
-    short SOMERSAULTFRAMES;
-    short SPINFRAMES;
-    short SPINRESETFRAMES;
-    short SUPERSPINFRAMES;
-    short SUPERSPINWAITFRAMES;
-    short SLAMWAITFRAMES;
-    short SLIDEFRAMES;
-    short CROUCHINGFRAMES;
-    short JUMPLANDFRAMES;
-    short spad;
-};
-
 typedef struct tagRECT tagRECT, *PtagRECT;
 
 struct tagRECT {
@@ -4430,14 +5668,164 @@ struct tagRECT {
     int bottom;
 };
 
-typedef struct UNK2 UNK2, *PUNK2;
+typedef struct TempTerr TempTerr, *PTempTerr;
 
-struct UNK2 { /* mtlgetbuffer2d */
-    uint UNK_WORD_0;
-    uint UNK_WORD_4;
-    uint UNK_WORD_8;
-    uint UNK_WORD_C;
-    char __padding_10[20];
+typedef struct terr terr, *Pterr;
+
+typedef struct TrackInfo TrackInfo, *PTrackInfo;
+
+typedef struct terrgroup terrgroup, *Pterrgroup;
+
+typedef enum terr_type {
+    TERR_TYPE_NORMAL=0,
+    TERR_TYPE_PLATFORM=1,
+    TERR_TYPE_WALLSPL=2,
+    TERR_TYPE_CRASHDATA=3,
+    TERR_TYPE_EMPTY=255
+} terr_type;
+
+struct terr {
+    struct nuvec_s Location;
+    short * model;
+    struct nuvec_s min;
+    struct nuvec_s max;
+    struct TERRAINFLAGS_s flags;
+    enum terr_type type;
+    short info;
+    short id;
+    float radius;
+};
+
+struct terrgroup {
+    short tabindex;
+    short count;
+    float minx;
+    float minz;
+    float maxx;
+    float maxz;
+};
+
+struct TrackInfo {
+    void * ptrid;
+    short platid;
+    short platinf;
+    short timer;
+    short pad;
+};
+
+struct TempTerr {
+    struct terr * terr;
+    struct platdata platdat[128];
+    void * wallinfo;
+    struct TrackInfo Trackinfo[4];
+    struct terrgroup group[257];
+    int terrainlow;
+    int terrgcnt;
+    short terrlist[4096];
+    struct pollist polllist[9];
+};
+
+typedef struct TerrI TerrI, *PTerrI;
+
+struct TerrI {
+    struct nuvec_s origpos;
+    struct nuvec_s origvel;
+    struct nuvec_s curpos;
+    struct nuvec_s curvel;
+    short id;
+    short scanmode;
+    float stopflag;
+    float vellen;
+    uchar * flags;
+    float ax;
+    float ay;
+    float len;
+    float size;
+    float sizesq;
+    float sizediv;
+    float yscale;
+    float yscalesq;
+    float inyscale;
+    float inyscalesq;
+    short hitcnt;
+    short hitterrno;
+    float csx;
+    float csy;
+    float csz;
+    float cex;
+    float cey;
+    float cez;
+    short hittype;
+    short plathit;
+    short * platScanStart;
+    struct hitdata * hitter;
+    float hittime;
+    float timeadj;
+    float impactadj;
+    struct nuvec_s hitnorm;
+    struct nuvec_s uhitnorm;
+    struct nuvec_s tempvec[2];
+    struct hitdata rotter;
+    struct hitdata * hitdat[512];
+};
+
+typedef struct TerrShape TerrShape, *PTerrShape;
+
+struct TerrShape {
+    struct nuvec_s offset;
+    float ang;
+    float size;
+};
+
+typedef struct TerSurface TerSurface, *PTerSurface;
+
+struct TerSurface {
+    float friction;
+    short gdeb;
+    ushort flags;
+};
+
+typedef struct trail trail, *Ptrail;
+
+struct trail {
+    struct nuvec_s pos1;
+    struct nuvec_s pos2;
+    int intensity;
+    int RealIntensity;
+};
+
+typedef struct VEHMASK VEHMASK, *PVEHMASK;
+
+struct VEHMASK {
+    int Active;
+    int id;
+    int KillAtEnd;
+    struct nuvec_s Position;
+    struct MYDRAW MainDraw;
+    float DrawAngY;
+    int Action;
+    int LastAction;
+    int EffectType;
+    float Tween;
+    float TweenInc;
+    float Ang;
+    struct nuvec_s Store[2];
+    struct nuvec_s * Point[2];
+    struct nuvec_s Offset[2];
+    float AngInc[2];
+    float Rad[2];
+    float Scale[2];
+    float TiltX[2];
+    float DrawScale;
+    int Seen;
+};
+
+typedef struct visidat_s visidat_s, *Pvisidat_s;
+
+struct visidat_s {
+    struct nugspline_s * sp;
+    int numinstances;
+    struct nuinstance_s * i[1];
 };
 
 typedef struct visidata_s visidata_s, *Pvisidata_s;
@@ -4450,10 +5838,115 @@ struct visidata_s {
     int curknot;
 };
 
-typedef struct D3DDevice D3DDevice, *PD3DDevice;
+typedef struct WallSpl WallSpl, *PWallSpl;
 
-struct D3DDevice { /* PlaceHolder Structure */
+struct WallSpl {
+    ushort count;
+    ushort val;
+    struct nuvec_s spl[4096];
 };
+
+typedef struct WaterDat WaterDat, *PWaterDat;
+
+struct WaterDat {
+    struct nuvec_s pos;
+    float size;
+    float endsize;
+    float cursize;
+    uint shade;
+    uint curshade;
+    short timer;
+    short otimer;
+};
+
+typedef struct WBBOLT WBBOLT, *PWBBOLT;
+
+struct WBBOLT {
+    int Mode;
+    int Owner;
+    struct nuvec_s Position;
+    struct nuvec_s Velocity;
+    float Life;
+    int Type;
+    float SeekSpeed;
+    float Scale;
+};
+
+typedef struct WindGroup WindGroup, *PWindGroup;
+
+struct WindGroup {
+    struct nuinstance_s * instance;
+    struct numtx_s * mtx;
+    struct nuvec_s center;
+    char onscreen;
+    char inrange;
+    short objcount;
+    int collide;
+    float wind;
+    float height;
+    float radius;
+};
+
+typedef struct WInfo WInfo, *PWInfo;
+
+struct WInfo {
+    struct numtx_s m;
+    float scale;
+    float dy;
+    ushort angle;
+    ushort spin;
+    char pad1;
+    char pad2;
+    char pad3;
+    char pad4;
+};
+
+typedef struct WScr WScr, *PWScr;
+
+struct WScr {
+    struct nuvec_s pos;
+    float timer;
+    float xs;
+    float ys;
+    float scale;
+    char bonus;
+    char pad1;
+    char pad2;
+    char pad3;
+};
+
+typedef struct Wumpa Wumpa, *PWumpa;
+
+struct Wumpa {
+    struct nuvec_s pos0;
+    struct nuvec_s pos1;
+    struct nuvec_s pos;
+    struct nuvec_s mom;
+    float shadow;
+    ushort surface_xrot;
+    ushort surface_zrot;
+    float time;
+    float duration;
+    char active;
+    char iRAIL;
+    short iALONG;
+    float fALONG;
+    char destroy;
+    char fired;
+    char in_range;
+    char surface_type;
+};
+
+typedef struct ZOFFASTART ZOFFASTART, *PZOFFASTART;
+
+struct ZOFFASTART {
+    float x;
+    float y;
+    float z;
+    float angle;
+};
+
+#define __WORDSIZE 32
 
 typedef struct HWND__ HWND__, *PHWND__;
 
@@ -4683,6 +6176,12 @@ struct txanimscripts {
     ulonglong levbits;
 };
 
+typedef struct Vert_s8 Vert_s8, *PVert_s8;
+
+struct Vert_s8 {
+    char field0_0x0[18];
+};
+
 typedef int __ssize_t;
 
 typedef short int16_t;
@@ -4694,123 +6193,5 @@ typedef char int8_t;
 typedef __ssize_t ssize_t;
 
 typedef void * ARCallback;
-
-typedef struct bootInfo bootInfo, *PbootInfo;
-
-struct bootInfo { /* DVDInit */
-    uint x0[8];
-    uint boot_magic;
-};
-
-typedef struct DiskInfo DiskInfo, *PDiskInfo;
-
-struct DiskInfo {
-    struct DVDDiskID diskID;
-    uint8_t filler20[32];
-    void * FSTLocationInRam;
-    uint FSTMaxLength;
-};
-
-typedef struct DVDQueue_sub DVDQueue_sub, *PDVDQueue_sub;
-
-struct DVDQueue_sub {
-    struct DVDQueue_sub * unk0;
-    struct DVDQueue_sub * unk4;
-};
-
-typedef struct GS_FrameBufferCopy GS_FrameBufferCopy, *PGS_FrameBufferCopy;
-
-struct GS_FrameBufferCopy {
-    struct _GXTexObj tobj;
-    uchar * data;
-    int top;
-    int left;
-    int width;
-    int height;
-};
-
-typedef enum GXAnisotropy {
-    GX_ANISO_1=0,
-    GX_ANISO_2=1,
-    GX_ANISO_4=2,
-    GX_MAX_ANISOTROPY=3
-} GXAnisotropy;
-
-typedef uint8_t GXBool;
-
-typedef enum GXSpotFn {
-    GX_SP_OFF=0,
-    GX_SP_FLAT=1,
-    GX_SP_COS=2,
-    GX_SP_COS2=3,
-    GX_SP_SHARP=4,
-    GX_SP_RING1=5,
-    GX_SP_RING2=6
-} GXSpotFn;
-
-typedef enum GXTexCacheSize {
-    GX_TEXCACHE_32K=1,
-    GX_TEXCACHE_128K=2,
-    GX_TEXCACHE_512K=3,
-    GX_TEXCACHE_NONE=4
-} GXTexCacheSize;
-
-typedef enum GXTexFilter {
-    GX_NEAR=0,
-    GX_LINEAR=1,
-    GX_NEAR_MIP_NEAR=2,
-    GX_LIN_MIP_NEAR=3,
-    GX_NEAR_MIP_LIN=4,
-    GX_LIN_MIP_LIN=5
-} GXTexFilter;
-
-typedef enum GXTexFmt {
-    GX_TF_I4=0,
-    GX_TF_I8=1,
-    GX_TF_A8=2,
-    GX_TF_IA4=3,
-    GX_TF_IA8=4,
-    GX_TF_RGB565=5,
-    GX_TF_RGB5A3=6,
-    GX_TF_RGBA8=7,
-    GX_TF_CMPR=8,
-    GX_TF_Z8=9,
-    GX_TF_Z16=10,
-    GX_TF_Z24X8=11,
-    GX_CTF_R4=12,
-    GX_CTF_RA4=13,
-    GX_CTF_RA8=14,
-    GX_CTF_A8=15,
-    GX_CTF_R8=16,
-    GX_CTF_G8=17,
-    GX_CTF_B8=18,
-    GX_CTF_RG8=19,
-    GX_CTF_GB8=20,
-    GX_CTF_Z4=21,
-    GX_CTF_Z8M=22,
-    GX_CTF_Z8L=23,
-    GX_CTF_Z16L=24
-} GXTexFmt;
-
-typedef enum GXTexWrapMode {
-    GX_CLAMP=0,
-    GX_REPEAT=1,
-    GX_MIRROR=2,
-    GX_MAX_TEXWRAPMODE=3
-} GXTexWrapMode;
-
-typedef enum GXTlutSize {
-    GX_TLUT_16=0,
-    GX_TLUT_32=1,
-    GX_TLUT_64=2,
-    GX_TLUT_128=3,
-    GX_TLUT_256=4,
-    GX_TLUT_512=5,
-    GX_TLUT_1K=6,
-    GX_TLUT_2K=7,
-    GX_TLUT_4K=8,
-    GX_TLUT_8K=9,
-    GX_TLUT_16K=10
-} GXTlutSize;
 
 typedef unsigned short    wchar16;
