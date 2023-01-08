@@ -282,3 +282,25 @@ nuAnimData_s * NuAnimDataRead(filehandle handle)		//WIP
   }
   return ADat;
 }
+
+
+void NuAnimCurveSetDestroy(struct nuanimcurveset_s* animcurveset, s32 destroy_curves) //CHECK
+{
+    s32 var_r29;
+    s32 i;
+    struct nuanimcurve_s* curve;
+
+    if ((animcurveset != NULL) && ((struct nuanimcurve_s** ) animcurveset->set != NULL) && (destroy_curves != 0)) {
+        i = 0;
+        if ((s8) (u8) animcurveset->ncurves > 0) {
+            var_r29 = 0;
+            do {
+                curve = *(var_r29 + animcurveset->set); //could be? curve = (animcurveset->set[var_r29]);
+                if (curve != NULL) {
+                    NuAnimCurveDestroy(curve);
+                }
+                i += 1;
+                var_r29 += 4;
+            } while (i < (s8) (u8) animcurveset->ncurves);
+        }
+    }
