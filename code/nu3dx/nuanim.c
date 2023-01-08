@@ -160,3 +160,125 @@ struct nuanimdata_s* NuAnimDataFixPtrs(struct nuanimdata_s* animdata, s32 addres
     }
     return var_r3;
 }
+
+
+
+nuAnimData_s * NuAnimDataRead(filehandle handle)		//WIP
+
+{
+  int nChunks;
+  char *data;
+  nuAnimData_s *ADat;
+  nuanimdatachunk_s *chunk;
+  nuanimkey_s *keys;
+  nuanimcurve_s *curves;
+  char nCurves;
+  nuanimcurveset_s *crvset;
+  int flags;
+  nuanimcurveset_s **ptrCset;
+  int j;
+  int N;
+  int i;
+  int k;
+  double time;
+  float fVar1;
+  uint *nKeys;
+  
+  if (isBitCountTable == 0) {
+    buildBitCountTable();
+  }
+  nChunks = NuFileReadInt(handle);
+  if (nChunks == 0) {
+    data = (char *)0x0;
+  }
+  else {
+    data = (char *)NuMemAlloc(nChunks);
+    NuFileRead(handle,data,nChunks);
+  }
+  i = 0;
+  fVar1 = NuFileReadFloat(handle);
+  time = (double)fVar1;
+  nChunks = NuFileReadInt(handle);
+  ADat = NuAnimDataCreate(nChunks);
+  ADat->time = (float)time;
+  ADat->node_name = data;
+  if (0 < ADat->nchunks) {
+    do {
+      nChunks = NuFileReadInt(handle);
+      chunk = NuAnimDataChunkCreate(nChunks);
+      ADat->chunks[i] = chunk;
+      chunk->numnodes = nChunks;
+      N = NuFileReadInt(handle);
+      if (N == 0) {
+        chunk->keys = (nuanimkey_s *)0x0;
+      }
+      else {
+        keys = (nuanimkey_s *)NuMemAlloc(N << 4);
+        chunk->keys = keys;
+        NuFileRead(handle,keys,N << 4);
+      }
+      keys = chunk->keys;
+      N = NuFileReadInt(handle);
+      if (N == 0) {
+        chunk->curves = (nuanimcurve_s *)0x0;
+      }
+      else {
+        curves = (nuanimcurve_s *)NuMemAlloc(N << 4);
+        chunk->curves = curves;
+        NuFileRead(handle,curves,N << 4);
+      }
+      i = i + 1;
+      N = 0;
+      if (0 < nChunks) {
+        do {
+          j = N + 1;
+          nCurves = NuFileReadChar(handle);
+          if (nCurves != 0) {
+            crvset = NuAnimCurveSetCreate((int)nCurves);
+            k = 0;
+            chunk->animcurveset[N] = crvset;
+            flags = NuFileReadInt(handle);
+            chunk->animcurveset[N]->flags = flags;
+            if ('\0' < chunk->animcurveset[N]->ncurves) {
+              flags = 0;
+              do {
+                k = k + 1;
+                fVar1 = NuFileReadFloat(handle);
+                *(float *)(flags + (int)chunk->animcurveset[N]->constants) = fVar1;
+                flags = flags + 4;
+              } while (k < chunk->animcurveset[N]->ncurves);
+            }
+          }
+          N = j;
+        } while (j < nChunks);
+      }
+      nChunks = 0;
+      curves = chunk->curves;
+      if (0 < chunk->numnodes) {
+        do {
+          ptrCset = chunk->animcurveset;
+          N = nChunks + 1;
+          if ((ptrCset[nChunks] != (nuanimcurveset_s *)0x0) &&
+             (j = 0, '\0' < ptrCset[nChunks]->ncurves)) {
+            flags = 0;
+            do {
+              if (*(float *)(flags + (int)ptrCset[nChunks]->constants) == 3.402823e+38) {
+                *(nuanimcurve_s **)(ptrCset[nChunks]->set->pad + flags + -0xd) = curves;
+                chunk->num_valid_animcurvesets = chunk->num_valid_animcurvesets + 1;
+                curves->animkeys = keys;
+                nKeys = &curves->numkeys;
+                curves = curves + 1;
+                keys = keys + *nKeys;
+              }
+              ptrCset = chunk->animcurveset;
+              j = j + 1;
+              flags = flags + 4;
+            } while (j < ptrCset[nChunks]->ncurves);
+          }
+          nChunks = N;
+        } while (N < chunk->numnodes);
+      }
+    } while (i < ADat->nchunks);
+  }
+  return ADat;
+}
