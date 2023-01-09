@@ -258,7 +258,7 @@ void GS_DrawTriStripTTL(_GS_VERTEXTL *vertlist,int nverts)
 }
 
 
-void GS_DrawTriListTTL(int param_1,int nverts)	//TODO
+void GS_DrawTriListTTL(nuvtx_tltc1_s *vtx,int nverts)	//Check
 
 {
   if (GS_CurrentVertDesc != 0x81) {
@@ -272,8 +272,8 @@ void GS_DrawTriListTTL(int param_1,int nverts)	//TODO
   GXBegin(GX_TRIANGLES,GX_VTXFMT1,(ushort)nverts);
   if (0 < nverts) {
     do {
-      _DAT_cc008000 = *(undefined4 *)(param_1 + 0x18);
-      param_1 = param_1 + 0x1c;
+      _DAT_cc008000 = vtx->tc[1];
+      vtx = vtx + 1;
       nverts = nverts + -1;
     } while (nverts != 0);
   }

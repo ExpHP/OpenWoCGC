@@ -9,7 +9,7 @@ s32 totalpts;
 s32 tritot;
 s32 stats[15];
 
-void InitSkinning(void) //makes primitive
+void InitSkinning(s32 buffsize) //makes primitive
 
 {
   primdefs = (struct primdef_s *)NuMemAlloc(0xc7ce0); // 0xC7CE0 bytes can fit 0x3548 NuPrims perfectly
@@ -29,12 +29,12 @@ void CloseSkinning(void)
 }
 
 
-void NuPs2CreateSkin(NuGobj* gobj) {
-    NuGeom* geom;
+void NuPs2CreateSkin(nugobj_s* gobj) {
+    nugeom_s* tmp;
 
-    geom = gobj->geoms;
-    if ((geom != NULL) && ((s32) geom->prims->type == 5)) {
-        NuPs2CreateSkinNorm(Gobj);
+    tmp = gobj->geom;
+    if ((tmp != NULL) && (tmp->prim->type == NUPT_NDXTRI)) {
+        NuPs2CreateSkinNorm(gobj);
     }
 return;
 }
@@ -43,168 +43,168 @@ return;
 
 /********************************WIP*************************************************/
 
-void CreateSkinGeom(NuGeom *geom,primdef_s *primdefs,int pdcnt)
+/*void CreateSkinGeom(nugeom_s *geom,primdef_s *primdefs,int pdcnt)
 
 {
-  short sVar1;
-  float sizebuf;
+  float n;
   int amount_prim;
-  nuprim_s *prim1;
+  nuprim_s *nextp;
   uint bufsize;
-  GS_Buffer *buffer;
-  primdef_s *ppVar2;
-  uint uVar3;
-  float fVar4;
-  short *psVar5;
-  int iVar6;
-  int *vtx_count;
+  nuvtx_sk3tc1_s *vtxbuf;
+  primdef_s *currpd;
+  uint uVar2;
+  float fVar3;
+  int psVar5;
+  int vid;
+  int *baseid_2;
+  int i;
   nuprimtype_e prim_type;
-  short *skinmtxlookup;
-  int iVar7;
+  short *mtxlookup;
   int count;
-  int buf;
-  int iVar8;
-  int iVar9;
-  int amount_6;
-  int iVar10;
+  int indexbuf;
+  int iVar4;
+  int iVar5;
+  int currbaseid;
+  int iVar6;
   nuprim_s *next;
-  int iVar11;
-  int vtxcount [300];
-  nuprim_s *prim3;
-  undefined4 local_50;
+  int iVar7;
+  int primsize [300];
+  nuprim_s *startp;
+  float local_50;
   uint uStack_4c;
-  nuprim_s *prim2;
+  nuprim_s *actualp;
+  short sVar1;
   
   if (geom->vertex_type != NUVT_TC1) {
     e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x69);
-    //(*error)("CreateSkinGeom : Unknown vertex type!");
+    (*e)("CreateSkinGeom : Unknown vertex type!");
   }
-  amount_6 = primdefs->baseid;
+  currbaseid = primdefs->baseid;
   count = 1;
-  memset(vtxcount,0,0x4b0);
+  memset(primsize,0,0x4b0);
   if (0 < pdcnt) {
-    vtx_count = &primdefs->baseid;
+    baseid_2 = &primdefs->baseid;
     prim_type = NUPT_NDXLINE;
     do {
-      amount_prim = *vtx_count;
-      vtx_count = vtx_count + 0x5d;
-      if (amount_prim != amount_6) {
+      amount_prim = *baseid_2;
+      baseid_2 = baseid_2 + 0x5d;
+      if (amount_prim != currbaseid) {
         prim_type = prim_type + NUPT_NDXLINE;
         count = count + 1;
-        amount_6 = amount_prim;
+        currbaseid = amount_prim;
       }
       pdcnt = pdcnt + -1;
-      *(int *)((int)vtxcount + prim_type) = *(int *)((int)vtxcount + prim_type) + 3;
+      *(int *)((int)primsize + prim_type) = *(int *)((int)primsize + prim_type) + 3;
     } while (pdcnt != 0);
   }
-  prim3 = NuPrimCreate(vtxcount[1],NUPT_NDXTRI);
-  amount_6 = 1;
+  startp = NuPrimCreate(primsize[1],NUPT_NDXTRI);
+  currbaseid = 1;
   if (1 < count) {
-    vtx_count = vtxcount + 2;
-    prim2 = prim3;
+    baseid_2 = primsize + 2;
+    actualp = startp;
     do {
-      amount_prim = *vtx_count;
-      amount_6 = amount_6 + 1;
-      vtx_count = vtx_count + 1;
-      prim1 = NuPrimCreate(amount_prim,NUPT_NDXTRI);
-      prim2->next = prim1;
-      prim2 = prim1;
-    } while (amount_6 < count);
+      amount_prim = *baseid_2;
+      currbaseid = currbaseid + 1;
+      baseid_2 = baseid_2 + 1;
+      nextp = NuPrimCreate(amount_prim,NUPT_NDXTRI);
+      actualp->next = nextp;
+      actualp = nextp;
+    } while (currbaseid < count);
   }
-  prim2 = prim3;
+  actualp = startp;
   bufsize = geom->vtxcount * 0x38;
-  buffer = GS_CreateBuffer(bufsize,1);
-  amount_6 = 0;
+  vtxbuf = (nuvtx_sk3tc1_s *)GS_CreateBuffer(bufsize,1);
+  currbaseid = 0;
   if (0 < count) {
     do {
-      amount_6 = amount_6 + 1;
+      currbaseid = currbaseid + 1;
       amount_prim = 0xf;
-      skinmtxlookup = prim2->skinmtxlookup;
-      psVar5 = (short *)((int)primdefs->mtxid + 2);
+      mtxlookup = actualp->skinmtxlookup;
+      psVar5 = (int)primdefs->mtxid + 2;
       do {
-        sVar1 = *psVar5;
-        psVar5 = psVar5 + 2;
-        *skinmtxlookup = sVar1;
-        skinmtxlookup = skinmtxlookup + 1;
+        sVar1 = *(short *)psVar5;
+        psVar5 = psVar5 + 4;
+        *mtxlookup = sVar1;
+        mtxlookup = mtxlookup + 1;
         amount_prim = amount_prim + -1;
       } while (amount_prim != 0);
       amount_prim = 0;
-      buf = prim2->idxbuff;
-      ppVar2 = primdefs;
-      if (prim2->vertexCount != 0) {
+      indexbuf = actualp->idxbuff;
+      currpd = primdefs;
+      if (actualp->vertexCount != 0) {
         do {
-          iVar7 = amount_prim * 2 + buf;
-          *(undefined2 *)(buf + amount_prim * 2) = *(undefined2 *)((int)ppVar2->vid + 2);
+          i = amount_prim * 2 + indexbuf;
+          *(undefined2 *)(indexbuf + amount_prim * 2) = *(undefined2 *)((int)currpd->vid + 2);
           amount_prim = amount_prim + 3;
-          primdefs = ppVar2 + 1;
-          *(undefined2 *)(iVar7 + 2) = *(undefined2 *)((int)ppVar2->vid + 6);
-          *(undefined2 *)(iVar7 + 4) = *(undefined2 *)((int)ppVar2->vid + 10);
-          iVar7 = 0;
+          primdefs = currpd + 1;
+          *(undefined2 *)(i + 2) = *(undefined2 *)((int)currpd->vid + 6);
+          *(undefined2 *)(i + 4) = *(undefined2 *)((int)currpd->vid + 10);
+          i = 0;
           do {
-            iVar6 = ppVar2->vid[iVar7];
-            iVar8 = iVar7 + 1;
-            iVar9 = iVar7 * 0x3c;
-            sizebuf = ppVar2->vrts[iVar7].pnt.z;
-            fVar4 = ppVar2->vrts[iVar7].pnt.y;
-            iVar10 = 0;
-            buffer[iVar6 * 7].size = (uint)ppVar2->vrts[iVar7].pnt.x;
-            buffer[iVar6 * 7 + 1].size = (uint)sizebuf;
-            buffer[iVar6 * 7].type = (uint)fVar4;
-            iVar11 = 3;
-            iVar6 = ppVar2->vid[iVar7];
-            sizebuf = ppVar2->vrts[iVar7].nrm.z;
-            fVar4 = ppVar2->vrts[iVar7].nrm.y;
-            buffer[iVar6 * 7 + 4].size = (uint)ppVar2->vrts[iVar7].nrm.x;
-            buffer[iVar6 * 7 + 5].size = (uint)sizebuf;
-            buffer[iVar6 * 7 + 4].type = (uint)fVar4;
-            buffer[ppVar2->vid[iVar7] * 7 + 5].type = ppVar2->vrts[iVar7].diffuse;
-            buffer[ppVar2->vid[iVar7] * 7 + 6].size = (uint)ppVar2->vrts[iVar7].tc[0];
-            buffer[ppVar2->vid[iVar7] * 7 + 6].type = (uint)ppVar2->vrts[iVar7].tc[1];
-            do {
-              *(undefined4 *)((int)&buffer[ppVar2->vid[iVar7] * 7 + 1].type + iVar10) = 0;
-              *(undefined4 *)((int)&buffer[ppVar2->vid[iVar7] * 7 + 2].type + iVar10) = 0;
-              iVar10 = iVar10 + 4;
-              iVar11 = iVar11 + -1;
-            } while (iVar11 != 0);
-            uVar3 = 0;
+            vid = currpd->vid[i];
+            iVar4 = i + 1;
+            iVar5 = i * 0x3c;
+            n = currpd->vrts[i].pnt.z;
+            fVar3 = currpd->vrts[i].pnt.y;
             iVar6 = 0;
-            iVar10 = 0;
+            vtxbuf[vid].pnt.x = currpd->vrts[i].pnt.x;
+            vtxbuf[vid].pnt.z = n;
+            vtxbuf[vid].pnt.y = fVar3;
+            iVar7 = 3;
+            vid = currpd->vid[i];
+            n = currpd->vrts[i].nrm.z;
+            fVar3 = currpd->vrts[i].nrm.y;
+            vtxbuf[vid].nrm.x = currpd->vrts[i].nrm.x;
+            vtxbuf[vid].nrm.z = n;
+            vtxbuf[vid].nrm.y = fVar3;
+            vtxbuf[currpd->vid[i]].diffuse = currpd->vrts[i].diffuse;
+            vtxbuf[currpd->vid[i]].tc[0] = currpd->vrts[i].tc[0];
+            vtxbuf[currpd->vid[i]].tc[1] = currpd->vrts[i].tc[1];
             do {
-              if (*(float *)((int)ppVar2->weights + iVar9) != 0.0) {
-                uStack_4c = uVar3 ^ 0x80000000;
-                local_50 = 0x43300000;
-                *(float *)((int)&buffer[ppVar2->vid[iVar7] * 7 + 2].type + iVar10) =
+              *(undefined4 *)((int)vtxbuf[currpd->vid[i]].weights + iVar6) = 0;
+              *(undefined4 *)((int)vtxbuf[currpd->vid[i]].indexes + iVar6) = 0;
+              iVar6 = iVar6 + 4;
+              iVar7 = iVar7 + -1;
+            } while (iVar7 != 0);
+            uVar2 = 0;
+            vid = 0;
+            iVar6 = 0;
+            do {
+              if (*(float *)((int)currpd->weights + iVar5) != 0.0) {
+                uStack_4c = uVar2 ^ 0x80000000;
+                local_50 = 176.0;
+                *(float *)((int)vtxbuf[currpd->vid[i]].indexes + iVar6) =
                      (float)((double)CONCAT44(0x43300000,uStack_4c) - 4503601774854144.0);
-                if (iVar6 < 2) {
-                  *(undefined4 *)((int)&buffer[ppVar2->vid[iVar7] * 7 + 1].type + iVar10) =
-                       *(undefined4 *)((int)ppVar2->weights + iVar9);
+                if (vid < 2) {
+                  *(undefined4 *)((int)vtxbuf[currpd->vid[i]].weights + iVar6) =
+                       *(undefined4 *)((int)currpd->weights + iVar5);
                 }
-                iVar10 = iVar10 + 4;
-                iVar6 = iVar6 + 1;
+                iVar6 = iVar6 + 4;
+                vid = vid + 1;
               }
-              uVar3 = uVar3 + 1;
-              iVar9 = iVar9 + 4;
-            } while (((int)uVar3 < 0xf) && (iVar6 < 3));
-            iVar7 = iVar8;
-          } while (iVar8 < 3);
-          ppVar2 = primdefs;
-        } while (amount_prim < (int)(uint)prim2->vertexCount);
+              uVar2 = uVar2 + 1;
+              iVar5 = iVar5 + 4;
+            } while (((int)uVar2 < 0xf) && (vid < 3));
+            i = iVar4;
+          } while (iVar4 < 3);
+          currpd = primdefs;
+        } while (amount_prim < (int)(uint)actualp->vertexCount);
       }
-      prim2 = prim2->next;
-    } while (amount_6 < count);
+      actualp = actualp->next;
+    } while (currbaseid < count);
   }
   GS_DeleteBuffer((void *)geom->hVB);
-  prim2 = geom->prim;
-  while (prim2 != (nuprim_s *)0x0) {
-    next = prim2->next;
-    NuPrimDestroy(prim2);
-    prim2 = next;
+  actualp = geom->prim;
+  while (actualp != (nuprim_s *)0x0) {
+    next = actualp->next;
+    NuPrimDestroy(actualp);
+    actualp = next;
   }
-  geom->hVB = (int)buffer;
+  geom->hVB = (int)vtxbuf;
   geom->vertex_type = NUVT_SK3TC1;
-  geom->prim = prim3;
+  geom->prim = startp;
   return;
-}
+}*/
 
 
 /*
@@ -217,46 +217,46 @@ void NuPs2CreateSkinNorm(nugobj_s *gobj)
   int *num_mtx;
   int pdcnt;
   nuprim_s *prims;
-  int skinnedVtxCount;
+  int skinix;
   int iVar3;
   nuvtx_tc1_s *srcvb;
-  nugeom_s *currgeom;
+  nugeom_s *ge;
   primdef_s *pd;
   int vid;
   int iVar4;
   
   memset(stats,0,0x3c);
-  currgeom = gobj->geom;
+  ge = gobj->geom;
   stritot = 0;
   totaldupes = 0;
   totalpts = 0;
   tritot = 0;
   pd = primdefs;
-  for (; currgeom != (nugeom_s *)0x0; currgeom = currgeom->next) {
+  for (; ge != (nugeom_s *)0x0; ge = ge->next) {
     primdefs = pd;
-    if ((currgeom->skin != (NuSkin *)0x0) || (currgeom->vtxskininfo != (NUVTXSKININFO_s *)0x0)) {
-      prims = currgeom->prim;
+    if ((ge->skin != (nuskin_s *)0x0) || (ge->vtxskininfo != (NUVTXSKININFO_s *)0x0)) {
+      prims = ge->prim;
       pdcnt = 0;
       vid = prims->idxbuff;
-      srcvb = (nuvtx_tc1_s *)currgeom->hVB;
+      srcvb = (nuvtx_tc1_s *)ge->hVB;
       if (0x898 < prims->vertexCount / 3) {
-        e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x35e);
-        //(*e)("NuPs2CreateSkinNorm: TOO MANY PRIMS!");
+        error = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x35e);
+        (*error)("NuPs2CreateSkinNorm: TOO MANY PRIMS!");
       }
-      skinnedVtxCount = 0;
+      skinix = 0;
       if (prims->vertexCount != 0) {
         do {
           memset(pd,0,0x174);
           memset(pd->mtxid,-1,0x3c);
-          if (currgeom->vtxskininfo == (NUVTXSKININFO_s *)0x0) {
-            SetVtxSkinData(pd,0,srcvb,(uint)*(ushort *)vid,currgeom);
-            SetVtxSkinData(pd,1,srcvb,(uint)*(ushort *)(vid + 2),currgeom);
-            SetVtxSkinData(pd,2,srcvb,(uint)*(ushort *)(vid + 4),currgeom);
+          if (ge->vtxskininfo == (NUVTXSKININFO_s *)0x0) {
+            SetVtxSkinData(pd,0,srcvb,(uint)*(ushort *)vid,ge);
+            SetVtxSkinData(pd,1,srcvb,(uint)*(ushort *)(vid + 2),ge);
+            SetVtxSkinData(pd,2,srcvb,(uint)*(ushort *)(vid + 4),ge);
           }
           else {
-            SetVtxSkinData2(pd,0,srcvb,(uint)*(ushort *)vid,currgeom);
-            SetVtxSkinData2(pd,1,srcvb,(uint)*(ushort *)(vid + 2),currgeom);
-            SetVtxSkinData2(pd,2,srcvb,(uint)*(ushort *)(vid + 4),currgeom);
+            SetVtxSkinData2(pd,0,srcvb,(uint)*(ushort *)vid,ge);
+            SetVtxSkinData2(pd,1,srcvb,(uint)*(ushort *)(vid + 2),ge);
+            SetVtxSkinData2(pd,2,srcvb,(uint)*(ushort *)(vid + 4),ge);
           }
           if (((pd->vid[0] == pd->vid[1]) || (pd->vid[1] == pd->vid[2])) ||
              (pd->vid[0] == pd->vid[2])) {
@@ -264,31 +264,31 @@ void NuPs2CreateSkinNorm(nugobj_s *gobj)
             pdcnt = pdcnt + -1;
           }
           num_mtx = &pd->nummtx;
-          skinnedVtxCount = skinnedVtxCount + 3;
+          skinix = skinix + 3;
           pd = pd + 1;
           pdcnt = pdcnt + 1;
           vid = vid + 6;
           stats[*num_mtx] = stats[*num_mtx] + 1;
-        } while (skinnedVtxCount < (int)(uint)prims->vertexCount);
+        } while (skinix < (int)(uint)prims->vertexCount);
       }
       iVar3 = 0;
       SortPrimdefs(primdefs,pdcnt);
       num_mtx = stats;
       iVar4 = 0xf;
-      skinnedVtxCount = 0;
+      skinix = 0;
       iVar2 = 0;
       do {
         if ((*num_mtx != 0) && (iVar2 < iVar3)) {
           iVar2 = iVar3;
         }
-        if (stats[skinnedVtxCount] <= *num_mtx) {
-          skinnedVtxCount = iVar3;
+        if (stats[skinix] <= *num_mtx) {
+          skinix = iVar3;
         }
         num_mtx = num_mtx + 1;
         iVar3 = iVar3 + 1;
         iVar4 = iVar4 + -1;
       } while (iVar4 != 0);
-      CreateSkinGeom(currgeom,primdefs,pdcnt);
+      CreateSkinGeom(ge,primdefs,pdcnt);
     }
     pd = primdefs;
   }
@@ -314,13 +314,15 @@ void NuPs2CreateSkinNorm(struct nugobj_s *gobj)
     
     for (tritot = 0; currGeom; currGeom = currGeom->next)
     {
+		s32 pdcnt = 0;
+		
         if (currGeom->primarySkinData == nullptr && !currGeom->secondSkinData) {
             continue;
         }
         
         struct nuprim_s* prims = currGeom->prims;
         
-        // Maximum amount of faces is 2200
+        // Maximum amount of faces is 2200 (0x898)
         if ((prims->vertexCount / 3) > 2200)
         {
             ASSERT_FILE_LINE_MSG("C:/source/crashwoc/code/nu3dx/nucvtskn.c",
@@ -332,32 +334,49 @@ void NuPs2CreateSkinNorm(struct nugobj_s *gobj)
             for (; skinnedVtxCount < prims->vertexCount; skinnedVtxCount += 3)
             {
                 memset(primdefs, NULL, sizeof(primdefs));
-                memset(primdefs->_12C, -1, 60);
+                memset(primdefs->mtxid, -1, 60);
                 
-                if (currGeom->secondSkinData)
+                if (currGeom->vtxskininfo)
                 {
-                    SetVtxSkinData2(v4, 0, vertexBuffer, prims->buffer->vertIdx0, currGeom);
-                    SetVtxSkinData2(v4, 1, vertexBuffer, prims->buffer->vertIdx1, currGeom);
-                    SetVtxSkinData2(v4, 2, vertexBuffer, prims->buffer->vertIdx2, currGeom);
+                    SetVtxSkinData2(primdefs, 0, vertexBuffer, prims->buffer->idxbuff, currGeom);
+                    SetVtxSkinData2(primdefs, 1, vertexBuffer, prims->buffer->idxbuff + 2, currGeom);
+                    SetVtxSkinData2(primdefs, 2, vertexBuffer, prims->buffer->idxbuff + 4, currGeom);
                 }
                 else
                 {
-                    SetVtxSkinData(v4, 0, vertexBuffer, prims->buffer->vertIdx0, currGeom);
-                    SetVtxSkinData(v4, 1, vertexBuffer, prims->buffer->vertIdx1, currGeom);
-                    SetVtxSkinData(v4, 2, vertexBuffer, prims->buffer->vertIdx2, currGeom);
+                    SetVtxSkinData(primdefs, 0, vertexBuffer, prims->buffer->idxbuff, currGeom);
+                    SetVtxSkinData(primdefs, 1, vertexBuffer, prims->buffer->idxbuff + 2, currGeom);
+                    SetVtxSkinData(primdefs, 2, vertexBuffer, prims->buffer->idxbuff + 4, currGeom);
                 }
+				
+				 if (((pd->vid[0] == pd->vid[1]) || (pd->vid[1] == pd->vid[2])) || (pd->vid[0] == pd->vid[2]))
+				 {
+					 primdefs -= 1;
+					 pdcnt -= 1;
+
+				 }
+
+					primdefs+= 1;
+					prims->buffer->idxbuff += 6;
+					stats[*primdefs->nummtx] = stats[*primdefs->nummtx] + 1;
             }    
         }
+		
+		SortPrimdefs(primdefs,pdcnt);
 
 			//TODO
+			
+			
+		CreateSkinGeom(currGeom,primdefs,pdcnt);
     }
+	
+	return;
 }
 
 
 
 
-int FillFreeMatrixSlots(struct primdef_s *pd,int cnt,int start)
-
+int FillFreeMatrixSlots(primdef_s *pd,int cnt,int start)
 {
   int iVar1;
   int numbatchmtx;
@@ -381,14 +400,14 @@ int FillFreeMatrixSlots(struct primdef_s *pd,int cnt,int start)
         piVar5 = (int *)((int)pd[start].vrts[0].tc + iVar7 + -0x1c);
         do {
           iVar6 = *(int *)((int)pd->mtxid + iVar4 + iVar1 + 300 + -300);
-          if (*(char *)((int)mtxused[0].mtx + iVar6) == '\0') {
+          if (*(char *)((int)&mtxused[0]._00 + iVar6) == '\0') {
             *piVar5 = iVar6;
             check = numbatchmtx == 0xb;
             piVar5 = piVar5 + 1;
             iVar7 = iVar7 + 4;
             numbatchmtx = numbatchmtx + 1;
             *(undefined *)
-             ((int)mtxused[0].mtx + *(int *)((int)pd->mtxid + iVar4 + iVar1 + 300 + -300)) = 1;
+             ((int)&mtxused[0]._00 + *(int *)((int)pd->mtxid + iVar4 + iVar1 + 300 + -300)) = 1;
             if (check) {
               return 0xc;
             }
@@ -412,477 +431,472 @@ int FillFreeMatrixSlots(struct primdef_s *pd,int cnt,int start)
 
 {
   int iVar1;
-  float *pfVar2;
-  NUERRORFUNC *errormsg;
+  int iVar2;
   int iVar3;
-  int iVar4;
-  primdef_s *ppVar5;
-  int iVar6;
+  primdef_s *ppVar4;
+  int iVar5;
+  primdef_s *ppVar6;
   primdef_s *ppVar7;
-  primdef_s *ppVar8;
-  float *pfVar9;
-  int iVar10;
-  uint uVar11;
-  int *piVar12;
-  float (*pafVar13) [3];
-  primdef_s *ppVar14;
+  int iVar8;
+  uint uVar9;
+  int *piVar10;
+  matchingslot_s *pmVar11;
+  primdef_s *pSorted;
+  uint uVar12;
+  float *pfVar13;
+  int *piVar14;
+  float (*totalweights) [3];
   int iVar15;
-  uint uVar16;
-  undefined4 *puVar17;
-  int *piVar18;
-  int iVar19;
+  int iVar16;
+  int iVar17;
+  primdef_s *ppVar18;
+  primdef_s *ppVar19;
   int iVar20;
   int iVar21;
-  primdef_s *ppVar22;
-  primdef_s *ppVar23;
-  int iVar24;
-  int iVar25;
-  int iVar26;
-  int iVar27;
-  float local_6830 [94];
-  int local_66b8 [3000];
-  undefined auStack_37d8 [12000];
-  int aiStack_8f8 [150];
-  int local_6a0 [400];
-  int local_60;
-  int local_5c;
-  undefined *local_58;
-  int local_54;
-  int *local_50;
-  float (*local_4c) [3];
+  int iVar22;
+  int n;
+  int i;
+  primdef_s tpd;
+  int batchmatrices [15] [200];
+  int batchmatrices_sorted [15] [200];
+  int matrixusecount [150];
+  matchingslot_s matchingslot [200];
+  int cnt;
+  int (*batchmtx_sorted) [200];
+  int *mtxusecnt;
+  int bID;
+  int k;
   
-  local_60 = count;
-  iVar27 = 0;
-  local_50 = aiStack_8f8;
-  local_58 = auStack_37d8;
-  iVar26 = 0;
+  mtxusecnt = matrixusecount;
+  batchmtx_sorted = batchmatrices_sorted;
+  bID = 0;
+  n = 0;
   if (0 < count) {
     do {
-      iVar19 = iVar26 + 1;
-      if (iVar19 < count) {
-        ppVar14 = primdef + iVar26;
-        iVar26 = iVar19;
+      i = n + 1;
+      if (i < count) {
+        pSorted = primdef + n;
+        n = i;
         do {
-          iVar20 = iVar26 + 1;
-          if (ppVar14->nummtx < primdef[iVar26].nummtx) {
-            iVar15 = 0x168;
-            pfVar2 = local_6830;
-            ppVar22 = ppVar14;
+          iVar16 = n + 1;
+          if (pSorted->nummtx < primdef[n].nummtx) {
+            k = 0x168;
+            ppVar18 = &tpd;
+            ppVar19 = pSorted;
             do {
-              ppVar23 = ppVar22;
-              pfVar9 = pfVar2;
-              iVar15 = iVar15 + -0x18;
-              *pfVar9 = ppVar23->vrts[0].pnt.x;
-              pfVar9[1] = ppVar23->vrts[0].pnt.y;
-              pfVar9[2] = ppVar23->vrts[0].pnt.z;
-              pfVar9[3] = ppVar23->vrts[0].nrm.x;
-              pfVar9[4] = ppVar23->vrts[0].nrm.y;
-              ppVar22 = (primdef_s *)&ppVar23->vrts[0].diffuse;
-              pfVar9[5] = ppVar23->vrts[0].nrm.z;
-              pfVar2 = pfVar9 + 6;
-            } while (iVar15 != 0);
-            iVar15 = 0x168;
-            pfVar9[6] = *(float *)ppVar22;
-            pfVar9[7] = ppVar23->vrts[0].tc[0];
-            pfVar9[8] = ppVar23->vrts[0].tc[1];
-            ppVar22 = ppVar14;
-            ppVar23 = primdef + iVar26;
+              ppVar4 = ppVar19;
+              ppVar7 = ppVar18;
+              k = k + -0x18;
+              ppVar7->vrts[0].pnt.x = ppVar4->vrts[0].pnt.x;
+              ppVar7->vrts[0].pnt.y = ppVar4->vrts[0].pnt.y;
+              ppVar7->vrts[0].pnt.z = ppVar4->vrts[0].pnt.z;
+              ppVar7->vrts[0].nrm.x = ppVar4->vrts[0].nrm.x;
+              ppVar7->vrts[0].nrm.y = ppVar4->vrts[0].nrm.y;
+              ppVar19 = (primdef_s *)&ppVar4->vrts[0].diffuse;
+              ppVar7->vrts[0].nrm.z = ppVar4->vrts[0].nrm.z;
+              ppVar18 = (primdef_s *)&ppVar7->vrts[0].diffuse;
+            } while (k != 0);
+            k = 0x168;
+            *(int *)ppVar18 = *(int *)ppVar19;
+            ppVar7->vrts[0].tc[0] = ppVar4->vrts[0].tc[0];
+            ppVar7->vrts[0].tc[1] = ppVar4->vrts[0].tc[1];
+            ppVar18 = pSorted;
+            ppVar19 = primdef + n;
             do {
-              ppVar5 = ppVar23;
-              ppVar8 = ppVar22;
-              iVar15 = iVar15 + -0x18;
-              ppVar8->vrts[0].pnt.x = ppVar5->vrts[0].pnt.x;
-              ppVar8->vrts[0].pnt.y = ppVar5->vrts[0].pnt.y;
-              ppVar8->vrts[0].pnt.z = ppVar5->vrts[0].pnt.z;
-              ppVar8->vrts[0].nrm.x = ppVar5->vrts[0].nrm.x;
-              ppVar8->vrts[0].nrm.y = ppVar5->vrts[0].nrm.y;
-              ppVar23 = (primdef_s *)&ppVar5->vrts[0].diffuse;
-              ppVar8->vrts[0].nrm.z = ppVar5->vrts[0].nrm.z;
-              ppVar22 = (primdef_s *)&ppVar8->vrts[0].diffuse;
-            } while (iVar15 != 0);
-            iVar15 = 0x168;
-            *(int *)ppVar22 = *(int *)ppVar23;
-            ppVar8->vrts[0].tc[0] = ppVar5->vrts[0].tc[0];
-            ppVar8->vrts[0].tc[1] = ppVar5->vrts[0].tc[1];
-            ppVar22 = primdef + iVar26;
-            pfVar2 = local_6830;
+              ppVar4 = ppVar19;
+              ppVar7 = ppVar18;
+              k = k + -0x18;
+              ppVar7->vrts[0].pnt.x = ppVar4->vrts[0].pnt.x;
+              ppVar7->vrts[0].pnt.y = ppVar4->vrts[0].pnt.y;
+              ppVar7->vrts[0].pnt.z = ppVar4->vrts[0].pnt.z;
+              ppVar7->vrts[0].nrm.x = ppVar4->vrts[0].nrm.x;
+              ppVar7->vrts[0].nrm.y = ppVar4->vrts[0].nrm.y;
+              ppVar19 = (primdef_s *)&ppVar4->vrts[0].diffuse;
+              ppVar7->vrts[0].nrm.z = ppVar4->vrts[0].nrm.z;
+              ppVar18 = (primdef_s *)&ppVar7->vrts[0].diffuse;
+            } while (k != 0);
+            k = 0x168;
+            *(int *)ppVar18 = *(int *)ppVar19;
+            ppVar7->vrts[0].tc[0] = ppVar4->vrts[0].tc[0];
+            ppVar7->vrts[0].tc[1] = ppVar4->vrts[0].tc[1];
+            ppVar18 = primdef + n;
+            ppVar19 = &tpd;
             do {
-              pfVar9 = pfVar2;
-              ppVar23 = ppVar22;
-              iVar15 = iVar15 + -0x18;
-              ppVar23->vrts[0].pnt.x = *pfVar9;
-              ppVar23->vrts[0].pnt.y = pfVar9[1];
-              ppVar23->vrts[0].pnt.z = pfVar9[2];
-              ppVar23->vrts[0].nrm.x = pfVar9[3];
-              ppVar23->vrts[0].nrm.y = pfVar9[4];
-              ppVar23->vrts[0].nrm.z = pfVar9[5];
-              ppVar22 = (primdef_s *)&ppVar23->vrts[0].diffuse;
-              pfVar2 = pfVar9 + 6;
-            } while (iVar15 != 0);
-            *(float *)ppVar22 = pfVar9[6];
-            ppVar23->vrts[0].tc[0] = pfVar9[7];
-            ppVar23->vrts[0].tc[1] = pfVar9[8];
+              ppVar4 = ppVar19;
+              ppVar7 = ppVar18;
+              k = k + -0x18;
+              ppVar7->vrts[0].pnt.x = ppVar4->vrts[0].pnt.x;
+              ppVar7->vrts[0].pnt.y = ppVar4->vrts[0].pnt.y;
+              ppVar7->vrts[0].pnt.z = ppVar4->vrts[0].pnt.z;
+              ppVar7->vrts[0].nrm.x = ppVar4->vrts[0].nrm.x;
+              ppVar7->vrts[0].nrm.y = ppVar4->vrts[0].nrm.y;
+              ppVar19 = (primdef_s *)&ppVar4->vrts[0].diffuse;
+              ppVar7->vrts[0].nrm.z = ppVar4->vrts[0].nrm.z;
+              ppVar18 = (primdef_s *)&ppVar7->vrts[0].diffuse;
+            } while (k != 0);
+            *(int *)ppVar18 = *(int *)ppVar19;
+            ppVar7->vrts[0].tc[0] = ppVar4->vrts[0].tc[0];
+            ppVar7->vrts[0].tc[1] = ppVar4->vrts[0].tc[1];
           }
-          iVar26 = iVar20;
-        } while (iVar20 < count);
+          n = iVar16;
+        } while (iVar16 < count);
       }
-      iVar26 = iVar19;
-    } while (iVar19 < count);
+      n = i;
+    } while (i < count);
   }
-  iVar26 = 0;
-  iVar19 = iVar26;
-  iVar20 = 0;
+  n = 0;
+  i = n;
+  iVar16 = bID;
+  k = 0;
   if (0 < count) {
     do {
-      iVar15 = iVar20 + 1;
-      iVar26 = iVar19;
-      if (primdef[iVar20].sorted == 0) {
-        local_5c = iVar27 + 1;
+      iVar22 = k + 1;
+      n = i;
+      bID = iVar16;
+      if (primdef[k].sorted == 0) {
+        bID = iVar16 + 1;
         memset(mtxused,0,0x100);
-        iVar26 = 0;
-        iVar24 = iVar19 + 1;
-        if (0 < primdef[iVar20].nummtx) {
-          piVar12 = primdef[iVar20].mtxid;
+        n = 0;
+        iVar20 = i + 1;
+        if (0 < primdef[k].nummtx) {
+          piVar10 = primdef[k].mtxid;
           do {
-            iVar10 = *piVar12;
-            iVar26 = iVar26 + 1;
-            piVar12 = piVar12 + 1;
-            *(undefined *)((int)mtxused[0].mtx + iVar10) = 1;
-          } while (iVar26 < primdef[iVar20].nummtx);
+            iVar8 = *piVar10;
+            n = n + 1;
+            piVar10 = piVar10 + 1;
+            *(undefined *)((int)&mtxused[0]._00 + iVar8) = 1;
+          } while (n < primdef[k].nummtx);
         }
-        local_54 = iVar27 * 0x3c;
-        iVar27 = FillFreeMatrixSlots(primdef,local_60,iVar20);
-        ppVar14 = primdefs_sorted;
-        ppVar22 = primdef + iVar20;
-        ppVar22->nummtx = iVar27;
-        iVar27 = 0x168;
-        ppVar22->baseid = iVar19;
-        ppVar14 = ppVar14 + iVar19;
+        n = FillFreeMatrixSlots(primdef,count,k);
+        pSorted = primdefs_sorted;
+        ppVar18 = primdef + k;
+        ppVar18->nummtx = n;
+        n = 0x168;
+        ppVar18->baseid = i;
+        pSorted = pSorted + i;
         do {
-          ppVar8 = ppVar22;
-          ppVar23 = ppVar14;
-          iVar27 = iVar27 + -0x18;
-          ppVar23->vrts[0].pnt.x = ppVar8->vrts[0].pnt.x;
-          ppVar23->vrts[0].pnt.y = ppVar8->vrts[0].pnt.y;
-          ppVar23->vrts[0].pnt.z = ppVar8->vrts[0].pnt.z;
-          ppVar23->vrts[0].nrm.x = ppVar8->vrts[0].nrm.x;
-          ppVar23->vrts[0].nrm.y = ppVar8->vrts[0].nrm.y;
-          ppVar22 = (primdef_s *)&ppVar8->vrts[0].diffuse;
-          ppVar23->vrts[0].nrm.z = ppVar8->vrts[0].nrm.z;
-          ppVar14 = (primdef_s *)&ppVar23->vrts[0].diffuse;
-        } while (iVar27 != 0);
-        *(int *)ppVar14 = *(int *)ppVar22;
-        ppVar23->vrts[0].tc[0] = ppVar8->vrts[0].tc[0];
-        ppVar23->vrts[0].tc[1] = ppVar8->vrts[0].tc[1];
-        ppVar14 = primdefs_sorted;
-        iVar26 = iVar24;
-        if (iVar15 < local_60) {
-          local_4c = primdefs_sorted->weights[10];
-          iVar27 = iVar15;
-          ppVar22 = primdefs_sorted + iVar24;
-          iVar10 = iVar24 * 0x174;
+          ppVar7 = ppVar18;
+          ppVar19 = pSorted;
+          n = n + -0x18;
+          ppVar19->vrts[0].pnt.x = ppVar7->vrts[0].pnt.x;
+          ppVar19->vrts[0].pnt.y = ppVar7->vrts[0].pnt.y;
+          ppVar19->vrts[0].pnt.z = ppVar7->vrts[0].pnt.z;
+          ppVar19->vrts[0].nrm.x = ppVar7->vrts[0].nrm.x;
+          ppVar19->vrts[0].nrm.y = ppVar7->vrts[0].nrm.y;
+          ppVar18 = (primdef_s *)&ppVar7->vrts[0].diffuse;
+          ppVar19->vrts[0].nrm.z = ppVar7->vrts[0].nrm.z;
+          pSorted = (primdef_s *)&ppVar19->vrts[0].diffuse;
+        } while (n != 0);
+        *(int *)pSorted = *(int *)ppVar18;
+        ppVar19->vrts[0].tc[0] = ppVar7->vrts[0].tc[0];
+        ppVar19->vrts[0].tc[1] = ppVar7->vrts[0].tc[1];
+        pSorted = primdefs_sorted;
+        n = iVar20;
+        if (iVar22 < count) {
+          iVar8 = iVar22;
+          ppVar18 = primdefs_sorted + iVar20;
+          iVar15 = iVar20 * 0x174;
           do {
-            iVar21 = iVar27 + 1;
-            ppVar23 = ppVar22;
-            iVar25 = iVar10;
-            if ((primdef[iVar27].sorted == 0) && (primdef[iVar27].nummtx <= primdef[iVar20].nummtx ))
-            {
-              iVar6 = 0;
-              iVar3 = 0;
-              if (0 < primdef[iVar27].nummtx) {
-                iVar4 = 0;
-                do {
-                  iVar3 = iVar3 + 1;
-                  piVar12 = (int *)((int)primdef[iVar27].mtxid + iVar4);
-                  iVar4 = iVar4 + 4;
-                  uVar11 = (int)*(char *)((int)mtxused[0].mtx + *piVar12) - 1;
-                  uVar16 = (int)uVar11 >> 0x1f;
-                  iVar6 = iVar6 + ((uVar16 ^ uVar11) - uVar16);
-                } while (iVar3 < primdef[iVar27].nummtx);
-              }
-              if (iVar6 == 0) {
-                primdef[iVar27].baseid = iVar19;
-                iVar26 = 0x168;
-                iVar25 = iVar10 + 0x174;
-                ppVar23 = ppVar22 + 1;
-                iVar24 = iVar24 + 1;
-                ppVar8 = primdef + iVar27;
-                do {
-                  ppVar7 = ppVar8;
-                  ppVar5 = ppVar22;
-                  iVar26 = iVar26 + -0x18;
-                  ppVar5->vrts[0].pnt.x = ppVar7->vrts[0].pnt.x;
-                  ppVar5->vrts[0].pnt.y = ppVar7->vrts[0].pnt.y;
-                  ppVar5->vrts[0].pnt.z = ppVar7->vrts[0].pnt.z;
-                  ppVar5->vrts[0].nrm.x = ppVar7->vrts[0].nrm.x;
-                  ppVar5->vrts[0].nrm.y = ppVar7->vrts[0].nrm.y;
-                  ppVar8 = (primdef_s *)&ppVar7->vrts[0].diffuse;
-                  ppVar5->vrts[0].nrm.z = ppVar7->vrts[0].nrm.z;
-                  ppVar22 = (primdef_s *)&ppVar5->vrts[0].diffuse;
-                } while (iVar26 != 0);
-                *(int *)ppVar22 = *(int *)ppVar8;
-                ppVar5->vrts[0].tc[0] = ppVar7->vrts[0].tc[0];
-                puVar17 = (undefined4 *)((int)*local_4c + iVar10);
-                ppVar5->vrts[0].tc[1] = ppVar7->vrts[0].tc[1];
-                iVar26 = 0xf;
-                primdef[iVar27].sorted = 1;
-                do {
-                  puVar17[0xf] = 0xffffffff;
-                  puVar17[-0x1e] = 0;
-                  puVar17[-0xf] = 0;
-                  *puVar17 = 0;
-                  puVar17 = puVar17 + 1;
-                  iVar26 = iVar26 + -1;
-                } while (iVar26 != 0);
+            iVar17 = iVar8 + 1;
+            ppVar19 = ppVar18;
+            iVar21 = iVar15;
+            if ((primdef[iVar8].sorted == 0) && (primdef[iVar8].nummtx <= primdef[k].nummtx)) {
+              iVar5 = 0;
+              iVar2 = 0;
+              if (0 < primdef[iVar8].nummtx) {
                 iVar3 = 0;
-                iVar26 = iVar24;
-                if (0 < primdef[iVar20].nummtx) {
+                do {
+                  iVar2 = iVar2 + 1;
+                  piVar10 = (int *)((int)primdef[iVar8].mtxid + iVar3);
+                  iVar3 = iVar3 + 4;
+                  uVar9 = (int)*(char *)((int)&mtxused[0]._00 + *piVar10) - 1;
+                  uVar12 = (int)uVar9 >> 0x1f;
+                  iVar5 = iVar5 + ((uVar12 ^ uVar9) - uVar12);
+                } while (iVar2 < primdef[iVar8].nummtx);
+              }
+              if (iVar5 == 0) {
+                primdef[iVar8].baseid = i;
+                n = 0x168;
+                iVar21 = iVar15 + 0x174;
+                ppVar19 = ppVar18 + 1;
+                iVar20 = iVar20 + 1;
+                ppVar7 = primdef + iVar8;
+                do {
+                  ppVar6 = ppVar7;
+                  ppVar4 = ppVar18;
+                  n = n + -0x18;
+                  ppVar4->vrts[0].pnt.x = ppVar6->vrts[0].pnt.x;
+                  ppVar4->vrts[0].pnt.y = ppVar6->vrts[0].pnt.y;
+                  ppVar4->vrts[0].pnt.z = ppVar6->vrts[0].pnt.z;
+                  ppVar4->vrts[0].nrm.x = ppVar6->vrts[0].nrm.x;
+                  ppVar4->vrts[0].nrm.y = ppVar6->vrts[0].nrm.y;
+                  ppVar7 = (primdef_s *)&ppVar6->vrts[0].diffuse;
+                  ppVar4->vrts[0].nrm.z = ppVar6->vrts[0].nrm.z;
+                  ppVar18 = (primdef_s *)&ppVar4->vrts[0].diffuse;
+                } while (n != 0);
+                *(int *)ppVar18 = *(int *)ppVar7;
+                ppVar4->vrts[0].tc[0] = ppVar6->vrts[0].tc[0];
+                pfVar13 = (float *)((int)pSorted->weights[10] + iVar15);
+                ppVar4->vrts[0].tc[1] = ppVar6->vrts[0].tc[1];
+                n = 0xf;
+                primdef[iVar8].sorted = 1;
+                do {
+                  pfVar13[0xf] = -NAN;
+                  pfVar13[-0x1e] = 0.0;
+                  pfVar13[-0xf] = 0.0;
+                  *pfVar13 = 0.0;
+                  pfVar13 = pfVar13 + 1;
+                  n = n + -1;
+                } while (n != 0);
+                iVar2 = 0;
+                n = iVar20;
+                if (0 < primdef[k].nummtx) {
                   do {
-                    iVar6 = 0;
-                    iVar4 = iVar3 + 1;
-                    if (0 < primdef[iVar27].nummtx) {
-                      iVar1 = iVar3 * 4;
-                      pafVar13 = primdef[iVar27].weights[10];
+                    iVar5 = 0;
+                    iVar3 = iVar2 + 1;
+                    if (0 < primdef[iVar8].nummtx) {
+                      iVar1 = iVar2 * 4;
+                      totalweights = primdef[iVar8].weights[10];
                       do {
-                        if (primdef[iVar20].mtxid[iVar3] == *(int *)pafVar13[5]) {
-                          *(float *)((int)ppVar14->weights + iVar1 + iVar10) = pafVar13[-10][0];
-                          *(float *)((int)ppVar14->weights[5] + iVar1 + iVar10) = pafVar13[-5][0];
-                          *(float *)((int)ppVar14->weights[10] + iVar1 + iVar10) = (*pafVar13)[0];
-                          *(int *)((int)ppVar14->mtxid + iVar1 + iVar10) =
-                               primdef[iVar20].mtxid[iVar3];
+                        if (primdef[k].mtxid[iVar2] == *(int *)totalweights[5]) {
+                          *(float *)((int)pSorted->weights + iVar1 + iVar15) = totalweights[-10][0 ];
+                          *(float *)((int)pSorted->weights[5] + iVar1 + iVar15) =
+                               totalweights[-5][0];
+                          *(float *)((int)pSorted->weights[10] + iVar1 + iVar15) =
+                               (*totalweights)[0];
+                          *(int *)((int)pSorted->mtxid + iVar1 + iVar15) = primdef[k].mtxid[iVar2] ;
                         }
-                        iVar6 = iVar6 + 1;
-                        pafVar13 = (float (*) [3])(*pafVar13 + 1);
-                      } while (iVar6 < primdef[iVar27].nummtx);
+                        iVar5 = iVar5 + 1;
+                        totalweights = (float (*) [3])(*totalweights + 1);
+                      } while (iVar5 < primdef[iVar8].nummtx);
                     }
-                    iVar3 = iVar4;
-                  } while (iVar4 < primdef[iVar20].nummtx);
+                    iVar2 = iVar3;
+                  } while (iVar3 < primdef[k].nummtx);
                 }
               }
             }
-            iVar27 = iVar21;
-            ppVar22 = ppVar23;
-            iVar10 = iVar25;
-          } while (iVar21 < local_60);
+            iVar8 = iVar17;
+            ppVar18 = ppVar19;
+            iVar15 = iVar21;
+          } while (iVar17 < count);
         }
-        iVar20 = 0xf;
-        piVar18 = (int *)((int)local_66b8 + local_54);
-        piVar12 = primdefs_sorted[iVar19].mtxid;
+        k = 0xf;
+        piVar14 = batchmatrices + iVar16 * 0xf;
+        piVar10 = primdefs_sorted[i].mtxid;
         do {
-          iVar27 = *piVar12;
-          piVar12 = piVar12 + 1;
-          *piVar18 = iVar27;
-          piVar18 = piVar18 + 1;
-          iVar20 = iVar20 + -1;
-          iVar27 = local_5c;
-        } while (iVar20 != 0);
+          i = *piVar10;
+          piVar10 = piVar10 + 1;
+          *piVar14 = i;
+          piVar14 = piVar14 + 1;
+          k = k + -1;
+        } while (k != 0);
       }
-      iVar19 = iVar26;
-      iVar20 = iVar15;
-    } while (iVar15 < local_60);
+      i = n;
+      iVar16 = bID;
+      k = iVar22;
+    } while (iVar22 < count);
   }
-  iVar20 = 0;
-  memset(local_50,0,0x258);
-  iVar19 = -1;
-  if (0 < iVar27) {
+  iVar16 = 0;
+  memset(mtxusecnt,0,0x258);
+  i = -1;
+  if (0 < bID) {
     do {
-      iVar24 = iVar20 * 0x3c;
-      iVar10 = 0xf;
-      iVar20 = iVar20 + 1;
-      iVar15 = iVar19;
+      iVar22 = iVar16 * 0x3c;
+      iVar20 = 0xf;
+      iVar16 = iVar16 + 1;
+      k = i;
       do {
-        iVar25 = *(int *)((int)local_66b8 + iVar24);
-        iVar19 = iVar15;
-        if (iVar25 != -1) {
-          local_50[iVar25] = local_50[iVar25] + 1;
-          iVar19 = *(int *)((int)local_66b8 + iVar24);
-          if (*(int *)((int)local_66b8 + iVar24) < iVar15) {
-            iVar19 = iVar15;
+        iVar8 = *(int *)((int)batchmatrices + iVar22);
+        i = k;
+        if (iVar8 != -1) {
+          mtxusecnt[iVar8] = mtxusecnt[iVar8] + 1;
+          i = *(int *)((int)batchmatrices + iVar22);
+          if (i < k) {
+            i = k;
           }
         }
-        iVar24 = iVar24 + 4;
-        iVar10 = iVar10 + -1;
-        iVar15 = iVar19;
-      } while (iVar10 != 0);
-    } while (iVar20 < iVar27);
+        iVar22 = iVar22 + 4;
+        iVar20 = iVar20 + -1;
+        k = i;
+      } while (iVar20 != 0);
+    } while (iVar16 < bID);
   }
-  memset(local_58,-1,0x2ee0);
+  memset(batchmtx_sorted,-1,0x2ee0);
+  cnt = count;
   do {
-    iVar20 = 0;
-    iVar24 = 0;
-    iVar15 = *local_50;
-    piVar12 = local_50;
-    if (-1 < iVar19) {
+    iVar16 = 0;
+    iVar22 = 0;
+    k = *mtxusecnt;
+    piVar10 = mtxusecnt;
+    if (-1 < i) {
       do {
-        if (local_50[iVar20] < *piVar12) {
-          iVar20 = iVar24;
-          iVar15 = *piVar12;
+        if (mtxusecnt[iVar16] < *piVar10) {
+          iVar16 = iVar22;
+          k = *piVar10;
         }
-        iVar24 = iVar24 + 1;
-        piVar12 = piVar12 + 1;
-      } while (iVar24 <= iVar19);
+        iVar22 = iVar22 + 1;
+        piVar10 = piVar10 + 1;
+      } while (iVar22 <= i);
     }
-    if (iVar15 == 0) break;
-    iVar24 = 0;
-    if (0 < iVar27) {
-      iVar25 = 0;
-      iVar10 = 0;
+    if (k == 0) break;
+    iVar22 = 0;
+    if (0 < bID) {
+      iVar8 = 0;
+      iVar20 = 0;
       do {
-        iVar6 = 0xf;
-        iVar21 = 0;
-        iVar3 = iVar10 + 1;
-        piVar12 = (int *)((int)local_6a0 + iVar25 + 4);
-        piVar18 = local_66b8 + iVar10 * 0xf;
+        iVar17 = 0xf;
+        iVar15 = 0;
+        iVar21 = iVar20 + 1;
+        piVar10 = (int *)((int)&matchingslot[0].slot + iVar8);
+        piVar14 = batchmatrices + iVar20 * 0xf;
         do {
-          iVar4 = *piVar18;
-          piVar18 = piVar18 + 1;
-          if (iVar4 == iVar20) {
-            piVar12[-1] = iVar10;
-            iVar25 = iVar25 + 8;
-            *piVar12 = iVar21;
-            iVar24 = iVar24 + 1;
-            piVar12 = piVar12 + 2;
+          iVar2 = *piVar14;
+          piVar14 = piVar14 + 1;
+          if (iVar2 == iVar16) {
+            piVar10[-1] = iVar20;
+            iVar8 = iVar8 + 8;
+            *piVar10 = iVar15;
+            iVar22 = iVar22 + 1;
+            piVar10 = piVar10 + 2;
           }
-          iVar21 = iVar21 + 1;
-          iVar6 = iVar6 + -1;
-        } while (iVar6 != 0);
-        iVar10 = iVar3;
-      } while (iVar3 < iVar27);
+          iVar15 = iVar15 + 1;
+          iVar17 = iVar17 + -1;
+        } while (iVar17 != 0);
+        iVar20 = iVar21;
+      } while (iVar21 < bID);
     }
-    iVar25 = 0;
-    iVar10 = iVar25;
-    if (iVar24 < 1) {
+    iVar8 = 0;
+    iVar20 = iVar8;
+    if (iVar22 < 1) {
 LAB_800ae5b0:
-      if (0 < iVar24) {
-        piVar12 = local_6a0;
+      if (0 < iVar22) {
+        pmVar11 = matchingslot;
         do {
-          iVar10 = *piVar12;
-          iVar24 = iVar24 + -1;
-          piVar12 = piVar12 + 2;
-          *(int *)(local_58 + (iVar25 + -1) * 4 + iVar10 * 0x3c) = iVar20;
-          local_50[iVar20] = 0;
-        } while (iVar24 != 0);
+          piVar10 = &pmVar11->batch;
+          iVar22 = iVar22 + -1;
+          pmVar11 = pmVar11 + 1;
+          batchmtx_sorted[-1][*piVar10 * 0xf + iVar8 + 199] = iVar16;
+          mtxusecnt[iVar16] = 0;
+        } while (iVar22 != 0);
       }
     }
     else {
       do {
-        iVar21 = 0;
-        iVar25 = iVar10 + 1;
-        if (0 < iVar24) {
-          piVar12 = local_6a0;
-          iVar3 = iVar24;
+        iVar15 = 0;
+        iVar8 = iVar20 + 1;
+        if (0 < iVar22) {
+          pmVar11 = matchingslot;
+          iVar21 = iVar22;
           do {
-            iVar6 = *piVar12;
-            piVar12 = piVar12 + 2;
-            if (*(int *)(local_58 + iVar10 * 4 + iVar6 * 0x3c) == -1) {
-              iVar21 = iVar21 + 1;
+            piVar10 = &pmVar11->batch;
+            pmVar11 = pmVar11 + 1;
+            if ((*batchmtx_sorted)[*piVar10 * 0xf + iVar20] == -1) {
+              iVar15 = iVar15 + 1;
             }
-            iVar3 = iVar3 + -1;
-          } while (iVar3 != 0);
+            iVar21 = iVar21 + -1;
+          } while (iVar21 != 0);
         }
-        if (iVar24 <= iVar21) goto LAB_800ae5b0;
-        iVar10 = iVar25;
-      } while (iVar25 < 0xf);
-      errormsg = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x232);
-      (*errormsg)("SortPrimDefs: Unable to find a matching free slot in all batches!!");
+        if (iVar22 <= iVar15) goto LAB_800ae5b0;
+        iVar20 = iVar8;
+      } while (iVar8 < 0xf);
+      e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x232);
+      (*e)("SortPrimDefs: Unable to find a matching free slot in all batches!!");
     }
-  } while (iVar15 != 0);
-  ppVar14 = primdefs_sorted;
-  iVar27 = 0;
-  if (0 < local_60) {
-    iVar20 = 0;
-    iVar19 = 0;
+  } while (k != 0);
+  pSorted = primdefs_sorted;
+  bID = 0;
+  if (0 < cnt) {
+    iVar16 = 0;
+    i = 0;
     do {
-      iVar15 = ppVar14[iVar19].baseid;
-      if (iVar15 != iVar27) {
-        iVar20 = iVar20 + 0x3c;
-        iVar27 = iVar15;
+      k = pSorted[i].baseid;
+      if (k != bID) {
+        iVar16 = iVar16 + 0x3c;
+        bID = k;
       }
-      iVar24 = iVar19 + 1;
-      iVar15 = 0x168;
-      ppVar22 = ppVar14 + iVar19;
-      ppVar23 = primdef + iVar19;
+      iVar22 = i + 1;
+      k = 0x168;
+      ppVar18 = pSorted + i;
+      ppVar19 = primdef + i;
       do {
-        ppVar5 = ppVar23;
-        ppVar8 = ppVar22;
-        iVar15 = iVar15 + -0x18;
-        ppVar5->vrts[0].pnt.x = ppVar8->vrts[0].pnt.x;
-        ppVar5->vrts[0].pnt.y = ppVar8->vrts[0].pnt.y;
-        ppVar5->vrts[0].pnt.z = ppVar8->vrts[0].pnt.z;
-        ppVar5->vrts[0].nrm.x = ppVar8->vrts[0].nrm.x;
-        ppVar5->vrts[0].nrm.y = ppVar8->vrts[0].nrm.y;
-        ppVar22 = (primdef_s *)&ppVar8->vrts[0].diffuse;
-        ppVar5->vrts[0].nrm.z = ppVar8->vrts[0].nrm.z;
-        ppVar23 = (primdef_s *)&ppVar5->vrts[0].diffuse;
-      } while (iVar15 != 0);
-      pafVar13 = primdef[iVar19].weights[10];
-      *(int *)ppVar23 = *(int *)ppVar22;
-      iVar15 = 0xf;
-      ppVar5->vrts[0].tc[0] = ppVar8->vrts[0].tc[0];
-      ppVar5->vrts[0].tc[1] = ppVar8->vrts[0].tc[1];
+        ppVar4 = ppVar19;
+        ppVar7 = ppVar18;
+        k = k + -0x18;
+        ppVar4->vrts[0].pnt.x = ppVar7->vrts[0].pnt.x;
+        ppVar4->vrts[0].pnt.y = ppVar7->vrts[0].pnt.y;
+        ppVar4->vrts[0].pnt.z = ppVar7->vrts[0].pnt.z;
+        ppVar4->vrts[0].nrm.x = ppVar7->vrts[0].nrm.x;
+        ppVar4->vrts[0].nrm.y = ppVar7->vrts[0].nrm.y;
+        ppVar18 = (primdef_s *)&ppVar7->vrts[0].diffuse;
+        ppVar4->vrts[0].nrm.z = ppVar7->vrts[0].nrm.z;
+        ppVar19 = (primdef_s *)&ppVar4->vrts[0].diffuse;
+      } while (k != 0);
+      totalweights = primdef[i].weights[10];
+      *(int *)ppVar19 = *(int *)ppVar18;
+      k = 0xf;
+      ppVar4->vrts[0].tc[0] = ppVar7->vrts[0].tc[0];
+      ppVar4->vrts[0].tc[1] = ppVar7->vrts[0].tc[1];
       do {
-        *(int *)pafVar13[5] = -1;
-        pafVar13[-10][0] = 0.0;
-        pafVar13[-5][0] = 0.0;
-        (*pafVar13)[0] = 0.0;
-        pafVar13 = (float (*) [3])(*pafVar13 + 1);
-        iVar15 = iVar15 + -1;
-      } while (iVar15 != 0);
-      iVar15 = ppVar14[iVar27].nummtx;
-      primdef[iVar19].baseid = iVar27;
-      primdef[iVar19].nummtx = iVar15;
-      iVar15 = 0;
+        *(int *)totalweights[5] = -1;
+        totalweights[-10][0] = 0.0;
+        totalweights[-5][0] = 0.0;
+        (*totalweights)[0] = 0.0;
+        totalweights = (float (*) [3])(*totalweights + 1);
+        k = k + -1;
+      } while (k != 0);
+      k = pSorted[bID].nummtx;
+      primdef[i].baseid = bID;
+      primdef[i].nummtx = k;
+      k = 0;
       do {
-        iVar10 = iVar15 + 1;
-        piVar12 = ppVar14[iVar19].mtxid;
-        iVar25 = *(int *)(local_58 + iVar15 * 4 + iVar20);
-        iVar21 = 0xf;
+        iVar20 = k + 1;
+        piVar10 = pSorted[i].mtxid;
+        iVar8 = *(int *)((int)*batchmtx_sorted + k * 4 + iVar16);
+        iVar15 = 0xf;
         do {
-          if (iVar25 == *piVar12) {
-            primdef[iVar19].weights[iVar15] = (*(float (*) [3])(piVar12 + -0x2d))[0];
-            primdef[iVar19].mtxid[iVar15 + -0x1e] = (int)(*(float (*) [3])(piVar12 + -0x1e))[0];
-            primdef[iVar19].mtxid[iVar15 + -0xf] = (int)(*(float (*) [3])(piVar12 + -0xf))[0];
-            primdef[iVar19].mtxid[iVar15] = *piVar12;
+          if (iVar8 == *piVar10) {
+            primdef[i].weights[k] = (*(float (*) [3])(piVar10 + -0x2d))[0];
+            primdef[i].mtxid[k + -0x1e] = (int)(*(float (*) [3])(piVar10 + -0x1e))[0];
+            primdef[i].mtxid[k + -0xf] = (int)(*(float (*) [3])(piVar10 + -0xf))[0];
+            primdef[i].mtxid[k] = *piVar10;
           }
-          piVar12 = piVar12 + 1;
-          iVar21 = iVar21 + -1;
-        } while (iVar21 != 0);
-        iVar15 = iVar10;
-      } while (iVar10 < 0xf);
-      iVar19 = iVar24;
-    } while (iVar24 < local_60);
+          piVar10 = piVar10 + 1;
+          iVar15 = iVar15 + -1;
+        } while (iVar15 != 0);
+        k = iVar20;
+      } while (iVar20 < 0xf);
+      i = iVar22;
+    } while (iVar22 < cnt);
   }
-  iVar19 = 0;
-  iVar27 = -1;
-  ppVar14 = primdefs_sorted;
-  if (0 < iVar26) {
+  i = 0;
+  bID = -1;
+  pSorted = primdefs_sorted;
+  if (0 < n) {
     do {
-      if (ppVar14->baseid != iVar27) {
-        iVar19 = iVar19 + ppVar14->nummtx;
-        iVar27 = ppVar14->baseid;
+      if (pSorted->baseid != bID) {
+        i = i + pSorted->nummtx;
+        bID = pSorted->baseid;
       }
-      iVar26 = iVar26 + -1;
-      ppVar14 = ppVar14 + 1;
-    } while (iVar26 != 0);
+      n = n + -1;
+      pSorted = pSorted + 1;
+    } while (n != 0);
   }
-  return iVar19;
+  return i;
 }*/
 
 
 
-int AddMtxToPrimDef(primdef_s *primdef,int mtxid)
+s32 AddMtxToPrimDef(struct primdef_s *primdef,s32 mtxid)
 
 {
-  int n;
-  int i;
-  int *mtxid_;
+  s32 n;
+  s32 i;
   
   i = 0;
   if (0 < primdef->nummtx) {
-    mtxid_ = primdef->mtxid;
-    do {
-      n = *mtxid_;
-      mtxid_ = mtxid_ + 1;
+ do {
+      n = *primdef->mtxid;
+      primdef->mtxid += 1;
       if (n == mtxid) {
         return i;
       }

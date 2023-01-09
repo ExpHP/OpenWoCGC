@@ -22,27 +22,28 @@ void NuTexInit()
 	ntex = 0;
 }
 
-void NuTexClose(void)		\\CHECK
-
+void NuTexClose(void) 
 {
-  int i;
-  int *data;
-  
-  NudxFw_DestroyBackBufferCopy();
-  i = 0x400;
-  data = (int *)&tinfo[0].tex.bits;
-  do {
-    if ((void *)*data != NULL) {
-      NuMemFree((void *)*data);
-      *data = 0;
-    }
-    data = data + 10;
-    i = i + -1;
-  } while (i != 0);
-  initialised = i;
-  tpid = i;
-  ntex = i;
-  return;
+    s32 i;
+    void* temp_r3;
+    void** data;
+
+    NudxFw_DestroyBackBufferCopy();
+    i = 0x400;
+    data = &tinfo->tex.bits; //data = &tinfo[0].tex.bits;
+    do {
+        temp_r3 = *data;
+        if (temp_r3 != NULL) {
+            NuMemFree(temp_r3);
+            *data = NULL;
+        }
+        data += 0x28;
+        i -= 1;
+    } while (i != 0);
+    initialised = i;
+    tpid = i;
+    ntex = i;
+	return;
 }
 
 s32 GetTPID()
@@ -225,8 +226,8 @@ void NuTexSetTextureStates(numtl_s *mtl)
 }
 
 
-s32 NuTexReadBitmapMM(char* fileName, s32 mode, nutex_s* tex)
-{
+s32 NuTexReadBitmapMM(char* fileName, s32 mmlevel, nutex_s* tex)
+{	
 	if (fileName == NULL)
 	{
 		error_func e = NuErrorProlog("OpenCrashWOC/code/nu3dx/nutex.c", 999);
@@ -248,15 +249,15 @@ s32 NuTexReadBitmapMM(char* fileName, s32 mode, nutex_s* tex)
 	{
 		memset(tex, 0, sizeof(nutex_s));
 		NuFilePos(handle);
-		char bmpHeader[14];
-		NuFileRead(handle, &bmpHeader, 14);
-		char standardHeader[40];
-		NuFileRead(handle, &standardHeader, 40);
-		s16 bitsPerPixel = (s16)standardHeader[0xE];
+		tagBITMAPFILEHEADER bmpHeader;
+		NuFileRead(handle, &bmpHeader.bfType, 14);
+		tagBITMAPINFOHEADER bmi;
+		NuFileRead(handle, &bmi, 40);
+		u16 bitsPerPixel = bmi.biBitCount;
 		if (bitsPerPixel == 8)
 		{
 			tex->type = NUTEX_PAL8;
-			u32 palette[0x100]; // 256 colors.
+			s32 palette[0x100]; // 256 colors.
 			NuFileRead(handle, &palette, 0x400);
 			u32 num = 0;
 			for (s32 i = 0; i < 0x100; i++)
@@ -281,26 +282,100 @@ s32 NuTexReadBitmapMM(char* fileName, s32 mode, nutex_s* tex)
 		else if (bitsPerPixel == 16) // I don't think this was in here, but makes sense to add it.
 		{
 			tex->type = NUTEX_RGBA16;
+			palette = 0;
 		}
 		else if (bitsPerPixel == 24)
 		{
 			tex->type = NUTEX_RGB24;
+			palette = 0;
 		}
 		else if (bitsPerPixel == 32)
 		{
 			tex->type = NUTEX_RGBA32;
+			palette = 0;
 		}
 		else
 		{
 			error_func e = NuErrorProlog("OpenCrashWOC/code/nu3dx/nutex.c", 999);
 			e("NuTexLoadBitmap:Bad BitCount <%d> on loading bitmap <%s>", bitsPerPixel, fileName);
 		}
-		tex->mmcnt = mode + 1;
-		tex->height = (u32)standardHeader[8];
-		tex->width = (u32)standardHeader[4];
+		tex->mmcnt = mmlevel + 1;
+		tex->height = bmi.biHeight;
+		tex->width = bmi.biWidth;
 		s32 size = NuTexPixelSize(tex->type);
 		size *= tex->width;
-		// TODO!!!
+           
+		   
+		 /********************new part**********************/ 
+		
+		s32 var1 = size + 7;
+		if(var1 < 0)
+		{
+			var1 = size + 0xe;
+		}
+		
+		s32 h = tex->height;
+  		s32 ___N = var1 >> 3;
+  		var1 = 0;
+  		s32 w = tex->width;
+		
+		s32 k = 0; //counter
+
+		  do {
+    				s32 imgsize = NuTexImgSize(tex->type,w,h);
+    				h = h >> 1;
+    				var1 = var1 + imgsize;
+    				k = k + -1;
+    				w = w >> 1;
+
+  			} while (k != 0);
+
+		void* bits = NuMemAlloc(var1);
+  		tex->bits = bits;
+
+		  if (palette == 0 {
+
+    			tex->pal = (int *)0x0;
+  			}
+  			
+		else {
+    				s32 palsize = (int *)NuMemAlloc(palette);
+    				tex->pal = palsize;
+  			}
+  		bits = tex->bits;
+		
+		imgsize = NuTexImgSize(tex->type,tex->width,tex->height);
+        NuFileRead(fh,bits,imgsize);
+		union variptr_u dst;
+		dst.voidptr = malloc_x(___N);
+		void * __src = tex->bits;
+		imgsize = NuTexImgSize(tex->type,tex->width,tex->height);
+		bits = (void *)((int)__src + (imgsize - ___N));
+		
+		  if (__src < bits) 
+		  {
+			  
+			  void* ptr1 = NULL;
+			  void* ptr2 = NULL;
+             do{
+					memcpy(dst.voidptr,__src,___N);
+					ptr2 = (void *)((int)__src + ___N);
+					memcpy(__src,bits,___N);
+					ptr1 = (void *)((int)bits - ___N);
+					memcpy(bits,dst.voidptr,___N);
+					bits = ptr1;
+					__src = ptr2;
+               } while (ptr2 < ptr1);
+		  }
+		  
+		free_x(dst.voidptr);
+		NuTexImgSize(tex->type,tex->width,tex->height);
+		
+		if (palette !=0)
+		{
+			memcpy(tex->pal,palette,sizeof(palette));
+		}
+		
 	}
 }
 
@@ -330,75 +405,4 @@ nutex_s * NuTexReadBitmap(char* fileName)
 NuSurface* NuTexLoadTextureFromDDSFile(char* fileName)
 {
 	return NULL;
-}
-
-void GS_TexSelect(_GXTevStageID stage,int NUID)
-
-{
-  int iVar1;
-  uint uVar2;
-  _GS_TEXTURE *GSTex;
-  bool check;
-  
-  check = stage == GX_TEVSTAGE0;
-  if (check) {
-    ShadowBodge = stage;
-  }
-  if (3 < (int)stage) {
-    DisplayErrorAndLockup("C:/source/crashwoc/code/system/gc/gstex.c",0x21c,"GS_TexSelect1");
-  }
-  TexStages[stage] = NUID;
-  GSTex = GS_TexList;
-  if ((NUID == 0) || (NUID == 9999)) {
-    GXSetNumTevStages('\x01');
-    GXSetTevOrder(stage,GX_TEXCOORD_NULL,GX_TEXMAP_NULL,GX_COLOR0A0);
-    GXSetTevOp(stage,GX_PASSCLR);
-  }
-  else {
-    if (NUID == ShadowMatBodge) {
-      ShadowBodge = GX_TEVSTAGE1;
-    }
-    if ((int)maxstage.189 < (int)stage) {
-      maxstage.189 = stage;
-    }
-    if (check) {
-      maxstage.189 = stage;
-    }
-    if (NUID == 0x270e) {
-      GS_SetFBCopyTexturePause();
-    }
-    GXSetNumTexGens((char)maxstage.189 + '\x01');
-    GXSetNumTevStages((char)maxstage.189 + '\x01');
-    GXSetTexCoordGen2(stage,GX_TG_MTX2x4,GX_TG_TEX0,0x3c,'\0',0x7d);
-    GXSetTevOrder(stage,stage,stage,GX_COLOR0A0);
-    iVar1 = 0;
-    if (check) {
-      iVar1 = 10;
-    }
-    GXSetTevColorIn(stage,0xf,8,iVar1,0xf);
-    GXSetTevColorOp(stage,0,0,0,1,0);
-    iVar1 = 0;
-    if (check) {
-      iVar1 = 5;
-    }
-    GXSetTevColorIn(stage,7,4,iVar1,7);
-    GXSetTevAlphaOp(stage,0,0,0,1,0);
-    if (1 < NUID - 0x270eU) {
-      uVar2 = 0;
-      if (GS_NumTextures != 0) {
-        do {
-          if (GSTex->NUID == NUID - 1U) {
-            GXInitTexObjWrapMode(&GSTex->Tex,(&GS_TexWrapMode_s)[stage],(&GS_TexWrapMode_t)[stage] );
-            GXLoadTexObj(&GSTex->Tex,stage);
-            return;
-          }
-          uVar2 = uVar2 + 1;
-          GSTex = GSTex + 1;
-        } while (uVar2 < GS_NumTextures);
-      }
-      DisplayErrorAndLockup("C:/source/crashwoc/code/system/gc/gstex.c",0x281,"GS_TexSelect2");
-      GXLoadTexObj(&GS_TexList->Tex,stage);
-    }
-  }
-  return;
 }
