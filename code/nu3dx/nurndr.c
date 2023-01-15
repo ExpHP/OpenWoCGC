@@ -1913,10 +1913,11 @@ int NuRndrGScnObj(nugobj_s *gobj,numtx_s *wm)
 }
 
 
-void NuRndrParticleGroup(_sceDmaTag *data,setup_s *setup,numtl_s *mtl,float time,numtx_s *wm)
+void NuRndrParticleGroup(rdata_s *data,setup_s *setup,numtl_s *mtl,float time,numtx_s *wm)
+
 {
   int i;
-  rdata_s *rdata;
+  _sceDmaTag *data2;
   double dVar1;
   bool check;
   
@@ -1928,16 +1929,16 @@ void NuRndrParticleGroup(_sceDmaTag *data,setup_s *setup,numtl_s *mtl,float time
     if (check) {
       return;
     }
-    rdata = (rdata_s *)((rdata_s *)data)->dmadata[1];
-    if (((rdata_s *)data)->dmadata[0] == 0) {
-      if (rdata != (rdata_s *)0x0) {
-        renderpsdma(0x20,(rdata_s *)data,setup,mtl,(float)dVar1,wm);
-        data = (_sceDmaTag *)rdata;
+    data2 = (_sceDmaTag *)data->dmadata[1];
+    if (data->dmadata[0] == 0) {
+      if (data2 != (_sceDmaTag *)0x0) {
+        renderpsdma(0x20,data,setup,mtl,(float)dVar1,wm);
+        data = (rdata_s *)data2;
       }
     }
     else {
-      if (((rdata_s *)data)->dmadata[0] == 1) {
-        renderpsdma(0x20,(rdata_s *)data,setup,mtl,(float)dVar1,wm);
+      if (data->dmadata[0] == 1) {
+        renderpsdma(0x20,data,setup,mtl,(float)dVar1,wm);
       }
       check = true;
     }
@@ -1945,8 +1946,6 @@ void NuRndrParticleGroup(_sceDmaTag *data,setup_s *setup,numtl_s *mtl,float time
   } while (i < 0x101);
   return;
 }
-
-
 */
 
 

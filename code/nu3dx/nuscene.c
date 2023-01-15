@@ -647,55 +647,55 @@ int ReadNuIFFInstSet(filehandle handle,nuinstance_s *inst_data,void *param_3)
 }
 
 
-void ReadNuIFFSpecialObjects(filehandle handle,nugscn_s *scene)
+void ReadNuIFFSpecialObjects(int fh,nugscn_s *gsc)
 
 {
-  int iVar1;
-  void *data;
-  nuspecial_s *pnVar2;
-  int iVar3;
-  int iVar4;
+  int numspec;
+  nufspecial_s *file_specials;
+  nuspecial_s *pnVar1;
+  int cnt;
+  int i;
   nuinstance_s *inst;
-  nuinstance_s *pnVar5;
+  nuinstance_s *pnVar2;
   nuspecial_s *spec;
   
-  iVar1 = NuFileReadInt(fh);
-  gsc->numspecial = iVar1;
-  data = malloc_x(iVar1 * 0x50);
-  NuFileRead(fh,data,gsc->numspecial * 0x50);
-  pnVar2 = (nuspecial_s *)NuMemAlloc(gsc->numspecial * 0x50);
-  iVar1 = 0;
-  gsc->specials = pnVar2;
+  numspec = NuFileReadInt(fh);
+  gsc->numspecial = numspec;
+  file_specials = (nufspecial_s *)malloc_x(numspec * 0x50);
+  NuFileRead(fh,file_specials,gsc->numspecial * 0x50);
+  pnVar1 = (nuspecial_s *)NuMemAlloc(gsc->numspecial * 0x50);
+  numspec = 0;
+  gsc->specials = pnVar1;
   if (0 < gsc->numspecial) {
     do {
-      iVar3 = iVar1 + 1;
-      iVar4 = 0x30;
-      gsc->specials[iVar1].instance = gsc->instances + *(int *)((int)data + iVar1 * 0x50 + 0x40);
-      pnVar5 = gsc->specials[iVar1].instance;
-      pnVar2 = gsc->specials + iVar1;
+      cnt = numspec + 1;
+      i = 0x30;
+      gsc->specials[numspec].instance = gsc->instances + file_specials[numspec].instanceix;
+      pnVar2 = gsc->specials[numspec].instance;
+      pnVar1 = gsc->specials + numspec;
       do {
-        spec = pnVar2;
-        inst = pnVar5;
-        iVar4 = iVar4 + -0x18;
+        spec = pnVar1;
+        inst = pnVar2;
+        i = i + -0x18;
         (spec->mtx)._00 = (inst->matrix)._00;
         (spec->mtx)._01 = (inst->matrix)._01;
         (spec->mtx)._02 = (inst->matrix)._02;
         (spec->mtx)._03 = (inst->matrix)._03;
         (spec->mtx)._10 = (inst->matrix)._10;
-        pnVar5 = (nuinstance_s *)&(inst->matrix)._12;
+        pnVar2 = (nuinstance_s *)&(inst->matrix)._12;
         (spec->mtx)._11 = (inst->matrix)._11;
-        pnVar2 = (nuspecial_s *)&(spec->mtx)._12;
-      } while (iVar4 != 0);
-      *(float *)pnVar2 = *(float *)pnVar5;
+        pnVar1 = (nuspecial_s *)&(spec->mtx)._12;
+      } while (i != 0);
+      *(float *)pnVar1 = *(float *)pnVar2;
       (spec->mtx)._13 = (inst->matrix)._13;
       (spec->mtx)._20 = (inst->matrix)._20;
       (spec->mtx)._21 = (inst->matrix)._21;
-      gsc->specials[iVar1].name = gsc->nametable + *(int *)((int)data + iVar1 * 0x50 + 0x44);
-      (gsc->specials[iVar1].instance)->special_flag = '\x01';
-      iVar1 = iVar3;
-    } while (iVar3 < gsc->numspecial);
+      gsc->specials[numspec].name = gsc->nametable + file_specials[numspec].nameix;
+      (gsc->specials[numspec].instance)->special_flag = '\x01';
+      numspec = cnt;
+    } while (cnt < gsc->numspecial);
   }
-  free_x(data);
+  free_x(file_specials);
   return;
 }
 
