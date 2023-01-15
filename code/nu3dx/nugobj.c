@@ -112,8 +112,6 @@ void NuGobjAddGeom(struct nugobj_s* gobj, struct nugeom_s* geom) {
 }
 }*/
 
-
-
 /*void NuGobjAddFaceOnGeom(struct nugobj_s* gobj, struct nufaceongeom_s* geom) {
   if (gobj->faceon_geom == NULL) {
     gobj->faceon_geom = geom;
@@ -141,6 +139,131 @@ void NuGobjAddFaceOnGeom(struct nugobj_s* gobj, struct nufaceongeom_s* Fgeom) {
         return;
     }
     gobj->faceon_geom = Fgeom;
+}
+
+void NuGobjCalcFaceOnDims(struct nugobj_s* gobj) {
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  struct nuvec_s *pnt;
+  //struct nufaceon_s *faceon;
+  int iVar5;
+  //int iVar6;
+  struct nufaceongeom_s *face1;
+  double dVar7;
+  float fVar8;
+  float fVar9;
+  struct nuvec_s v;
+  float fvar10;
+  struct nufaceongeom_s* fgeom;
+  float pointX;
+  
+  gobj->bounding_box_min.z = FLT_MAX;
+  gobj->bounding_box_max.z = FLT_MIN;
+  gobj->bounding_rsq_from_origin = 0.0;
+  gobj->bounding_box_min.x = FLT_MAX;
+  gobj->bounding_box_min.y = FLT_MAX;
+  gobj->bounding_box_max.x = FLT_MIN;
+  gobj->bounding_box_max.y = FLT_MIN;
+  for (fgeom = gobj->faceon_geom; fgeom != NULL; fgeom = fgeom->next) {
+    int count = 0;
+    if (fgeom->nfaceons > 0) {
+      // Seems to be used as an index for an array? Increments by 24 each iteration.
+      int size = 0;
+      do {
+        struct nufaceon_s* faceon = fgeom->faceons;
+        float fonHeight = *(float *)((int)&faceon->height + size);
+        float fonWidth = *(float *)((int)&faceon->width + size);
+	// Clamp width to height.
+        if (fonWidth < fonHeight) {
+          fonWidth = fonHeight;
+        }
+        fonHeight = *(float *)((int)&faceon->point.x + size) - fonWidth;
+        if (fonHeight < gobj->bounding_box_min.x) {
+          gobj->bounding_box_min.x = fonHeight;
+        }
+        fonHeight = *(float *)((int)&faceon->point.y + size) - fonWidth;
+        if (fonHeight < gobj->bounding_box_min.y) {
+          gobj->bounding_box_min.y = fonHeight;
+        }
+        fonHeight = *(float *)((int)&faceon->point.z + size) - fonWidth;
+        if (fonHeight < gobj->bounding_box_min.z) {
+          gobj->bounding_box_min.z = fonHeight;
+        }
+        fonHeight = *(float *)((int)&faceon->point.x + size) + fonWidth;
+        if (gobj->bounding_box_max.x < fonHeight) {
+          gobj->bounding_box_max.x = fonHeight;
+        }
+        fonHeight = *(float *)((int)&faceon->point.y + size) + fonWidth;
+        if (gobj->bounding_box_max.y < fonHeight) {
+          gobj->bounding_box_max.y = fonHeight;
+        }
+        fonWidth = *(float *)((int)&faceon->point.z + size) + fonWidth;
+        if (gobj->bounding_box_max.z < fonWidth) {
+          gobj->bounding_box_max.z = fonWidth;
+        }
+        fonHeight = *(float *)((int)&faceon->point.y + size);
+        pointX = *(float *)((int)&faceon->point.x + size);
+        fonWidth = *(float *)((int)&faceon->point.z + size);
+	// z^2 + x^2 + y^2
+        fonHeight = fonWidth * fonWidth + pointX * pointX + fonHeight * fonHeight;
+	// Set the radius squared(?) from the origin point, if it has changed.
+        if (gobj->bounding_rsq_from_origin < fonHeight) {
+          gobj->bounding_rsq_from_origin = fonHeight;
+        }
+        count = count + 1;
+        size = size + 24;
+      } while (count < fgeom->nfaceons);
+    }
+  }
+  fVar8 = sqrt(gobj->bounding_rsq_from_origin);
+  fVar9 = (gobj->bounding_box_max).x;
+  fvar10 = (gobj->bounding_box_min).x;
+  fVar4 = (gobj->bounding_box_max).y;
+  fVar1 = (gobj->bounding_box_min).y;
+  fVar2 = (gobj->bounding_box_min).z;
+  fVar3 = (gobj->bounding_box_max).z;
+  face1 = gobj->faceon_geom;
+  gobj->bounding_radius_from_origin = fVar8;
+  (gobj->bounding_box_center).x = (fvar10 + fVar9) * 0.5;
+  (gobj->bounding_box_center).y = (fVar1 + fVar4) * 0.5;
+  (gobj->bounding_box_center).z = (fVar2 + fVar3) * 0.5;
+  gobj->bounding_rsq_from_center = (float)0;
+  for (; face1 != (nufaceongeom_s *)0x0; face1 = face1->next) {
+    iVar6 = 0;
+    if (0 < face1->nfaceons) {
+      iVar5 = 0;
+      do {
+        pnt = (nuvec_s *)((int)&(face1->faceons->point).x + iVar5);
+        dVar7 = (double)pnt[1].x;
+        if ((double)pnt[1].x < (double)pnt[1].y) {
+          dVar7 = (double)pnt[1].y;
+        }
+        NuVecSub(&v,pnt,&gobj->bounding_box_center);
+        if (v.x < (float)0) {
+          v.x = -v.x;
+        }
+        if (v.y < (float)0) {
+          v.y = -v.y;
+        }
+        if (v.z < (float)0) {
+          v.z = -v.z;
+        }
+        fVar9 = (float)((double)v.z + dVar7) * (float)((double)v.z + dVar7) +
+                (float)((double)v.x + dVar7) * (float)((double)v.x + dVar7) +
+                (float)((double)v.y + dVar7) * (float)((double)v.y + dVar7);
+        if (gobj->bounding_rsq_from_center < fVar9) {
+          gobj->bounding_rsq_from_center = fVar9;
+        }
+        iVar6 = iVar6 + 1;
+        iVar5 = iVar5 + 0x18;
+      } while (iVar6 < face1->nfaceons);
+    }
+  }
+  fVar9 = sqrt(gobj->bounding_rsq_from_center);
+  gobj->bounding_radius_from_center = fVar9;
+  return;
 }
 
 /*
