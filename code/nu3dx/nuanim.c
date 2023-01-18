@@ -1,6 +1,32 @@
 #include "nuanim.h"
 #include "../system.h"
 
+
+void buildBitCountTable(void) //check asm
+{
+    s32 k;
+    s32 j;
+    s32 i;
+
+    i = 0;
+    do {
+        BitCountTable[i] = 0;
+        k = 8;
+        j = 0;
+loop_2:
+        if ((i >> (j + 1)) & 1) {
+            BitCountTable[i] += 1;
+        }
+        j += 1;
+        k -= 1;
+        if (k != 0) {
+            goto loop_2;
+        }
+        i += 1;
+    } while (i <= 0xFF);    // i < 0x100
+    isBitCountTable = 1;
+}
+
 struct nuanimdata_s* NuAnimDataLoadBuff(s8* file, struct variptr_u* buff, struct variptr_u* endbuff) {
     s32 temp_r0;
     s32 temp_r3_2;
