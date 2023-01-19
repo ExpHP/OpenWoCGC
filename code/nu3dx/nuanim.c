@@ -30,12 +30,12 @@ loop_2:
 struct nuanimdata_s* NuAnimDataLoadBuff(s8* file, struct variptr_u* buff, struct variptr_u* endbuff) {
     s32 temp_r0;
     s32 temp_r3_2;
-    s32 mem;
+    u32 mem;
     struct nuanimdata_s* data;
     void* temp_r30;
 
-    mem = (s32) (buff->voidptr + 0xF) & 0xFFFFFFF0;
-    buff->voidptr = (void* ) mem;
+    mem = (buff->voidptr + 0xF) & 0xFFFFFFF0;
+    buff->intaddr = mem;
     temp_r3_2 = NuFileLoadBuffer(file, (void* ) mem, endbuff->voidptr - mem);
     if (temp_r3_2 == 0) {
         //NuErrorProlog("C:/source/crashwoc/code/nu3dx/nuanim.c", 0xB6E)
@@ -330,3 +330,173 @@ void NuAnimCurveSetDestroy(struct nuanimcurveset_s* animcurveset, s32 destroy_cu
             } while (i < (s8) (u8) animcurveset->ncurves);
         }
     }
+
+
+void NuAnimDataDestroy(nuAnimData_s *animdata)
+
+{
+  nuanimdatachunk_s **chunk;
+  int i;
+  
+  if (((animdata != (nuAnimData_s *)0x0) &&
+      (chunk = animdata->chunks, chunk != (nuanimdatachunk_s **)0x0)) &&
+     (i = 0, 0 < animdata->nchunks)) {
+    while( true ) {
+      NuAnimDataChunkDestroy(chunk[i]);
+      if (animdata->nchunks <= i + 1) break;
+      chunk = animdata->chunks;
+      i = i + 1;
+    }
+  }
+  return;
+}
+
+
+void NuAnimCurve2SetApplyToJoint
+               (nuanimcurve2_s *animcurveset,char *curveflags,char curvesetflags,nuanimtime_s *ati me
+               ,NUJOINTDATA_s *jointdata,nuvec_s *scale,nuvec_s *parentscale,numtx_s *T,
+               NUJOINTANIM_s *offset)
+
+{
+  uint max;
+  float tmp;
+  float z;
+  char procanim_flags;
+  nuvec_s t;
+  nuvec_s r;
+  nuvec_s lo;
+  nuangvec_s rf;
+  nuvec_s inv_scale;
+  
+  if (offset == (NUJOINTANIM_s *)0x0) {
+    procanim_flags = '\0';
+  }
+  else {
+    procanim_flags = offset->flags;
+  }
+  if ((curvesetflags & 1U) == 0) {
+    if ((procanim_flags & 1U) != 0) {
+      r.x = 0.0;
+      r.z = 0.0;
+      r.y = r.x;
+      goto LAB_800aac1c;
+    }
+    NuMtxSetIdentity(T);
+  }
+  else {
+    r.x = NuAnimCurve2CalcVal(animcurveset + 3,atime,(int)curveflags[3]);
+    r.y = NuAnimCurve2CalcVal(animcurveset + 4,atime,(int)curveflags[4]);
+    r.z = NuAnimCurve2CalcVal(animcurveset + 5,atime,(int)curveflags[5]);
+LAB_800aac1c:
+    if ((procanim_flags & 1U) == 0) {
+      rf.x = (int)(r.x * 10430.38);
+      rf.y = (int)(r.y * 10430.38);
+      rf.z = (int)(r.z * 10430.38);
+    }
+    else {
+      r.x = r.x + offset->rx;
+      r.y = r.y + offset->ry;
+      r.z = r.z + offset->rz;
+      rf.x = (int)(r.x * 10430.38);
+      if ((procanim_flags & 8U) != 0) {
+        rf.x = (int)(r.x * 10430.38) & 0xffff;
+        if (0x7fff < (uint)rf.x) {
+          rf.x = rf.x - 0x10000;
+        }
+        max = (uint)offset->max_rx;
+        if (((int)max < rf.x) || (max = (uint)offset->min_rx, rf.x < (int)max)) {
+          rf.x = max;
+        }
+      }
+      rf.y = (int)(r.y * 10430.38);
+      if ((procanim_flags & 0x10U) != 0) {
+        rf.y = (int)(r.y * 10430.38) & 0xffff;
+        if (0x7fff < (uint)rf.y) {
+          rf.y = rf.y - 0x10000;
+        }
+        max = (uint)offset->max_ry;
+        if (((int)max < rf.y) || (max = (uint)offset->min_ry, rf.y < (int)max)) {
+          rf.y = max;
+        }
+      }
+      rf.z = (int)(r.z * 10430.38);
+      if ((procanim_flags & 0x20U) != 0) {
+        rf.z = (int)(r.z * 10430.38) & 0xffff;
+        if (0x7fff < (uint)rf.z) {
+          rf.z = rf.z - 0x10000;
+        }
+        max = (uint)offset->max_rz;
+        if (((int)max < rf.z) || (max = (uint)offset->min_rz, rf.z < (int)max)) {
+          rf.z = max;
+        }
+      }
+    }
+    NuMtxSetRotateXYZ(T,&rf);
+  }
+  if ((curvesetflags & 0x20U) != 0) {
+    NuMtxMulR(T,T,jointdata);
+  }
+  if ((curvesetflags & 8U) == 0) {
+    if ((procanim_flags & 4U) == 0) {
+      tmp = parentscale->y;
+      z = parentscale->z;
+      scale->x = parentscale->x;
+      scale->y = tmp;
+      scale->z = z;
+      goto LAB_800aae24;
+    }
+    scale->x = 0.0;
+    scale->z = 0.0;
+    scale->y = 0.0;
+  }
+  else {
+    tmp = NuAnimCurve2CalcVal(animcurveset + 6,atime,(int)curveflags[6]);
+    scale->x = tmp;
+    tmp = NuAnimCurve2CalcVal(animcurveset + 7,atime,(int)curveflags[7]);
+    scale->y = tmp;
+    tmp = NuAnimCurve2CalcVal(animcurveset + 8,atime,(int)curveflags[8]);
+    scale->z = tmp;
+  }
+  if ((procanim_flags & 4U) != 0) {
+    scale->x = scale->x + offset->sx;
+    scale->y = scale->y + offset->sy;
+    scale->z = scale->z + offset->sz;
+  }
+  NuMtxPreScale(T,scale);
+  scale->x = scale->x * parentscale->x;
+  scale->y = scale->y * parentscale->y;
+  scale->z = scale->z * parentscale->z;
+LAB_800aae24:
+  if ((curvesetflags & 0x10U) != 0) {
+    inv_scale.x = NuFdiv(1.0,parentscale->x);
+    inv_scale.y = NuFdiv(1.0,parentscale->y);
+    inv_scale.z = NuFdiv(1.0,parentscale->z);
+    NuMtxScale(T,&inv_scale);
+    scale->z = scale->z * inv_scale.z;
+    scale->x = scale->x * inv_scale.x;
+    scale->y = scale->y * inv_scale.y;
+  }
+  t.x = NuAnimCurve2CalcVal(animcurveset,atime,(int)*curveflags);
+  t.y = NuAnimCurve2CalcVal(animcurveset + 1,atime,(int)curveflags[1]);
+  t.z = NuAnimCurve2CalcVal(animcurveset + 2,atime,(int)curveflags[2]);
+  if ((procanim_flags & 2U) != 0) {
+    t.x = t.x + offset->tx;
+    t.z = t.z + offset->tz;
+    t.y = t.y + offset->ty;
+  }
+  NuMtxTranslate(T,&t);
+  if ((jointdata->flags & 8U) != 0) {
+    NuMtxPreTranslate(T,&jointdata->locator_offset);
+    lo.y = -(jointdata->locator_offset).y;
+    lo.z = -(jointdata->locator_offset).z;
+    lo.x = -(jointdata->locator_offset).x;
+    NuMtxTranslate(T,&lo);
+  }
+  T->_02 = -T->_02;
+  T->_12 = -T->_12;
+  T->_32 = -T->_32;
+  T->_20 = -T->_20;
+  T->_21 = -T->_21;
+  T->_23 = -T->_23;
+  return;
+}

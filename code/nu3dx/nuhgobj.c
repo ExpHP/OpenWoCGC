@@ -62,70 +62,78 @@ void NuHGobjDestroy(struct NUHGOBJ_s* hgobj)
 void NuHGobjDestroyDynamic(NUHGOBJ_s *hgobj)
 
 {
-  nugobj_s *gobj;
-  NULAYERDATA_s *layer;
-  int nums;
-  int iVar1;
+  NULAYERDATA_s *layers;
+  uint nJoints;
+  numtl_s **mtls;
+  short *tids;
   int i;
-  int num2;
-  numtl_s **mtl;
+  int j;
+  int k;
+  nugobj_s **gobjs;
   
   if (hgobj->texanims != (nutexanim_s *)0x0) {
     NuTexAnimRemoveList(hgobj->texanims);
   }
-  if ((hgobj->layers != (NULAYERDATA_s *)0x0) && (i = 0, hgobj->num_layers != '\0')) {
-    do {
-      layer = hgobj->layers;
-      nums = i + 1;
-      if ((layer[i].gobjs != (nugobj_s **)0x0) && (num2 = 0, hgobj->num_joints != '\0')) {
-        iVar1 = 0;
-        do {
-          gobj = *(nugobj_s **)(iVar1 + (int)hgobj->layers[i].gobjs);
-          if (gobj != (nugobj_s *)0x0) {
-            NuGobjDestroy(gobj);
+  layers = hgobj->layers;
+  if ((layers != (NULAYERDATA_s *)0x0) && (i = 0, hgobj->num_layers != '\0')) {
+    while( true ) {
+      if (layers[i].gobjs != (nugobj_s **)0x0) {
+        nJoints = (uint)hgobj->num_joints;
+        j = 0;
+        while (j < (int)nJoints) {
+          k = j + 1;
+          gobjs = layers[i].gobjs + j;
+          j = k;
+          if (*gobjs != (nugobj_s *)0x0) {
+            NuGobjDestroy(*gobjs);
+            layers = hgobj->layers;
+            nJoints = (uint)hgobj->num_joints;
           }
-          num2 = num2 + 1;
-          iVar1 = iVar1 + 4;
-          layer = hgobj->layers;
-        } while (num2 < (int)(uint)hgobj->num_joints);
+        }
       }
-      if ((layer[i].blend_gobjs != (nugobj_s **)0x0) && (num2 = 0, hgobj->num_joints != '\0')) {
-        iVar1 = 0;
-        do {
-          gobj = *(nugobj_s **)(iVar1 + (int)hgobj->layers[i].blend_gobjs);
-          if (gobj != (nugobj_s *)0x0) {
-            NuGobjDestroy(gobj);
+      if (layers[i].blend_gobjs != (nugobj_s **)0x0) {
+        nJoints = (uint)hgobj->num_joints;
+        j = 0;
+        while (j < (int)nJoints) {
+          k = j + 1;
+          gobjs = layers[i].blend_gobjs + j;
+          j = k;
+          if (*gobjs != (nugobj_s *)0x0) {
+            NuGobjDestroy(*gobjs);
+            layers = hgobj->layers;
+            nJoints = (uint)hgobj->num_joints;
           }
-          num2 = num2 + 1;
-          iVar1 = iVar1 + 4;
-        } while (num2 < (int)(uint)hgobj->num_joints);
+        }
       }
-      gobj = hgobj->layers[i].skin_gobj;
-      if (gobj != (nugobj_s *)0x0) {
-        NuGobjDestroy(gobj);
+      if (layers[i].skin_gobj != (nugobj_s *)0x0) {
+        NuGobjDestroy(layers[i].skin_gobj);
+        layers = hgobj->layers;
       }
-      gobj = hgobj->layers[i].blend_skin_gobj;
-      if (gobj != (nugobj_s *)0x0) {
-        NuGobjDestroy(gobj);
+      if (layers[i].blend_skin_gobj != (nugobj_s *)0x0) {
+        NuGobjDestroy(layers[i].blend_skin_gobj);
       }
-      i = nums;
-    } while (nums < (int)(uint)hgobj->num_layers);
-  }
-  if ((hgobj->mtls != (numtl_s **)0x0) && (i = 0, 0 < hgobj->nummtl)) {
-    nums = 0;
-    do {
       i = i + 1;
-      mtl = (numtl_s **)(nums + (int)hgobj->mtls);
-      nums = nums + 4;
-      NuMtlDestroy((nusysmtl_s *)*mtl);
-    } while (i < hgobj->nummtl);
+      if ((int)(uint)hgobj->num_layers <= i) break;
+      layers = hgobj->layers;
+    }
   }
-  if ((hgobj->tids != (short *)0x0) && (i = 0, 0 < hgobj->numtid)) {
-    do {
-      nums = i + 1;
-      NuTexDestroy((int)hgobj->tids[i]);
-      i = nums;
-    } while (nums < hgobj->numtid);
+  mtls = hgobj->mtls;
+  if ((mtls != (numtl_s **)0x0) && (i = 0, 0 < hgobj->nummtl)) {
+    while( true ) {
+      NuMtlDestroy(mtls[i]);
+      if (hgobj->nummtl <= i + 1) break;
+      mtls = hgobj->mtls;
+      i = i + 1;
+    }
+  }
+  tids = hgobj->tids;
+  if ((tids != (short *)0x0) && (i = 0, 0 < hgobj->numtid)) {
+    while( true ) {
+      NuTexDestroy((int)tids[i]);
+      if (hgobj->numtid <= i + 1) break;
+      tids = hgobj->tids;
+      i = i + 1;
+    }
   }
   if (hgobj->texanims != (nutexanim_s *)0x0) {
     NuTexAnimRemoveList(hgobj->texanims);
@@ -134,16 +142,14 @@ void NuHGobjDestroyDynamic(NUHGOBJ_s *hgobj)
 }
 */
 
+//Check
 void NuHGobjPOIMtx(struct NUHGOBJ_s* hgobj, u8 poi_id, struct numtx_s* world_mtx, struct numtx_s* mtx_array, struct numtx_s* mtx)
 
 {
-    struct NUPOINTOFINTEREST_s* p;
 
-    //NuMtxMul(mtx, &hgobj->points_of_interest[hgobj->poi_ixs[CONCAT31(p._1_3_, poi_id)]].offset,
-        //mtx_array +
-        //hgobj->points_of_interest[hgobj->poi_ixs[CONCAT31(p._1_3_, poi_id)]].parent_joint_ix);
-    //NuMtxMul(mtx, mtx, world_mtx);
-    return;
+     NuMtxMul(mtx,&hgobj->points_of_interest[hgobj->poi_ixs[poi_id]].offset, mtx_array + hgobj->points_of_interest[hgobj->poi_ixs[poi_id]].parent_joint_ix);
+     NuMtxMul(mtx,mtx,world_mtx);
+     return;
 }
 
 

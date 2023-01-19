@@ -997,7 +997,7 @@ void NuMtlAnimate(float timestep)
 
 {
   struct nusysmtl_s *sm;
-  struct numtl_s *mtl;
+  uint unk;
   
   sinetime.246 = sinetime.246 + timestep;
   sm = smlist;
@@ -1005,9 +1005,9 @@ void NuMtlAnimate(float timestep)
     return;
   }
   do {
-    mtl = *(numtl_s **)&(sm->mtl).K;
-    if (((uint)mtl & 0xff) != 0) {
-      if (((uint)mtl & 0xf0) == 0x20) {
+    unk = *(uint *)&(sm->mtl).K;
+    if ((unk & 0xff) != 0) {
+      if ((unk & 0xf0) == 0x20) {
         (sm->mtl).du = (sm->mtl).su * timestep;
       }
       if ((*(uint *)&(sm->mtl).K & 0xf) == 2) {

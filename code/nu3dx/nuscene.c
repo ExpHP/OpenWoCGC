@@ -72,85 +72,83 @@ void ReadNuIFFTextureSet(filehandle handle,nuscene_s *scene)
   return;
 }
 
-void ReadNuIFFMaterialSet(filehandle handle,nuscene_s *nus)
+void ReadNuIFFMaterialSet(filehandle fh,nuscene_s *sc)
 
 {
-  uint uVar1;
-  int num_mtls;
-  numtl_s **mtls;
+  numtlattrib_s attr;
+  code *er;
+  int nmtl;
+  numtl_s **mtl;
+  numtl_s *mtlR;
   numtl_s *nextmtl;
-  int iVar2;
-  int *piVar3;
-  numtl_s *m;
-  int iVar3;
-  int count;
+  int i;
+  int j;
   
-  num_mtls = NuFileReadInt(handle);
-  mtls = (numtl_s **)NuMemAlloc(num_mtls << 2);
-  nus->mtls = mtls;
-  nus->nummtls = num_mtls;
-  if (0 < num_mtls) {
-    iVar3 = 0;
-    count = num_mtls;
+  i = 0;
+  //er = NuDebugMsgProlog("C:/source/crashwoc/code/nu3dx/nuscene.c",0xe6);
+  //(*er)("Reading IFF Material set...");
+  nmtl = NuFileReadInt(fh);
+  mtl = (numtl_s **)NuMemAlloc(nmtl << 2);
+  sc->nummtls = nmtl;
+  sc->mtls = mtl;
+  if (0 < nmtl) {
     do {
-      nextmtl = NuMtlRead(handle);
-      *(numtl_s **)(iVar3 + (int)nus->mtls) = nextmtl;
-      iVar2 = *(int *)(iVar3 + (int)nus->mtls);
-      uVar1 = *(uint *)(iVar2 + 4);
-      if (uVar1 >> 0x1e != 0) {
-        *(uint *)(iVar2 + 4) = uVar1 & 0xfff3ffff | 0x40000;
+      mtlR = (numtl_s *)NuMtlRead(fh);
+      j = i + 1;
+      sc->mtls[i] = mtlR;
+      attr = sc->mtls[i]->attrib;
+      if ((uint)attr >> 0x1e != 0) {
+        sc->mtls[i]->attrib = (numtlattrib_s)((uint)attr & 0xfff3ffff | 0x40000);
       }
-      iVar3 = iVar3 + 4;
-      count = count + -1;
-    } while (count != 0);
+      i = j;
+    } while (j < nmtl);
   }
-  if (0 < num_mtls) {
-    count = 0;
+  i = 0;
+  if (0 < nmtl) {
     do {
-      piVar3 = *(int **)(count + (int)nus->mtls);
-      if (*piVar3 < 1) {
-        *piVar3 = 0;
+      mtlR = sc->mtls[i];
+      if ((int)mtlR->next < 1) {
+        mtlR->next = (numtl_s *)0x0;
       }
       else {
-        m = nus->mtls[*piVar3 + -1];
-        *piVar3 = (int)m;
-        *(uchar *)(*(int *)(count + (int)nus->mtls) + 0x3e) = m->fxid;
+        nextmtl = sc->mtls[(int)((int)&mtlR->next[-1].sv + 3)];
+        mtlR->next = nextmtl;
+        sc->mtls[i]->fxid = nextmtl->fxid;
       }
-      count = count + 4;
-      num_mtls = num_mtls + -1;
-    } while (num_mtls != 0);
+      i = i + 1;
+      nmtl = nmtl + -1;
+    } while (nmtl != 0);
   }
   return;
 }
 
 
 void NuSceneMtlUpdate(nuscene_s *nus)
+
 {
-  numtl_s **ppnVar1;
-  int iVar2;
-  int sm;
-  int iVar3;
-  int iVar4;
+  uchar decal;
+  numtl_s *mtl;
+  int i;
+  int n;
   
-  iVar3 = 0;
+  i = 0;
   if (0 < nus->nummtls) {
-    iVar4 = 0;
     do {
-      sm = *(int *)(iVar4 + (int)nus->mtls);
-      if (*(int *)(sm + 0x38) == -1) {
-        *(undefined4 *)(sm + 0x38) = 0;
-        *(undefined *)(*(int *)(iVar4 + (int)nus->mtls) + 0x42) = 0;
+      mtl = nus->mtls[i];
+      if (mtl->tid == -1) {
+        mtl->tid = 0;
+        nus->mtls[i]->L = '\0';
       }
       else {
-        *(int *)(sm + 0x38) = (int)nus->tids[*(int *)(sm + 0x38)];
-        iVar2 = NuTexGetDecalInfo(*(int *)(*(int *)(iVar4 + (int)nus->mtls) + 0x38));
-        *(char *)(*(int *)(iVar4 + (int)nus->mtls) + 0x42) = (char)iVar2;
+        mtl->tid = (int)nus->tids[mtl->tid];
+        mtl = nus->mtls[i];
+        decal = NuTexGetDecalInfo(mtl->tid);
+        mtl->L = decal;
       }
-      iVar3 = iVar3 + 1;
-      ppnVar1 = (numtl_s **)(iVar4 + (int)nus->mtls);
-      iVar4 = iVar4 + 4;
-      NuMtlUpdate(*ppnVar1);
-    } while (iVar3 < nus->nummtls);
+      n = i + 1;
+      NuMtlUpdate((char)nus->mtls[i]);
+      i = n;
+    } while (n < nus->nummtls);
   }
   return;
 }
@@ -927,46 +925,40 @@ s32 ReadNuIFFNameTable(fileHandle handle)
 }
 
 
-void NuGSceneDestroy(nugscn_s *sc)
+void NuGSceneDestroy(nugscn_s *gsc)
 
 {
-  int iVar1;
+  nuAnimData_s **ianm;
   int i;
-  nuAnimData_s **animdat;
-  nusysmtl_s **mtl;
-  nugobj_s **obj;
+  int j;
   
-  for (i = 0; i < sc->numtid; i = i + 1) {
-    NuTexDestroy((int)sc->tids[i]);
+  for (i = 0; i < gsc->numtid; i = i + 1) {
+    NuTexDestroy((int)gsc->tids[i]);
   }
   i = 0;
-  if (0 < sc->nummtl) {
-    iVar1 = 0;
+  if (0 < gsc->nummtl) {
     do {
-      i = i + 1;
-      mtl = (nusysmtl_s **)(iVar1 + (int)sc->mtls);
-      iVar1 = iVar1 + 4;
-      NuMtlDestroy(*mtl);
-    } while (i < sc->nummtl);
+      j = i + 1;
+      NuMtlDestroy(gsc->mtls[i]);
+      i = j;
+    } while (j < gsc->nummtl);
   }
   i = 0;
-  if (0 < sc->numgobj) {
-    iVar1 = 0;
+  if (0 < gsc->numgobj) {
     do {
-      i = i + 1;
-      obj = (nugobj_s **)(iVar1 + (int)sc->gobjs);
-      iVar1 = iVar1 + 4;
-      NuGobjDestroy(*obj);
-    } while (i < sc->numgobj);
+      j = i + 1;
+      NuGobjDestroy(gsc->gobjs[i]);
+      i = j;
+    } while (j < gsc->numgobj);
   }
-  if ((sc->instanimdata != (nuAnimData_s **)0x0) && (i = 0, 0 < sc->numinstanims)) {
-    iVar1 = 0;
-    do {
+  ianm = gsc->instanimdata;
+  if ((ianm != (nuAnimData_s **)0x0) && (i = 0, 0 < gsc->numinstanims)) {
+    while( true ) {
+      NuAnimDataDestroy(ianm[i]);
+      if (gsc->numinstanims <= i + 1) break;
+      ianm = gsc->instanimdata;
       i = i + 1;
-      animdat = (nuAnimData_s **)(iVar1 + (int)sc->instanimdata);
-      iVar1 = iVar1 + 4;
-      NuAnimDataDestroy(*animdat);
-    } while (i < sc->numinstanims);
+    }
   }
   return;
 }
@@ -976,13 +968,11 @@ void NuSceneDestroy(nuscene_s *sc)
 
 {
   int i;
-  int iVar1;
-  nugobj_s **Gobj;
-  nusysmtl_s **mtl;
+  int j;
   
   if (sc != (nuscene_s *)0x0) {
     if (sc->names != (char **)0x0) {
-      NuMemFree(sc->names);
+      NuMemFree(sc->names)
     }
     if (sc->nodes != (NUNODE_s **)0x0) {
       NuMemFree(sc->nodes);
@@ -993,30 +983,26 @@ void NuSceneDestroy(nuscene_s *sc)
     i = 0;
     if (0 < sc->numtids) {
       do {
-        iVar1 = i + 1;
+        j = i + 1;
         NuTexDestroy((int)sc->tids[i]);
-        i = iVar1;
-      } while (iVar1 < sc->numtids);
+        i = j;
+      } while (j < sc->numtids);
     }
     i = 0;
     if (0 < sc->nummtls) {
-      iVar1 = 0;
       do {
-        i = i + 1;
-        mtl = (nusysmtl_s **)(iVar1 + (int)sc->mtls);
-        iVar1 = iVar1 + 4;
-        NuMtlDestroy(*mtl);
-      } while (i < sc->nummtls);
+        j = i + 1;
+        NuMtlDestroy(sc->mtls[i]);
+        i = j;
+      } while (j < sc->nummtls);
     }
     i = 0;
     if (0 < sc->numgobjs) {
-      iVar1 = 0;
       do {
-        i = i + 1;
-        Gobj = (nugobj_s **)(iVar1 + (int)sc->gobjs);
-        iVar1 = iVar1 + 4;
-        NuGobjDestroy(*Gobj);
-      } while (i < sc->numgobjs);
+        j = i + 1;
+        NuGobjDestroy(sc->gobjs[i]);
+        i = j;
+      } while (j < sc->numgobjs);
     }
     if (sc->gscene != (nugscn_s *)0x0) {
       NuGSceneDestroy(sc->gscene);

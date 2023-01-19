@@ -51,18 +51,18 @@ struct nutexanimprog_s * NuTexAnimProgFind(char *name)
 void NuTexAnimProgInit(nutexanimprog_s *rv)	//TODO
 
 {
-  int iVar1;
+  int* sig;
   int n;
   
   if (rv == NULL) {
     return;
   }
   n = 0x20;
-  iVar1 = 0;
+  sig = rv->on_sig;
   do {
-    *(rv->off_sig + iVar1) = -1;
-    *(rv->on_sig + iVar1) = -1;
-    iVar1 = iVar1 + 4;
+    sig[0x20] = -1;
+    *sig = -1;
+    sig = sig + 1;
     n = n + -1;
   } while (n != 0);
   rv->eop = 0;
@@ -75,87 +75,87 @@ void NuTexAnimProgInit(nutexanimprog_s *rv)	//TODO
 }*/
 
 
-/*void NuTexAnimProgAssembleEnd(nutexanimprog_s *p)		//TODO
+/*void NuTexAnimProgAssembleEnd(nutexanimprog_s *p)
 
 {
-    short sVar1;
-  short sVar2;
-  int iVar3;
-  int iVar4;
+  short ix;
+  int i;
+  int j;
+  short code;
   
-  iVar3 = 0;
+  i = 0;
   if (p->eop < 1) {
     return;
   }
   do {
-    sVar1 = p->code[iVar3];
-    sVar2 = (short)iVar3;
-    if (sVar1 == 8) {
+    code = p->code[i];
+    ix = (short)i;
+    if (code == 8) {
 LAB_800ba2fc:
-      iVar4 = iVar3 + 1;
-      sVar2 = sVar2 + 2;
+      j = i + 1;
+      ix = ix + 2;
 LAB_800ba304:
-      iVar3 = (int)sVar2;
-      p->code[iVar4] = *(short *)((int)nta_labels + p->code[iVar4] * 4 + 2);
+      i = (int)ix;
+      p->code[j] = *(short *)((int)nta_labels + p->code[j] * 4 + 2);
       goto LAB_800ba354;
     }
-    if (sVar1 < 9) {
-      if (sVar1 < 5) {
-        if (sVar1 < 3) {
-          if (sVar1 == 1) {
-            sVar2 = sVar2 + 4;
+    if (code < 9) {
+      if (code < 5) {
+        if (code < 3) {
+          if (code == 1) {
+            ix = ix + 4;
           }
-          else if (sVar1 < 2) {
-            if (sVar1 != 0) goto LAB_800ba354;
+          else if (code < 2) {
+            if (code != 0) goto LAB_800ba354;
 LAB_800ba34c:
-            sVar2 = sVar2 + 2;
+            ix = ix + 2;
           }
           else {
-            sVar2 = sVar2 + 3;
+            ix = ix + 3;
           }
           goto LAB_800ba350;
         }
       }
       else {
-        if (sVar1 == 5) {
-          sVar2 = sVar2 + 3;
+        if (code == 5) {
+          ix = ix + 3;
           goto LAB_800ba350;
         }
-        if (sVar1 == 7) goto LAB_800ba2fc;
+        if (code == 7) goto LAB_800ba2fc;
       }
     }
     else {
-      if (sVar1 == 0xc) {
-        sVar2 = sVar2 + 1;
+      if (code == 0xc) {
+        ix = ix + 1;
       }
-      else if (sVar1 < 0xd) {
-        if (sVar1 == 10) {
-          sVar2 = sVar2 + 1;
+      else if (code < 0xd) {
+        if (code == 10) {
+          ix = ix + 1;
         }
         else {
-          if (sVar1 < 0xb) {
-            iVar4 = iVar3 + 3;
-            sVar2 = sVar2 + 4;
+          if (code < 0xb) {
+            j = i + 3;
+            ix = ix + 4;
             goto LAB_800ba304;
           }
-          sVar2 = sVar2 + 3;
+          ix = ix + 3;
         }
       }
-      else if (sVar1 == 0xe) {
-        sVar2 = sVar2 + 1;
+      else if (code == 0xe) {
+        ix = ix + 1;
       }
       else {
-        if (0xd < sVar1) {
-          if (sVar1 == 0xf) goto LAB_800ba34c;
+        if (0xd < code) {
+          if (code == 0xf) goto LAB_800ba34c;
           goto LAB_800ba354;
         }
-        sVar2 = sVar2 + 3;
+        ix = ix + 3;
       }
 LAB_800ba350:
-      iVar3 = (int)sVar2;
+      i = (int)ix;
     }
 LAB_800ba354:
-    if (p->eop <= iVar3) {
+    if (p->eop <= i) {
       return;
     }
   } while( true );
