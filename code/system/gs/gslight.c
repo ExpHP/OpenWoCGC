@@ -67,13 +67,13 @@ void GS_SetMaterial(_D3DMATERIAL8 *pMaterial)
 }
 
 
-int GS_SetLight(int Index,_D3DLIGHT8 *pLight)
+s32 GS_SetLight(s32 Index,struct _D3DLIGHT8 *pLight)
 
 {
-  _D3DLIGHT8 *pLg;
-  _D3DLIGHT8 *ptr;
-  _D3DLIGHT8 *light;
-  int size;
+  struct _D3DLIGHT8 *pLg;
+  struct _D3DLIGHT8 *ptr;
+  struct _D3DLIGHT8 *light;
+  s32 size;
   
   size = 0x60;
   light = &GS_LightList[Index].Light;

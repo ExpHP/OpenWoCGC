@@ -98,7 +98,7 @@ void ReadNuIFFMaterialSet(filehandle fh,nuscene_s *sc)
       sc->mtls[i] = mtlR;
       attr = sc->mtls[i]->attrib;
       if ((uint)attr >> 0x1e != 0) {
-        sc->mtls[i]->attrib = (numtlattrib_s)((uint)attr & 0xfff3ffff | 0x40000);
+        sc->mtls[i]->attrib = (numtlattrib_s)((uint)attr & 0xfff3ffff | 0x40000);	//sc->mtls[i]->attrib).aref = 0xffffffff
       }
       i = j;
     } while (j < nmtl);

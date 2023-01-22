@@ -1293,6 +1293,8 @@ typedef struct nuanimdatachunk_s nuanimdatachunk_s, *Pnuanimdatachunk_s;
 
 typedef struct nutexanimenv_s nutexanimenv_s, *Pnutexanimenv_s;
 
+typedef struct nusysmtl_s nusysmtl_s, *Pnusysmtl_s;
+
 typedef enum nuvtxtype_e {
     NUVT_PS=17,
     NUVT_LC1=81,
@@ -1324,6 +1326,10 @@ typedef struct nuanimcurve_s nuanimcurve_s, *Pnuanimcurve_s;
 
 typedef struct nutexanimprog_s nutexanimprog_s, *Pnutexanimprog_s;
 
+typedef struct nurndritem_s nurndritem_s, *Pnurndritem_s;
+
+typedef struct nugeomitem_s nugeomitem_s, *Pnugeomitem_s;
+
 typedef enum nuprimtype_e {
     NUPT_POINT=0,
     NUPT_LINE=1,
@@ -1339,6 +1345,13 @@ typedef enum nuprimtype_e {
 } nuprimtype_e;
 
 typedef struct nuplane_s nuplane_s, *Pnuplane_s;
+
+typedef enum nurndritemtype_s {
+    NURNDRITEM_GEOM3D=0,
+    NURNDRITEM_GEOM2D=1,
+    NURNDRITEM_SKIN3D2=2,
+    NURNDRITEM_GEOMFACE=3
+} nurndritemtype_s;
 
 struct nugspline_s {
     short len;
@@ -1365,7 +1378,23 @@ struct nuanimdatachunk_s {
     struct nuanimcurve_s * curves;
 };
 
-struct nutexanimenv_s { /* NuTexAnimEnvCreate */
+struct nurndritem_s {
+    struct nurndritem_s * next;
+    enum nurndritemtype_s type;
+    int flags;
+    short lights_index;
+};
+
+struct nugeomitem_s {
+    struct nurndritem_s hdr;
+    struct numtx_s * mtx;
+    struct nugeom_s * geom;
+    float * * blendvals;
+    short instancelights_index[3];
+    short hShader;
+};
+
+struct nutexanimenv_s {
     struct nutexanimprog_s * prog;
     int pc;
     int rep_count[16];
@@ -1379,7 +1408,7 @@ struct nutexanimenv_s { /* NuTexAnimEnvCreate */
     struct numtl_s * mtl;
     short * tids;
     int tex_ix;
-    int unk;
+    int dynalloc:1;
 };
 
 struct nuplane_s {
@@ -1416,13 +1445,10 @@ struct numtx_s {
 };
 
 struct nuinstflags_s {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
-    int isanimated:1;
-    int visitest:1;
-    int onscreen:1;
     int visible:1;
+    int onscreen:1;
+    int visitest:1;
+    int isanimated:1;
 };
 
 struct nuinstance_s {
@@ -1469,9 +1495,6 @@ struct nugscn_s { /* used in nusceneload */
 };
 
 struct nuspecialflags {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
     int ext_onscreen:1;
     int ext_vis:1;
     int ext:1;
@@ -1515,7 +1538,7 @@ struct nutexanim_s {
     struct nutexanim_s * prev;
     short * tids;
     short numtids;
-    short dynalloc;
+    short dynalloc:1;
     struct numtl_s * mtl;
     struct nutexanimenv_s * env;
     char * ntaname;
@@ -1524,6 +1547,13 @@ struct nutexanim_s {
 
 union nufx_u {
     void * voidptr;
+    uchar u8;
+    char s8;
+    ushort u16;
+    short s16;
+    uint u32;
+    int s32;
+    float f32;
 };
 
 struct nutexanimprog_s {
@@ -1538,15 +1568,14 @@ struct nutexanimprog_s {
     short xdef_addrs[32];
     int xdef_cnt;
     short eop;
-    int dynalloc:1;
-    undefined field12_0x1b7;
-    short code;
+    short dynalloc:1;
+    short code[1];
 };
 
 struct nuanimcurveset_s {
     int flags;
     float * constants;
-    struct nuanimcurveset_s * set;
+    struct nuanimcurve_s * * set;
     char ncurves;
     char pad[3];
 };
@@ -1604,6 +1633,41 @@ struct numtlattrib_s {
     uint alpha:2;
 };
 
+struct numtl_s {
+    struct numtl_s * next;
+    struct numtlattrib_s attrib;
+    struct nucolour3_s ambient;
+    struct nucolour3_s diffuse;
+    union nufx_u fx1;
+    union nufx_u fx2;
+    union nufx_u fx3;
+    union nufx_u fx4;
+    float power;
+    float alpha;
+    int tid;
+    short alpha_sort;
+    uchar fxid;
+    uchar special_id;
+    short K;
+    uchar L;
+    uchar vanmmode:4;
+    uchar uanmmode:4;
+    float du;
+    float dv;
+    float su;
+    float sv;
+};
+
+struct nusysmtl_s {
+    struct numtl_s mtl;
+    struct nurndritem_s * rndrlist;
+    struct nugeomitem_s * geom2d;
+    struct nugeomitem_s * geom3d;
+    struct nusysmtl_s * next;
+    struct nusysmtl_s * last;
+    int hShader;
+};
+
 struct nuprim_s {
     struct nuprim_s * next;
     enum nuprimtype_e type;
@@ -1649,7 +1713,7 @@ struct nuskin_s {
 
 struct nugeom_s {
     struct nugeom_s * next;
-    struct numtl_s * mtls;
+    struct nusysmtl_s * mtls;
     int mtl_id;
     enum nuvtxtype_e vertex_type;
     int vtxcount;
@@ -1660,31 +1724,6 @@ struct nugeom_s {
     struct nuskin_s * skin;
     struct NUVTXSKININFO_s * vtxskininfo;
     struct NUBLENDGEOM_s * blendgeom;
-};
-
-struct numtl_s {
-    struct numtl_s * next;
-    struct numtlattrib_s attrib;
-    struct nucolour3_s ambient;
-    struct nucolour3_s diffuse;
-    union nufx_u fx1;
-    union nufx_u fx2;
-    union nufx_u fx3;
-    union nufx_u fx4;
-    float power;
-    float alpha;
-    int tid;
-    short alpha_sort;
-    uchar fxid;
-    uchar special_id;
-    short K;
-    uchar L;
-    uchar vanmmode:4;
-    uchar uanmmode:4;
-    float du;
-    float dv;
-    float su;
-    float sv;
 };
 
 struct nuanimkey_s {
@@ -1895,9 +1934,6 @@ struct instNUTRIGGERSYS_s {
     struct instNUTRIGGER_s * itriggers;
     void * scenemanager;
     int is_disabled:1;
-    undefined field6_0x15;
-    undefined field7_0x16;
-    undefined field8_0x17;
 };
 
 struct NUGCUTLOCATORTYPE_s {
@@ -1983,6 +2019,40 @@ struct locdataFN {
     struct NUGCUTLOCATOR_s * field3_0xc;
     float field4_0x10;
     struct numtx_s * field5_0x14;
+};
+
+typedef union BMPtmp BMPtmp, *PBMPtmp;
+
+union BMPtmp {
+    uint u32;
+    uchar u8[4];
+};
+
+typedef struct tagBITMAPFILEHEADER tagBITMAPFILEHEADER, *PtagBITMAPFILEHEADER;
+
+struct tagBITMAPFILEHEADER {
+    ushort pad;
+    ushort bfType;
+    uint bfSize;
+    ushort bfReserved1;
+    ushort bfReserved2;
+    uint bfOffBits;
+};
+
+typedef struct tagBITMAPINFOHEADER tagBITMAPINFOHEADER, *PtagBITMAPINFOHEADER;
+
+struct tagBITMAPINFOHEADER {
+    uint biSize;
+    uint biWidth;
+    uint biHeight;
+    ushort biPlanes;
+    ushort biBitCount;
+    uint biCompression;
+    uint biSizeImage;
+    uint biXPelsPerMeter;
+    uint biYPelsPerMeter;
+    uint biClrUsed;
+    uint biClrImportant;
 };
 
 typedef struct _REMAPTABLE _REMAPTABLE, *P_REMAPTABLE;
@@ -2328,9 +2398,26 @@ struct ADeb {
     float max;
 };
 
-typedef struct AI_s AI_s, *PAI_s;
+typedef struct ai_s ai_s, *Pai_s;
 
-struct AI_s {
+struct ai_s {
+    char ai_type;
+    char status;
+    char pad1;
+    char pad2;
+    char pad3;
+    char iRAIL;
+    short iALONG;
+    float fALONG;
+    float time;
+    float delay;
+    struct nuvec_s pos[8];
+    struct nuvec_s origin;
+};
+
+typedef struct AI_tmp AI_tmp, *PAI_tmp;
+
+struct AI_tmp {
     struct nuvec_s oldpos;
     struct nuvec_s newpos;
     struct nuvec_s wobblepos;
@@ -2376,23 +2463,6 @@ struct AI_s {
     short look_creature;
     uchar count;
     uchar hits;
-};
-
-typedef struct AITab AITab, *PAITab;
-
-struct AITab {
-    char ai_type;
-    char status;
-    char pad1;
-    char pad2;
-    char pad3;
-    char iRAIL;
-    short iALONG;
-    float fALONG;
-    float time;
-    float delay;
-    struct nuvec_s pos[8];
-    struct nuvec_s origin;
 };
 
 typedef struct AIType AIType, *PAIType;
@@ -2466,6 +2536,14 @@ struct anim_s {
     short blend_frames;
     char blend;
     uchar flags;
+};
+
+typedef struct animdatainst_s animdatainst_s, *Panimdatainst_s;
+
+struct animdatainst_s {
+    struct nuAnimData_s * ad;
+    char name[256];
+    int inst_cnt;
 };
 
 typedef struct AnimList AnimList, *PAnimList;
@@ -2904,7 +2982,7 @@ struct creature_s {
     char off_wait;
     char i_aitab;
     struct obj_s obj;
-    struct AI_s ai;
+    struct AI_tmp ai;
     struct NEWBUGGY * Buggy;
     struct creatcmd_s * cmdtable;
     struct creatcmd_s * cmdcurr;
@@ -3086,31 +3164,44 @@ struct BlockInfo {
     int pos;
 };
 
-typedef struct Bridges Bridges, *PBridges;
+typedef struct bridge bridge, *Pbridge;
 
-struct Bridges { /* NEED TEST */
-    struct numtx_s field0_0x0[9]; /* not sure */
-    struct numtx_s field1_0x240[9]; /* not sure */
-    struct numtx_s field2_0x480[24]; /* not sure */
-    struct nuinstance_s * field3_0xa80[24]; /* not sure */
-    struct nuinstance_s * field4_0xae0;
-    struct nuvec_s field5_0xae4;
-    float field6_0xaf0;
-    struct nuvec_s field7_0xaf4[4]; /* not sure */
-    char field8_0xb24;
-    char field9_0xb25;
-    char field10_0xb26;
-    char field11_0xb27;
-    int field12_0xb28;
-    short field13_0xb2c;
-    short field14_0xb2e;
-    float field15_0xb30;
-    float field16_0xb34;
-    float field17_0xb38;
-    float field18_0xb3c;
-    float field19_0xb40;
-    float field20_0xb44;
-    float field21_0xb48;
+struct bridge {
+    struct nuvec_s pos[2][24];
+    struct nuvec_s vel[2][24];
+    struct numtx_s mtx[24];
+    struct nuinstance_s * instance[24];
+    struct nuinstance_s * ipost;
+    struct nuvec_s center;
+    float radius;
+    short plat[24];
+    char inrange;
+    char onscreen;
+    char sections;
+    char postint;
+    int colour;
+    short hit;
+    short yang;
+    float width;
+    float tension;
+    float gravity;
+    float damp;
+    float plrweight;
+    float postw;
+    float posth;
+};
+
+typedef struct BugArea_s BugArea_s, *PBugArea_s;
+
+struct BugArea_s {
+    char in_pad;
+    char in_iRAIL;
+    short in_iALONG;
+    float in_fALONG;
+    char out_pad;
+    char out_iRAIL;
+    short out_iALONG;
+    float out_fALONG;
 };
 
 typedef struct BUGSAVE BUGSAVE, *PBUGSAVE;
@@ -3403,6 +3494,33 @@ struct csc_s {
     char * name;
 };
 
+typedef union currLst currLst, *PcurrLst;
+
+typedef struct nulnkhdr_s nulnkhdr_s, *Pnulnkhdr_s;
+
+typedef struct nulsthdr_s nulsthdr_s, *Pnulsthdr_s;
+
+union currLst {
+    char * s8;
+    struct nulnkhdr_s * lhdr;
+};
+
+struct nulsthdr_s {
+    struct nulnkhdr_s * free;
+    struct nulnkhdr_s * head;
+    struct nulnkhdr_s * tail;
+    short elcnt;
+    short elsize;
+};
+
+struct nulnkhdr_s {
+    struct nulsthdr_s * owner;
+    struct nulnkhdr_s * succ;
+    struct nulnkhdr_s * prev;
+    ushort id;
+    ushort used;
+};
+
 typedef struct Cursor Cursor, *PCursor;
 
 typedef struct remember remember, *Premember;
@@ -3549,6 +3667,42 @@ struct nudfnode_s {
     char * txt;
 };
 
+typedef struct deb3_s deb3_s, *Pdeb3_s;
+
+typedef struct deb3info deb3info, *Pdeb3info;
+
+struct deb3info {
+    short type;
+    short classid;
+    short info;
+    float timer;
+    float size;
+    short deb;
+    short rate;
+    void * impact; /* void(*impact)(deb3_s*) */
+    void * end; /* void(*end)(deb3_s*) */
+    int data;
+};
+
+struct deb3_s {
+    struct numtx_s mtx;
+    struct numtx_s invWorldInertiaTensor;
+    struct nuvec_s velocity;
+    struct nuvec_s angularvelocity;
+    struct nuvec_s angularMomentum;
+    struct nuvec_s impact;
+    struct nuvec_s norm;
+    struct nuvec_s diff;
+    float shadow;
+    float grav;
+    short status;
+    short timer;
+    short check;
+    short count;
+    struct deb3info * info;
+    int data;
+};
+
 typedef struct debkeydatatype_s debkeydatatype_s, *Pdebkeydatatype_s;
 
 typedef struct rdata_s rdata_s, *Prdata_s;
@@ -3673,27 +3827,11 @@ typedef struct jibxslot jibxslot, *Pjibxslot;
 
 typedef struct jibyslot jibyslot, *Pjibyslot;
 
-typedef struct DmaDebTypePointer DmaDebTypePointer, *PDmaDebTypePointer;
+typedef struct setup_s setup_s, *Psetup_s;
 
 typedef struct sphereslot sphereslot, *Psphereslot;
 
 typedef struct sounds sounds, *Psounds;
-
-struct DmaDebTypePointer {
-    int DmaHeader[4];
-    float grav;
-    float gtime;
-    int DmaBody[4];
-    float u0;
-    float v0;
-    float u1;
-    float v1;
-    float u2;
-    float v2;
-    float u3;
-    float v3;
-    struct datasetup_s data[64];
-};
 
 struct sphereslot {
     float t;
@@ -3721,14 +3859,14 @@ struct wslot {
     float w;
 };
 
-struct rotslot {
-    float t;
-    float r;
-};
-
 struct jibxslot {
     float t;
     float x;
+};
+
+struct rotslot {
+    float t;
+    float r;
 };
 
 struct debtab {
@@ -3792,12 +3930,46 @@ struct debtab {
     float v1;
     float u2;
     float v2;
-    struct DmaDebTypePointer * dmadebtypeptr;
+    struct setup_s * DmaDebTypePointer;
     struct sphereslot sphereslot[8];
     char numspheres;
     char pad2_unk[3];
     int variable_key;
     struct sounds sounds[4];
+};
+
+struct setup_s {
+    int DmaHeader[4];
+    float grav;
+    float gtime;
+    int DmaBody[4];
+    float u0;
+    float v0;
+    float u1;
+    float v1;
+    float u2;
+    float v2;
+    float u3;
+    float v3;
+    struct datasetup_s data[64];
+};
+
+typedef struct DmaDebTypePointer DmaDebTypePointer, *PDmaDebTypePointer;
+
+struct DmaDebTypePointer {
+    int DmaHeader[4];
+    float grav;
+    float gtime;
+    int DmaBody[4];
+    float u0;
+    float v0;
+    float u1;
+    float v1;
+    float u2;
+    float v2;
+    float u3;
+    float v3;
+    struct datasetup_s data[64];
 };
 
 typedef struct DVDCommandBlock DVDCommandBlock, *PDVDCommandBlock;
@@ -3972,6 +4144,13 @@ struct JEEPROCK {
     int SmashMe;
 };
 
+typedef struct Font3DAccentTab Font3DAccentTab, *PFont3DAccentTab;
+
+struct Font3DAccentTab {
+    struct nuhspecial_s obj;
+    char * name;
+};
+
 typedef struct Font3DObjTab Font3DObjTab, *PFont3DObjTab;
 
 struct Font3DObjTab {
@@ -3980,6 +4159,17 @@ struct Font3DObjTab {
     char action;
     float anim_time;
     float scale;
+};
+
+typedef struct Font3DTab Font3DTab, *PFont3DTab;
+
+struct Font3DTab {
+    char ascii;
+    char pad1;
+    char pad2;
+    char pad3;
+    struct nuhspecial_s obj;
+    char * name;
 };
 
 typedef struct FootData FootData, *PFootData;
@@ -4158,6 +4348,15 @@ typedef struct GS_Buffer GS_Buffer, *PGS_Buffer;
 struct GS_Buffer {
     uint size;
     uint type;
+};
+
+typedef struct H2OElec H2OElec, *PH2OElec;
+
+struct H2OElec {
+    struct nuvec_s start;
+    struct nuvec_s end;
+    int time;
+    int ang;
 };
 
 typedef struct hitdata hitdata, *Phitdata;
@@ -4439,6 +4638,13 @@ struct MaskFeathers {
     char pad4;
 };
 
+typedef struct matchingslot_s matchingslot_s, *Pmatchingslot_s;
+
+struct matchingslot_s {
+    int batch;
+    int slot;
+};
+
 typedef struct memexternal_s memexternal_s, *Pmemexternal_s;
 
 typedef union variptr_u variptr_u, *Pvariptr_u;
@@ -4685,15 +4891,9 @@ typedef struct nudathdr_s nudathdr_s, *Pnudathdr_s;
 struct nudathdr_s {
     int ver;
     int nfiles;
-    undefined field2_0x8;
-    undefined field3_0x9;
-    undefined field4_0xa;
-    undefined field5_0xb;
+    struct nudatinfo_s * finfo;
     int treecnt;
-    undefined field7_0x10;
-    undefined field8_0x11;
-    undefined field9_0x12;
-    undefined field10_0x13;
+    struct nudfnode_s * filetree;
     int leafnamesize;
     char * leafnames;
     int dfhandle;
@@ -4710,7 +4910,7 @@ typedef struct nufpcomjmp_s nufpcomjmp_s, *Pnufpcomjmp_s;
 
 struct nufpcomjmp_s {
     char * fname;
-    void * func; /* struct */
+    void (* func)(struct nufpar_s *); /* struct */
 };
 
 struct nufpar_s {
@@ -4738,39 +4938,21 @@ struct nufparpos_s {
     int buffend;
 };
 
+typedef struct nufspecial_s nufspecial_s, *Pnufspecial_s;
+
+struct nufspecial_s {
+    struct numtx_s mtx;
+    int instanceix;
+    int nameix;
+    struct nuspecialflags flags;
+    int pad;
+};
+
 typedef struct NUGCUTLOCFNDATA_s NUGCUTLOCFNDATA_s, *PNUGCUTLOCFNDATA_s;
 
 struct NUGCUTLOCFNDATA_s {
     char * name;
     struct locdataFN * void_fn;
-};
-
-typedef struct nugeomitem_s nugeomitem_s, *Pnugeomitem_s;
-
-typedef struct nurndritem_s nurndritem_s, *Pnurndritem_s;
-
-typedef enum nurndritemtype_s {
-    NURNDRITEM_GEOM3D=0,
-    NURNDRITEM_GEOM2D=1,
-    NURNDRITEM_SKIN3D2=2,
-    NURNDRITEM_GEOMFACE=3
-} nurndritemtype_s;
-
-struct nurndritem_s {
-    struct nurndritem_s * next;
-    enum nurndritemtype_s type;
-    int flags;
-    short lights_index;
-    char unk[2];
-};
-
-struct nugeomitem_s {
-    struct nurndritem_s hdr;
-    struct numtx_s * mtx;
-    struct nugeom_s * geom;
-    float * * blendvals;
-    short instancelights_index[3];
-    short hShader;
 };
 
 typedef struct nulight_s nulight_s, *Pnulight_s;
@@ -4785,26 +4967,6 @@ typedef struct nulights_s nulights_s, *Pnulights_s;
 
 struct nulights_s {
     struct nulight_s light[3];
-};
-
-typedef struct nulnkhdr_s nulnkhdr_s, *Pnulnkhdr_s;
-
-typedef struct nulsthdr_s nulsthdr_s, *Pnulsthdr_s;
-
-struct nulsthdr_s {
-    struct nulnkhdr_s * free;
-    struct nulnkhdr_s * head;
-    struct nulnkhdr_s * tail;
-    short elcnt;
-    short elsize;
-};
-
-struct nulnkhdr_s {
-    struct nulsthdr_s * owner;
-    struct nulnkhdr_s * succ;
-    struct nulnkhdr_s * prev;
-    ushort id;
-    ushort used;
 };
 
 typedef struct NUNODE_s NUNODE_s, *PNUNODE_s;
@@ -4827,18 +4989,6 @@ struct nunrand_s {
 };
 
 typedef struct nuotitem_s nuotitem_s, *Pnuotitem_s;
-
-typedef struct nusysmtl_s nusysmtl_s, *Pnusysmtl_s;
-
-struct nusysmtl_s {
-    struct numtl_s mtl;
-    struct nurndritem_s * rndrlist;
-    struct nugeomitem_s * geom2d;
-    struct nugeomitem_s * geom3d;
-    struct nusysmtl_s * next;
-    struct nusysmtl_s * last;
-    int hShader;
-};
 
 struct nuotitem_s {
     struct nuotitem_s * next;
@@ -5046,6 +5196,20 @@ struct nusystex_s {
     struct D3DTexture * dds;
     int ref;
     int rtid;
+};
+
+typedef struct nutexanimf_s nutexanimf_s, *Pnutexanimf_s;
+
+struct nutexanimf_s {
+    struct nutexanim_s * succ;
+    struct nutexanim_s * prev;
+    int tids;
+    short numtids;
+    short dynalloc:1;
+    int mtl;
+    struct nutexanimenv_s * env;
+    int ntaname;
+    int scriptname;
 };
 
 typedef struct nutexanimlist_s nutexanimlist_s, *Pnutexanimlist_s;
@@ -5378,9 +5542,6 @@ struct PLANESTRUCT {
 typedef struct platattrib platattrib, *Pplatattrib;
 
 struct platattrib {
-    undefined field0_0x0;
-    undefined field1_0x1;
-    undefined field2_0x2;
     uint hit:1;
     uint rotate:1;
 };
@@ -5462,6 +5623,13 @@ struct Poly {
     struct nuvec_s pnts[4];
     struct nuvec_s norm[2];
     uchar info[4];
+};
+
+typedef union prevLst prevLst, *PprevLst;
+
+union prevLst {
+    char * s8;
+    struct nulnkhdr_s * lhdr;
 };
 
 typedef struct primdef_s primdef_s, *Pprimdef_s;
@@ -5562,24 +5730,6 @@ typedef struct sceneptr sceneptr, *Psceneptr;
 struct sceneptr {
     int count;
     struct offlist offlist[512];
-};
-
-typedef struct setup_s setup_s, *Psetup_s;
-
-struct setup_s { /* UNK STRUCT */
-    int DmaHeader[4];
-    float grav;
-    float gtime;
-    int DmaBody[4];
-    float u0;
-    float v0;
-    float u1;
-    float v1;
-    float u2;
-    float v2;
-    float u3;
-    float v3;
-    struct datasetup_s data[64];
 };
 
 typedef enum shadertypes_e {
@@ -5783,6 +5933,16 @@ struct TerSurface {
     float friction;
     short gdeb;
     ushort flags;
+};
+
+typedef struct Text3DOBJ Text3DOBJ, *PText3DOBJ;
+
+struct Text3DOBJ { /* volatile */
+    short i;
+    uchar flags;
+    char action;
+    float anim_time;
+    float scale;
 };
 
 typedef struct trail trail, *Ptrail;
@@ -6154,11 +6314,6 @@ typedef ulonglong uint64_t;
 typedef uchar uint_fast8_t;
 
 typedef struct _IO_FILE FILE;
-
-typedef struct new new, *Pnew;
-
-struct new {
-};
 
 typedef struct nufaceonitem_s nufaceonitem_s, *Pnufaceonitem_s;
 

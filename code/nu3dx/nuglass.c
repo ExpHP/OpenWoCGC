@@ -1,27 +1,27 @@
 #include "nuglass.h"
 #include "../system.h"
 
-static int spectid;
+static s32 spectid;
 
 void InitSpecular(void)
 
 {
-  nutex_s tex;
+  struct nutex_s tex;
   
   spectid = 0;
   NuTexReadBitmapMM("gfx\\spectxtf.bmp",0,&tex);
   spectid = NuTexCreate(&tex);
-  if (tex.bits != (void *)0x0) {
+  if (tex.bits != NULL) {
     NuMemFree(tex.bits);
   }
-  if (tex.pal != (int *)0x0) {
+  if (tex.pal != NULL) {
     NuMemFree(tex.pal);
   }
   return;
 }
 
 
-int GetGlassSpecularTexId(void)
+s32 GetGlassSpecularTexId(void)
 
 {
   return spectid;
@@ -113,18 +113,18 @@ void InitOverrideMtl(void)	//TODO
 */
 
 
-int isGlassInstance(nugscn_s *gsc,nuinstance_s *inst)
+s32 isGlassInstance(struct nugscn_s *gsc,struct nuinstance_s *inst)
 
 {
-  nugeom_s *geom;
-  uchar fxid;
+  struct nugeom_s *geom;
+  u8 fxid;
   
   geom = (&gsc->gobjs->sysnext)[inst->objid]->geom;
   if (-1 < (int)inst->flags) {
     return 0;
   }
   while( true ) {
-    if (geom == (nugeom_s *)0x0) {
+    if (geom == NULL) {
       return 0;
     }
     fxid = geom->mtls->fxid;
@@ -141,7 +141,6 @@ void NuGlassProcessScene(nugscn_s *gsc)	//CHECK
 {
   float z;
   int flag;
-  NUERRORFUNC *e;
   nugobj_s *gobj;
   nugeom_s *next;
   nugobj_s *sysnext;
@@ -161,8 +160,8 @@ void NuGlassProcessScene(nugscn_s *gsc)	//CHECK
       flag = isGlassInstance(gsc,gsc->instances + i);
       if (flag != 0) {
         if (0xff < num_glass_inst) {
-          e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nuglass.c",0x9f);
-          (*e)("assert");
+          //e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nuglass.c",0x9f);
+          //(*e)("assert");
         }
         flag = num_glass_inst;
         glass_inst[num_glass_inst] = gsc->instances + i;
@@ -253,7 +252,7 @@ void NuGlassInit(void)
   return;
 }
 
-void NuGlassClose(void)	//TODO
+void NuGlassClose(void)	//CHECK
 
 {
   int i;
@@ -263,25 +262,25 @@ void NuGlassClose(void)	//TODO
   if (0 < num_glass_inst) {
     j = 0;
     do {
-      *(undefined4 *)((int)glass_inst + j) = 0;
-      *(undefined4 *)((int)glassMtx + j) = 0;
-      if (*(nugobj_s **)((int)glassGobj + j) != (nugobj_s *)0x0) {
-        NuGobjDestroy(*(nugobj_s **)((int)glassGobj + j));
-        *(undefined4 *)((int)glassGobj + j) = 0;
+      j = i + 1;
+      glass_inst[i] = NULL;
+      glassMtx[i] = NULL;
+      if (glassGobj[i] != NULL) {
+        NuGobjDestroy(glassGobj[i]);
+        glassGobj[i] = NULL;
       }
-      i = i + 1;
-      j = j + 4;
+      i = j;
     } while (i < num_glass_inst);
   }
   num_glass_inst = 0;
-  if (glass_mtl != (numtl_s *)0x0) {
+  if (glass_mtl != NULL) {
     NuMtlDestroy(glass_mtl);
   }
-  glass_mtl = (numtl_s *)0x0;
+  glass_mtl = NULL;
   return;
 }
 
-void NuGlassRenderStatic(void)	//TODO
+void NuGlassRenderStatic(void)	//CHECK
 {
   int i;
   int iVar1;
@@ -289,7 +288,7 @@ void NuGlassRenderStatic(void)	//TODO
   ProcessGlass(0);
   nurndr_forced_mtl = glass_mtl;
   DrawGlassCreatures(0);
-  nurndr_forced_mtl = (numtl_s *)0x0;
+  nurndr_forced_mtl = NULL;
   if ((SKELETALCRASH != 0) || (glass_mix != 1.0)) {
     NuRndrEndScene();
     NudxFw_MakeBackBufferCopy(1);
@@ -300,10 +299,10 @@ void NuGlassRenderStatic(void)	//TODO
     if (0 < num_glass_inst) {
       iVar1 = 0;
       do {
-        if ((*(uint *)(*(int *)((int)glass_inst + iVar1) + 0x44) & 0x20000000) != 0) {
-          NuRndrGobj(*(nugobj_s **)((int)glassGobj + iVar1),*(numtx_s **)((int)glassMtx + iVar1),
-                     (float **)0x0);
-        }
+      if (((uint)glass_inst[iVar1]->flags & 0x20000000) != 0) 
+	 {
+          NuRndrGobj(glassGobj[iVar1],glassMtx[iVar1],NULL);
+       }
         i = i + 1;
         iVar1 = iVar1 + 4;
       } while (i < num_glass_inst);

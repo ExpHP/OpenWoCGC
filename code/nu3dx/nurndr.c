@@ -290,32 +290,32 @@ LAB_800b47cc:
 
 int NuRndrGrassGobj(nugobj_s *gobj,numtx_s *wm,float **blendvals)
 
-{ 
+{
   float fVar1;
   float fVar2;
   float fVar3;
-  numtl_s **ppnVar4;
+  nusysmtl_s **ppnVar4;
   numtx_s *pnVar5;
   numtx_s *pnVar6;
-  NUERRORFUNC *pNVar7;
-  int iVar8;
-  short sVar9;
+  NUERRORFUNC *err;
+  int iVar7;
+  short sVar8;
   nusysmtl_s *mtl;
-  numtx_s *pnVar10;
-  uint uVar11;
-  int iVar12;
-  numtx_s *pnVar13;
-  int iVar14;
-  numtx_s *pnVar15;
-  int iVar16;
+  numtx_s *pnVar9;
+  uint uVar10;
+  int iVar11;
+  numtx_s *pnVar12;
+  int iVar13;
+  numtx_s *pnVar14;
+  int iVar15;
   nugeom_s *geom;
-  double dVar17;
+  double dVar16;
   nuvec_s local_70;
   nuvec_s local_60;
   
-  iVar14 = -1;
+  iVar13 = -1;
   if (gobj != (nugobj_s *)0x0) {
-    dVar17 = 100.0;
+    dVar16 = 100.0;
     do {
       local_70.x = (gobj->bounding_box_min).x;
       local_70.y = (gobj->bounding_box_min).y;
@@ -328,79 +328,79 @@ int NuRndrGrassGobj(nugobj_s *gobj,numtx_s *wm,float **blendvals)
       fVar1 = local_70.y - wm->_31;
       fVar2 = local_70.x - wm->_30;
       fVar3 = local_70.z - wm->_32;
-      if ((double)(fVar3 * fVar3 + fVar2 * fVar2 + fVar1 * fVar1) <= dVar17) {
-        iVar16 = NuCameraClipTestBoundingSphere
+      if ((double)(fVar3 * fVar3 + fVar2 * fVar2 + fVar1 * fVar1) <= dVar16) {
+        iVar15 = NuCameraClipTestBoundingSphere
                            (&gobj->bounding_box_center,&gobj->bounding_radius_from_center,wm);
       }
       else {
-        iVar16 = 0;
+        iVar15 = 0;
       }
-      iVar12 = iVar16;
-      if (iVar14 == -1) {
+      iVar11 = iVar15;
+      if (iVar13 == -1) {
 LAB_800b4b88:
-        iVar14 = iVar12;
-        if (iVar16 != 0) {
+        iVar13 = iVar11;
+        if (iVar15 != 0) {
           rndrmtx_cnt = rndrmtx_cnt + -1;
           if (rndrmtx_cnt < 0) {
-            pNVar7 = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x316);
-            (*pNVar7)("NuRndrGobj : No free matrix slots!");
+            err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x316);
+            (*err)("NuRndrGobj : No free matrix slots!");
           }
-          iVar12 = 0x30;
-          pnVar15 = rndrmtx + rndrmtx_cnt;
-          pnVar5 = pnVar15;
+          iVar11 = 0x30;
+          pnVar14 = rndrmtx + rndrmtx_cnt;
+          pnVar5 = pnVar14;
           pnVar6 = wm;
           do {
-            pnVar13 = pnVar6;
-            pnVar10 = pnVar5;
-            iVar12 = iVar12 + -0x18;
-            pnVar10->_00 = pnVar13->_00;
-            pnVar10->_01 = pnVar13->_01;
-            pnVar10->_02 = pnVar13->_02;
-            pnVar10->_03 = pnVar13->_03;
-            pnVar10->_10 = pnVar13->_10;
-            pnVar10->_11 = pnVar13->_11;
-            pnVar5 = (numtx_s *)&pnVar10->_12;
-            pnVar6 = (numtx_s *)&pnVar13->_12;
-          } while (iVar12 != 0);
-          pnVar10->_12 = pnVar13->_12;
-          pnVar10->_13 = pnVar13->_13;
-          pnVar10->_20 = pnVar13->_20;
-          pnVar10->_21 = pnVar13->_21;
+            pnVar12 = pnVar6;
+            pnVar9 = pnVar5;
+            iVar11 = iVar11 + -0x18;
+            pnVar9->_00 = pnVar12->_00;
+            pnVar9->_01 = pnVar12->_01;
+            pnVar9->_02 = pnVar12->_02;
+            pnVar9->_03 = pnVar12->_03;
+            pnVar9->_10 = pnVar12->_10;
+            pnVar9->_11 = pnVar12->_11;
+            pnVar5 = (numtx_s *)&pnVar9->_12;
+            pnVar6 = (numtx_s *)&pnVar12->_12;
+          } while (iVar11 != 0);
+          pnVar9->_12 = pnVar12->_12;
+          pnVar9->_13 = pnVar12->_13;
+          pnVar9->_20 = pnVar12->_20;
+          pnVar9->_21 = pnVar12->_21;
           geom = gobj->geom;
           if (geom != (nugeom_s *)0x0) {
             do {
               if (geomitem_cnt == 0) {
-                pNVar7 = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x344);
-                (*pNVar7)("NuRndrGobj : No free geom item slots!");
+                err = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nurndr.c",0x344);
+                (*err)("NuRndrGobj : No free geom item slots!");
               }
               else {
-                iVar12 = geomitem_cnt + -1;
-                geomitem_cnt = iVar12;
-                geomitem[iVar12].hdr.type = NURNDRITEM_GEOM3D;
-                geomitem[iVar12].hdr.flags = 0;
-                if (iVar16 == 1) {
-                  geomitem[iVar12].hdr.flags = 1;
+                iVar11 = geomitem_cnt + -1;
+                geomitem_cnt = iVar11;
+                geomitem[iVar11].hdr.type = NURNDRITEM_GEOM3D;
+                geomitem[iVar11].hdr.flags = 0;
+                if (iVar15 == 1) {
+                  geomitem[iVar11].hdr.flags = 1;
                 }
-                iVar8 = NuLightStoreCurrentLights();
-                geomitem[iVar12].hdr.lights_index = (short)iVar8;
-                geomitem[iVar12].mtx = pnVar15;
-                geomitem[iVar12].geom = geom;
-                geomitem[iVar12].blendvals = blendvals;
-                sVar9 = NuShaderAssignShader(geom);
+                iVar7 = NuLightStoreCurrentLights();
+                geomitem[iVar11].hdr.lights_index = (short)iVar7;
+                geomitem[iVar11].mtx = pnVar14;
+                geomitem[iVar11].geom = geom;
+                geomitem[iVar11].blendvals = blendvals;
+                sVar8 = NuShaderAssignShader(geom);
                 ppnVar4 = nurndr_forced_mtl_table;
-                geomitem[iVar12].hShader = sVar9;
-                if ((ppnVar4 == (numtl_s **)0x0) ||
-                   (uVar11 = (uint)geom->mtls->special_id, uVar11 == 0)) {
-                  mtl = (nusysmtl_s *)nurndr_forced_mtl;
-                  if (nurndr_forced_mtl == (numtl_s *)0x0) {
-                    mtl = (nusysmtl_s *)geom->mtls;
+                geomitem[iVar11].hShader = sVar8;
+                if ((ppnVar4 == (nusysmtl_s **)0x0) ||
+                   (uVar10 = (uint)(geom->mtls->mtl).special_id, uVar10 == 0)) {
+                  mtl = nurndr_forced_mtl;
+                  if (nurndr_forced_mtl == (nusysmtl_s *)0x0) {
+                    mtl = geom->mtls;
                   }
                 }
                 else {
-                  mtl = (nusysmtl_s *)ppnVar4[uVar11];
+                  mtl = ppnVar4[uVar10];
                   if (mtl == (nusysmtl_s *)0x0) goto LAB_800b4d14;
                 }
-                NuMtlAddRndrItem(mtl,geomitem + iVar12);
+                NuMtlAddRndrItem(mtl,geomitem + iVar11);
               }
 LAB_800b4d14:
               geom = geom->next;
@@ -409,19 +409,19 @@ LAB_800b4d14:
         }
       }
       else {
-        if ((iVar14 == 1) && (iVar16 != 1)) {
+        if ((iVar13 == 1) && (iVar15 != 1)) {
 LAB_800b4b84:
-          iVar12 = 2;
+          iVar11 = 2;
           goto LAB_800b4b88;
         }
-        iVar12 = iVar14;
-        if (iVar14 != 0) goto LAB_800b4b88;
-        if (iVar16 != 0) goto LAB_800b4b84;
+        iVar11 = iVar13;
+        if (iVar13 != 0) goto LAB_800b4b88;
+        if (iVar15 != 0) goto LAB_800b4b84;
       }
       gobj = gobj->next_gobj;
     } while (gobj != (nugobj_s *)0x0);
   }
-  return iVar14;
+  return iVar13;
 }
 
 
@@ -434,15 +434,15 @@ int NuRndrGobjSkin2(nugobj_s *gobj,int nummtx,numtx_s *wm,float **blendvals)
   int cclip;
   NUERRORFUNC *e;
   int currlgt;
-  short sVar3;
-  nusysmtl_s *mtl;
-  numtx_s *pnVar4;
-  uint uVar5;
-  int iVar6;
-  numtx_s *pnVar7;
+  short shad;
+  nusysmtl_s *sm1;
+  numtx_s *pnVar3;
+  uint specid;
+  int iVar4;
+  numtx_s *pnVar5;
   numtx_s *m;
   nugeom_s *geom;
-  numtl_s **mtl_2;
+  nusysmtl_s **sm2;
   
   if (gobj->culltype == 0) {
     cclip = NuCameraClipTestBoundingSphere
@@ -462,26 +462,26 @@ int NuRndrGobjSkin2(nugobj_s *gobj,int nummtx,numtx_s *wm,float **blendvals)
     if (0 < nummtx) {
       do {
         currlgt = i + 1;
-        iVar6 = 0x30;
+        iVar4 = 0x30;
         pnVar1 = m + i;
         pnVar2 = wm + i;
         do {
-          pnVar7 = pnVar2;
-          pnVar4 = pnVar1;
-          iVar6 = iVar6 + -0x18;
-          pnVar4->_00 = pnVar7->_00;
-          pnVar4->_01 = pnVar7->_01;
-          pnVar4->_02 = pnVar7->_02;
-          pnVar4->_03 = pnVar7->_03;
-          pnVar4->_10 = pnVar7->_10;
-          pnVar4->_11 = pnVar7->_11;
-          pnVar1 = (numtx_s *)&pnVar4->_12;
-          pnVar2 = (numtx_s *)&pnVar7->_12;
-        } while (iVar6 != 0);
-        pnVar4->_12 = pnVar7->_12;
-        pnVar4->_13 = pnVar7->_13;
-        pnVar4->_20 = pnVar7->_20;
-        pnVar4->_21 = pnVar7->_21;
+          pnVar5 = pnVar2;
+          pnVar3 = pnVar1;
+          iVar4 = iVar4 + -0x18;
+          pnVar3->_00 = pnVar5->_00;
+          pnVar3->_01 = pnVar5->_01;
+          pnVar3->_02 = pnVar5->_02;
+          pnVar3->_03 = pnVar5->_03;
+          pnVar3->_10 = pnVar5->_10;
+          pnVar3->_11 = pnVar5->_11;
+          pnVar1 = (numtx_s *)&pnVar3->_12;
+          pnVar2 = (numtx_s *)&pnVar5->_12;
+        } while (iVar4 != 0);
+        pnVar3->_12 = pnVar5->_12;
+        pnVar3->_13 = pnVar5->_13;
+        pnVar3->_20 = pnVar5->_20;
+        pnVar3->_21 = pnVar5->_21;
         i = currlgt;
       } while (currlgt < nummtx);
     }
@@ -505,20 +505,21 @@ int NuRndrGobjSkin2(nugobj_s *gobj,int nummtx,numtx_s *wm,float **blendvals)
           geomitem[i].blendvals = blendvals;
           geomitem[i].mtx = m;
           geomitem[i].geom = geom;
-          sVar3 = NuShaderAssignShader(geom);
-          mtl_2 = nurndr_forced_mtl_table;
-          geomitem[i].hShader = sVar3;
-          if ((mtl_2 == (numtl_s **)0x0) || (uVar5 = (uint)geom->mtls->special_id, uVar5 == 0)) {
-            mtl = (nusysmtl_s *)nurndr_forced_mtl;
-            if (nurndr_forced_mtl == (numtl_s *)0x0) {
-              mtl = (nusysmtl_s *)geom->mtls;
+          shad = NuShaderAssignShader(geom);
+          sm2 = nurndr_forced_mtl_table;
+          geomitem[i].hShader = shad;
+          if ((sm2 == (nusysmtl_s **)0x0) ||
+             (specid = (uint)(geom->mtls->mtl).special_id, specid == 0)) {
+            sm1 = nurndr_forced_mtl;
+            if (nurndr_forced_mtl == (nusysmtl_s *)0x0) {
+              sm1 = geom->mtls;
             }
           }
           else {
-            mtl = (nusysmtl_s *)mtl_2[uVar5];
-            if (mtl == (nusysmtl_s *)0x0) goto LAB_800b4f6c;
+            sm1 = sm2[specid];
+            if (sm1 == (nusysmtl_s *)0x0) goto LAB_800b4f6c;
           }
-          NuMtlAddRndrItem(mtl,geomitem + i);
+          NuMtlAddRndrItem(sm1,geomitem + i);
         }
 LAB_800b4f6c:
         geom = geom->next;
@@ -1862,29 +1863,21 @@ void NuRndrAddWaterRipple(nuvec_s *pos,float size,float endsize,int duration,int
   return;
 }
 
-void NuRndrAddShadow(float scale,nuvec_s *v,short shade,short xrot,short yrot,short zrot)
+void NuRndrAddShadow(struct NuVec* v, s16 shade, s16 xrot, s16 yrot, s16 zrot, f32 arg8) {
 
-{
-  float y;
-  int iVar1;
-  float z;
-  
-  iVar1 = NuCameraClipTestPoints(v,1,(numtx_s *)0x0);
-  if ((iVar1 == 0) && (NuRndrShadowCnt < 0x80)) {
-    z = v->z;
-    v->y = v->y + 0.01;
-    y = v->y;
-    NuRndrShadPolDat[NuRndrShadowCnt].pos.x = v->x;
-    NuRndrShadPolDat[NuRndrShadowCnt].pos.y = y;
-    NuRndrShadPolDat[NuRndrShadowCnt].pos.z = z;
-    NuRndrShadPolDat[NuRndrShadowCnt].size = (float)param_1;
-    NuRndrShadPolDat[NuRndrShadowCnt].zrot = param_6;
-    NuRndrShadPolDat[NuRndrShadowCnt].shade = param_3;
-    NuRndrShadPolDat[NuRndrShadowCnt].xrot = param_4;
-    NuRndrShadPolDat[NuRndrShadowCnt].yrot = param_5;
-    NuRndrShadowCnt = NuRndrShadowCnt + 1;
-  }
-  return;
+    if ((NuCameraClipTestPoints(v, 1, NULL) == 0) && ((s32) NuRndrShadowCnt <= 0x7F)) {
+        v->y += 0.01f;
+        NuRndrShadPolDat[NuRndrShadowCnt].pos.x = v->x;
+        NuRndrShadPolDat[NuRndrShadowCnt].pos.y = v->y;
+        NuRndrShadPolDat[NuRndrShadowCnt].pos.z = v->z;
+        *(&NuRndrShadPolDat->size + (NuRndrShadowCnt * 0x18)) = arg8;         //NuRndrShadPolDat[NuRndrShadowCnt].size = arg8;
+        NuRndrShadPolDat[NuRndrShadowCnt].zrot = zrot;
+        NuRndrShadPolDat[NuRndrShadowCnt].shade = shade;
+        NuRndrShadPolDat[NuRndrShadowCnt].xrot = xrot;
+        NuRndrShadPolDat[NuRndrShadowCnt].yrot = yrot;
+        NuRndrShadowCnt += 1;
+    }
+	return;
 }
 
 
