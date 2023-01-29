@@ -589,166 +589,101 @@ void NuMtlRenderOT(int begin,int end)
   return;
 }
 
-/*
-void NuMtlRenderFaceOn(void)
-
-{
-  float fVar4;
-  nusysmtl_s *mtl;
-  nurndritem_s *pnVar6;
-  int cnt;
-  float *pfVar9;
-  int iVar10;
-  nurndritem_s *pnVar11;
-  nufaceonitem_s *facei;
-  int *piVar13;
-  nuvec_s *a;
-  int i;
-  double dVar15;
-  double dVar16;
-  double dVar17;
-  double dVar18;
-  double dVar19;
-  double dVar20;
-  double dVar21;
-  numtx_s local_1a8;
-  numtx_s local_168;
-  numtx_s mtx_dest;
-  nuvec_s nStack_e8;
-  nuvec_s nStack_d8;
-  nuvec_s vec_a;
-  numtx_s local_b8;
-  float *pfVar2;
-  nurndritem_s *pnVar1;
-  
+void NuMtlRenderFaceOn() {
   ResetShaders();
-  i = 0;
   SetVertexShader(0x142);
   GS_LoadWorldMatrixIdentity();
-  if (0 < faceonmtl_cnt) {
-    do {
-      facei = faceonmtllist[i];
-      mtl = facei->mtl;
-      if ((mtl->mtl).L == '\0') {
-        NuTexSetTexture(0,(mtl->mtl).tid);
-        NuMtlSetRenderStates(&facei->mtl->mtl);
-        NuTexSetTextureStates(&facei->mtl->mtl);
-        GS_SetAlphaCompare(4,0);
-        GS_SetZCompare(1,1,3);
-      }
-      else {
-        NuTexSetTexture(0,(mtl->mtl).tid);
-        NuMtlSetRenderStates(&facei->mtl->mtl);
-        NuTexSetTextureStates(&facei->mtl->mtl);
-        GS_SetZCompare(1,0,3);
-        GS_SetAlphaCompare(3,0xf7);
-      }
-      iVar10 = i + 1;
-      cnt = 0x30;
-      pnVar1 = facei->hdr[1].next;
-      pfVar2 = (float *)&local_168;
-      do {
-        pfVar9 = pfVar2;
-        pnVar11 = pnVar1;
-        cnt = cnt + -0x18;
-        *pfVar9 = (float)pnVar11->next;
-        pfVar9[1] = (float)pnVar11->type;
-        pfVar9[2] = (float)pnVar11->flags;
-        pfVar9[3] = (float)*(nurndritem_s **)&pnVar11->lights_index;
-        (*(float (*) [4])(pfVar9 + 4))[0] = (float)pnVar11[1].next;
-        pfVar9[5] = (float)pnVar11[1].type;
-        pnVar1 = (nurndritem_s *)&pnVar11[1].flags;
-        pfVar2 = pfVar9 + 6;
-      } while (cnt != 0);
-      pfVar9[6] = (float)pnVar11[1].flags;
-      pfVar9[7] = (float)*(nurndritem_s **)&pnVar11[1].lights_index;
-      pfVar9[8] = (float)pnVar11[2].next;
-      pfVar9[9] = (float)pnVar11[2].type;
-      if (facei != (nufaceonitem_s *)0x0) {
-        dVar15 = 0.0;
-        do {
-          pnVar11 = facei->hdr;
-          cnt = 0x30;
-          pnVar1 = pnVar11[1].next;
-          pfVar2 = (float *)&local_1a8;
-          do {
-            pfVar9 = pfVar2;
-            pnVar6 = pnVar1;
-            cnt = cnt + -0x18;
-            *pfVar9 = (float)pnVar6->next;
-            pfVar9[1] = (float)pnVar6->type;
-            pfVar9[2] = (float)pnVar6->flags;
-            pfVar9[3] = (float)*(nurndritem_s **)&pnVar6->lights_index;
-            (*(float (*) [4])(pfVar9 + 4))[0] = (float)pnVar6[1].next;
-            pfVar9[5] = (float)pnVar6[1].type;
-            pnVar1 = (nurndritem_s *)&pnVar6[1].flags;
-            pfVar2 = pfVar9 + 6;
-          } while (cnt != 0);
-          pfVar9[6] = (float)pnVar6[1].flags;
-          pfVar9[7] = (float)*(nurndritem_s **)&pnVar6[1].lights_index;
-          pfVar9[8] = (float)pnVar6[2].next;
-          pfVar9[9] = (float)pnVar6[2].type;
-          local_1a8.mtx[3][0] = (float)dVar15;
-          local_1a8.mtx[3][1] = (float)dVar15;
-          local_1a8.mtx[3][2] = (float)dVar15;
-          for (piVar13 = (int *)facei->hdr[1].type; piVar13 != (int *)0x0; piVar13 = (int *)*piVar 13
-              ) {
-            cnt = piVar13[5];
-            a = (nuvec_s *)piVar13[4];
-            GS_DrawQuadListBeginBlock(cnt << 2);
-            if (0 < cnt) {
-              dVar16 = 0.5;
-              dVar17 = 0.0;
-              do {
-                dVar20 = (double)(float)((double)a[1].x * dVar16);
-                dVar21 = (double)(float)((double)a[1].y * dVar16);
-                NuVecMtxRotate(&nStack_d8,a,&local_1a8);
-                dVar18 = -dVar20;
-                dVar19 = -dVar21;
-                NuVecAdd(&vec_a,&nStack_d8,(nuvec_s *)(pnVar11[1].next + 3));
-                NuMtxCalcCheapFaceOn(&mtx_dest,&vec_a);
-                local_b8.mtx[0][0] = (float)dVar18;
-                local_b8.mtx[0][1] = (float)dVar21;
-                local_b8.mtx[0][2] = (float)dVar17;
-                NuVecMtxTransform(&nStack_e8,(nuvec_s *)&local_b8,&mtx_dest);
-                fVar4 = a[1].z;
-                a = a + 2;
-                GS_SetQuadListRGBA((uint)fVar4 >> 0x10 & 0xff,(uint)fVar4 >> 8 & 0xff,
-                                   (uint)fVar4 & 0xff,(uint)fVar4 >> 0x18);
-                GS_DrawQuadListSetVert(&nStack_e8,(float)dVar17,(float)dVar17);
-                local_b8.mtx[0][0] = (float)dVar20;
-                local_b8.mtx[0][1] = (float)dVar21;
-                local_b8.mtx[0][2] = (float)dVar17;
-                NuVecMtxTransform(&nStack_e8,(nuvec_s *)&local_b8,&mtx_dest);
-                GS_DrawQuadListSetVert(&nStack_e8,1.0,(float)dVar17);
-                local_b8.mtx[0][0] = (float)dVar20;
-                local_b8.mtx[0][1] = (float)dVar19;
-                local_b8.mtx[0][2] = (float)dVar17;
-                NuVecMtxTransform(&nStack_e8,(nuvec_s *)&local_b8,&mtx_dest);
-                GS_DrawQuadListSetVert(&nStack_e8,1.0,1.0);
-                local_b8.mtx[0][0] = (float)dVar18;
-                local_b8.mtx[0][1] = (float)dVar19;
-                local_b8.mtx[0][2] = (float)dVar17;
-                NuVecMtxTransform(&nStack_e8,(nuvec_s *)&local_b8,&mtx_dest);
-                GS_DrawQuadListSetVert(&nStack_e8,(float)dVar17,1.0);
-                cnt = cnt + -1;
-              } while (cnt != 0);
-            }
-            GS_DrawQuadListEndBlock();
-          }
-          facei = facei->next;
-        } while (facei != (nufaceonitem_s *)0x0);
-      }
-      cnt = faceonmtl_cnt;
-      faceonmtllist[i] = (nufaceonitem_s *)0x0;
-      i = iVar10;
-    } while (iVar10 < cnt);
+  if (faceonmtl_cnt <= 0) {
+    return;
   }
+  u32 processed_count = 0; // count -> r31
+  do {
+    struct nufaceonitem_s* cur_list = faceonmtllist[processed_count];
+    
+    struct nusysmtl_s* sys_mtl = cur_list->mtl;
+    if (sys_mtl->mtl.L) {
+      NuSetTextureSize(0, sys_mtl->mtl.tid);
+      NuMtlSetRenderStates(cur_list->sys_mtl);
+      NuTexSetTextureStates(cur_list->sys_mtl);
+      GS_SetZCompare(1, 0, GX_LEQUAL);
+      GS_SetAlphaCompare(GX_LEQUAL, 0xf7);
+    } else {
+      NuSetTextureSize(0, sys_mtl->mtl.tid);
+      NuMtlSetRenderStates(cur_list->sys_mtl);
+      NuTexSetTextureStates(cur_list->sys_mtl);
+      GS_SetAlphaCompare(GX_GREATER, 0);
+      GS_SetZCompare(1, 1, GX_LEQUAL);
+    }
+
+    // nufaceonitem_s::hdr is probably a nugeomitem_s* 
+    // TODO: remove this cast
+    struct numtx_s var_168 = ((struct nugeomitem_s*)cur_list->hdr)->mtx;
+
+    for (; cur_list != NULL; cur_list = cur_list->next) {
+      struct numtx_s faceon_geom_xf = ((struct nugeomitem_s*)cur_list->hdr)->mtx;
+      struct nuvec_s var_178 = {0.0f, 0.0f, 0.0f};
+      struct nugeomitem_s* list_geomitem = (struct nugeomitem_s*)cur_list->hdr;
+      struct nufaceongeom_s* faceon_geom = (struct nufaceongeom_s*)list_geomitem->geom;
+
+      for (; faceon_geom != null; faceon_geom = faceon_geom->next) {
+        int faceon_count = faceon_geom->nfaceons;
+        struct nufaceon_t* faceon_list = faceon_geom->faceons;
+        GS_DrawQuadListBeginBlock(faceon_count * 4);
+
+        for (; faceon_count > 0; faceon_count -= 1, faceon_list += 1) {
+          const float right = faceon_list->width * 0.5f; // 30
+          const float top = faceon_list->height * 0.5f; //31
+          const float left = -right;
+          const float bottom = -top;
+
+          struct nuvec_s faceon_point_rotated;
+          NuVecMtxRotate(&faceon_point_rotated, &faceon_list->point, &faceon_geom_xf);
+
+          struct nuvec_s faceon_world_pos;
+          struct nuvec_s* mtx_translation = (struct nuvec_s*)&cur_list->mtx->_30;
+          NuVecAdd(&faceon_world_pos, &faceon_point_rotated, mtx_translation);
+
+          struct numtx_s faceon_transform;
+          NuMtxCalcCheapFaceOn(&faceon_transform, &faceon_world_pos);
+
+          struct nuvec_s vertex_corner = {left, top, 0.0f};
+          struct nuvec_s vertex_transformed = {left, top, 0.0f};
+          NuVecMtxTransform(&vertex_transformed, &vertex_corner, &faceon_transform);
+
+          // Color is defined ARGB?
+          GS_SetQuadListRGBA((faceon_list->colour >> 16) & 0xff,
+                             (faceon_list->colour >> 8) & 0xff,
+                             faceon_list->colour & 0xff,
+                             (faceon_list->colour >> 24) & 0xff);
+          GS_DrawQuadListSetVert(&vertex_transformed, 0.0f, 0.0f);
+
+          vertex_corner.x = right;
+          vertex_corner.y = top;
+          vertex_corner.z = 0.0f;
+          NuVecMtxTransform(&vertex_transformed, &vertex_corner, &faceon_transform);
+          GS_DrawQuadListSetVert(&vertex_transformed, 1.0f, 0.0f);
+
+          vertex_corner.x = right;
+          vertex_corner.y = bottom;
+          vertex_corner.z = 0.0f;
+          NuVecMtxTransform(&vertex_transformed, &vertex_corner, &faceon_transform);
+          GS_DrawQuadListSetVert(&vertex_transformed, 1.0f, 1.0f);
+
+          vertex_corner.x = left;
+          vertex_corner.y = bottom;
+          vertex_corner.z = 0.0f;
+          NUVecMtxTransform(&vertex_transformed, &vertex_corner, &faceon_transform);
+          GS_DrawQuadListSetVert(&vertex_transformed, 0.0f, 1.0f);
+        }
+      }
+    }
+
+    faceonmtllist[processed_count] = 0;
+    processed_count += 1;
+  } while (processed_count < faceonmtl_cnt);
+
   return;
 }
-
-*/
-
 
 void NuMtlRenderGlass(void)
 
