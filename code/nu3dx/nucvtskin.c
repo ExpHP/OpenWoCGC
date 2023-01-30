@@ -43,171 +43,112 @@ return;
 
 /********************************WIP*************************************************/
 
-/*void CreateSkinGeom(nugeom_s *geom,primdef_s *primdefs,int pdcnt)
+void CreateSkinGeom(struct NuGeom* ge, struct primdef_s* pd, s32 pdcnt) {
 
-{
-  float n;
-  int amount_prim;
-  nuprim_s *nextp;
-  uint bufsize;
-  nuvtx_sk3tc1_s *vtxbuf;
-  primdef_s *currpd;
-  uint uVar2;
-  float fVar3;
-  int psVar5;
-  int vid;
-  int *baseid_2;
-  int i;
-  nuprimtype_e prim_type;
-  short *mtxlookup;
-  int count;
-  int indexbuf;
-  int iVar4;
-  int iVar5;
-  int currbaseid;
-  int iVar6;
-  nuprim_s *next;
-  int iVar7;
-  int primsize [300];
-  nuprim_s *startp;
-  float local_50;
-  uint uStack_4c;
-  nuprim_s *actualp;
-  short sVar1;
-  
-  if (geom->vertex_type != NUVT_TC1) {
-    e = NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x69);
-    (*e)("CreateSkinGeom : Unknown vertex type!");
+    u32 amount_per_range_arr[300];    //primsize
+    s32 uniq_baseid_ranges;
+    s32 i;
+    s32 j;
+    s32 k;
+    s32 vtx_k;
+    u16 j1;
+    s32 cur_baseid;
+    u32* amount_per_range;
+    struct NuPrim* new_prim_list;    //nextprim
+    struct NuPrim* cur_prim;
+    struct nuvtx_sk3tc1_s* vertex_buffer;
+    struct primdef_s* cur_pd;
+    float const* cur_vert_weights;
+    s32 weight_idx;
+    s32 nonzero_weight_count;
+    struct NuPrim* old_prims;
+
+    
+    
+    if (ge->vtxtype != NUVT_TC1) {
+        NuErrorProlog("C:/source/crashwoc/code/nu3dx/nucvtskn.c",0x69)("CreateSkinGeom : Unknown vertex type!");
+    }
+    
+  memset(amount_per_range_arr, 0, sizeof(amount_per_range_arr));
+  uniq_baseid_ranges = 1;
+  for (i = 0, cur_baseid = pd[0].baseid; i < pdcnt; ++i) {
+    if (pd[i].baseid != cur_baseid) {
+      cur_baseid = pd[i].baseid;
+      ++uniq_baseid_ranges;
+    }
+    amount_per_range_arr[uniq_baseid_ranges] += 3;
   }
-  currbaseid = primdefs->baseid;
-  count = 1;
-  memset(primsize,0,0x4b0);
-  if (0 < pdcnt) {
-    baseid_2 = &primdefs->baseid;
-    prim_type = NUPT_NDXLINE;
-    do {
-      amount_prim = *baseid_2;
-      baseid_2 = baseid_2 + 0x5d;
-      if (amount_prim != currbaseid) {
-        prim_type = prim_type + NUPT_NDXLINE;
-        count = count + 1;
-        currbaseid = amount_prim;
+
+  // Since the first element is never referenced, it's easier to read if working from index 1
+  amount_per_range = amount_per_range_arr + 1;
+  new_prim_list = NuPrimCreate(amount_per_range[0], NUPT_NDXTRI);
+  cur_prim = new_prim_list; // r28
+  for (i = 1; i < uniq_baseid_ranges; i++) {
+    cur_prim->next = NuPrimCreate(amount_per_range[i], NUPT_NDXTRI);
+    cur_prim = cur_prim->next;
+  }
+
+  vertex_buffer = (struct nuvtx_sk3tc1_s*)GS_CreateBuffer(ge->vtxcnt * sizeof(struct nuvtx_sk3tc1_s), 1);
+
+  cur_pd = pd; // bound to r4
+  cur_prim = new_prim_list; // bound to r27
+  for (i = 0; i < uniq_baseid_ranges; i++) {
+    for (j = 0; j < 15; j++) {
+      cur_prim->skinmtxlookup[j] = cur_pd->mtxid[j];
+    }
+
+    // j ~= r10, r18
+    for (j1 = 0; j1 < cur_prim->cnt; j1 += 3) {
+      ((u16*)cur_prim->idxbuff)[j1] = cur_pd->vid[0];
+      ((u16*)cur_prim->idxbuff)[j1 + 1] = cur_pd->vid[1];
+      ((u16*)cur_prim->idxbuff)[j1 + 2] = cur_pd->vid[2];
+
+      // k ~= r10, r24
+      for (k = 0; k < 3; k++) {
+        s32 vtx_k = cur_pd->vid[k];
+        vertex_buffer[vtx_k].pnt.x = cur_pd->vrts[k].pnt.x;
+        vertex_buffer[vtx_k].pnt.y = cur_pd->vrts[k].pnt.y;
+        vertex_buffer[vtx_k].pnt.z = cur_pd->vrts[k].pnt.z;
+        vertex_buffer[vtx_k].nrm.x = cur_pd->vrts[k].nrm.x;
+        vertex_buffer[vtx_k].nrm.y = cur_pd->vrts[k].nrm.y;
+        vertex_buffer[vtx_k].nrm.z = cur_pd->vrts[k].nrm.z;
+        vertex_buffer[vtx_k].tc[0] = cur_pd->vrts[k].tc[0];
+        vertex_buffer[vtx_k].tc[1] = cur_pd->vrts[k].tc[1];
+        vertex_buffer[vtx_k].diffuse = cur_pd->vrts[k].diffuse;
+        memset(vertex_buffer[vtx_k].weights, 0, sizeof(float[2]));
+        memset(vertex_buffer[vtx_k].indexes, 0, sizeof(float[3]));
+
+        // TODO: Likely need to flip weights around to be [3][15]
+        cur_vert_weights = (float const*)cur_pd->weights + j * 15;
+        weight_idx = 0;
+        nonzero_weight_count = 0;
+        while (weight_idx < 15 && nonzero_weight_count < 3) {
+          if (cur_vert_weights[weight_idx] != 0.0f) {
+            vertex_buffer[vtx_k].indexes[nonzero_weight_count] = (float)weight_idx;
+            if (nonzero_weight_count > 0) {
+              vertex_buffer[vtx_k].weights[nonzero_weight_count - 1] = cur_vert_weights[weight_idx];
+            }
+            ++nonzero_weight_count;
+          }
+          ++weight_idx;
+        }
       }
-      pdcnt = pdcnt + -1;
-      *(int *)((int)primsize + prim_type) = *(int *)((int)primsize + prim_type) + 3;
-    } while (pdcnt != 0);
+    }
   }
-  startp = NuPrimCreate(primsize[1],NUPT_NDXTRI);
-  currbaseid = 1;
-  if (1 < count) {
-    baseid_2 = primsize + 2;
-    actualp = startp;
-    do {
-      amount_prim = *baseid_2;
-      currbaseid = currbaseid + 1;
-      baseid_2 = baseid_2 + 1;
-      nextp = NuPrimCreate(amount_prim,NUPT_NDXTRI);
-      actualp->next = nextp;
-      actualp = nextp;
-    } while (currbaseid < count);
-  }
-  actualp = startp;
-  bufsize = geom->vtxcount * 0x38;
-  vtxbuf = (nuvtx_sk3tc1_s *)GS_CreateBuffer(bufsize,1);
-  currbaseid = 0;
-  if (0 < count) {
-    do {
-      currbaseid = currbaseid + 1;
-      amount_prim = 0xf;
-      mtxlookup = actualp->skinmtxlookup;
-      psVar5 = (int)primdefs->mtxid + 2;
-      do {
-        sVar1 = *(short *)psVar5;
-        psVar5 = psVar5 + 4;
-        *mtxlookup = sVar1;
-        mtxlookup = mtxlookup + 1;
-        amount_prim = amount_prim + -1;
-      } while (amount_prim != 0);
-      amount_prim = 0;
-      indexbuf = actualp->idxbuff;
-      currpd = primdefs;
-      if (actualp->vertexCount != 0) {
-        do {
-          i = amount_prim * 2 + indexbuf;
-          *(undefined2 *)(indexbuf + amount_prim * 2) = *(undefined2 *)((int)currpd->vid + 2);
-          amount_prim = amount_prim + 3;
-          primdefs = currpd + 1;
-          *(undefined2 *)(i + 2) = *(undefined2 *)((int)currpd->vid + 6);
-          *(undefined2 *)(i + 4) = *(undefined2 *)((int)currpd->vid + 10);
-          i = 0;
-          do {
-            vid = currpd->vid[i];
-            iVar4 = i + 1;
-            iVar5 = i * 0x3c;
-            n = currpd->vrts[i].pnt.z;
-            fVar3 = currpd->vrts[i].pnt.y;
-            iVar6 = 0;
-            vtxbuf[vid].pnt.x = currpd->vrts[i].pnt.x;
-            vtxbuf[vid].pnt.z = n;
-            vtxbuf[vid].pnt.y = fVar3;
-            iVar7 = 3;
-            vid = currpd->vid[i];
-            n = currpd->vrts[i].nrm.z;
-            fVar3 = currpd->vrts[i].nrm.y;
-            vtxbuf[vid].nrm.x = currpd->vrts[i].nrm.x;
-            vtxbuf[vid].nrm.z = n;
-            vtxbuf[vid].nrm.y = fVar3;
-            vtxbuf[currpd->vid[i]].diffuse = currpd->vrts[i].diffuse;
-            vtxbuf[currpd->vid[i]].tc[0] = currpd->vrts[i].tc[0];
-            vtxbuf[currpd->vid[i]].tc[1] = currpd->vrts[i].tc[1];
-            do {
-              *(undefined4 *)((int)vtxbuf[currpd->vid[i]].weights + iVar6) = 0;
-              *(undefined4 *)((int)vtxbuf[currpd->vid[i]].indexes + iVar6) = 0;
-              iVar6 = iVar6 + 4;
-              iVar7 = iVar7 + -1;
-            } while (iVar7 != 0);
-            uVar2 = 0;
-            vid = 0;
-            iVar6 = 0;
-            do {
-              if (*(float *)((int)currpd->weights + iVar5) != 0.0) {
-                uStack_4c = uVar2 ^ 0x80000000;
-                local_50 = 176.0;
-                *(float *)((int)vtxbuf[currpd->vid[i]].indexes + iVar6) =
-                     (float)((double)CONCAT44(0x43300000,uStack_4c) - 4503601774854144.0);
-                if (vid < 2) {
-                  *(undefined4 *)((int)vtxbuf[currpd->vid[i]].weights + iVar6) =
-                       *(undefined4 *)((int)currpd->weights + iVar5);
-                }
-                iVar6 = iVar6 + 4;
-                vid = vid + 1;
-              }
-              uVar2 = uVar2 + 1;
-              iVar5 = iVar5 + 4;
-            } while (((int)uVar2 < 0xf) && (vid < 3));
-            i = iVar4;
-          } while (iVar4 < 3);
-          currpd = primdefs;
-        } while (amount_prim < (int)(uint)actualp->vertexCount);
-      }
-      actualp = actualp->next;
-    } while (currbaseid < count);
-  }
-  GS_DeleteBuffer((void *)geom->hVB);
-  actualp = geom->prim;
-  while (actualp != (nuprim_s *)0x0) {
-    next = actualp->next;
-    NuPrimDestroy(actualp);
-    actualp = next;
-  }
-  geom->hVB = (int)vtxbuf;
-  geom->vertex_type = NUVT_SK3TC1;
-  geom->prim = startp;
-  return;
-}*/
 
+  GS_DeleteBuffer((u8*)ge->vtxBuffer);
+  old_prims = ge->prims;
+  while (old_prims != NULL) {
+    struct NuPrim* old_prim_next = old_prims->next;
+    NuPrimDestroy(old_prims);
+    old_prims = old_prim_next;
+  }
 
-/*
+  ge->vtxBuffer = (struct GS_Buffer*)vertex_buffer;
+  ge->vtxtype = NUVT_SK3TC1;
+  ge->prims = new_prim_list;
+}
+
 
 void NuPs2CreateSkinNorm(nugobj_s *gobj)
 

@@ -126,16 +126,16 @@ instNuGCutSceneCreate
           variptr_u *buff)
 
 {
-  instNUGCUTCAMSYS_s *piVar1;
-  instNUGCUTRIGIDSYS_s *piVar2;
-  instNUGCUTCHARSYS_s *piVar3;
-  instNUGCUTLOCATORSYS_s *piVar4;
-  instNUGCUTTRIGGERSYS_s *piVar5;
+  instNUGCUTCAMSYS_s *camsys;
+  instNUGCUTRIGIDSYS_s *rigidsys;
+  instNUGCUTCHARSYS_s *charsys;
+  instNUGCUTLOCATORSYS_s *locsys;
+  instNUGCUTTRIGGERSYS_s *trigsys;
   instNUGCUTSCENE_s *icutscene;
   
   icutscene = (instNUGCUTSCENE_s *)0x0;
   if (cutscene != (NUGCUTSCENE_s *)0x0) {
-    icutscene = (instNUGCUTSCENE_s *)((uint)((int)&buff->vec4->w + 3) & 0xfffffff0);
+    icutscene = (instNUGCUTSCENE_s *)(buff->intaddr + 0xf & 0xfffffff0);
     buff->voidptr = icutscene + 1;
     memset(icutscene,0,0x94);
     icutscene->next = active_cutscene_instances;
@@ -145,28 +145,28 @@ instNuGCutSceneCreate
     active_cutscene_instances = icutscene;
     icutscene->cutscene = cutscene;
     if (name != (char *)0x0) {
-      sprintf((char *)((uint)icutscene | 8),name);
+      sprintf(icutscene->name,name);
     }
     if (cutscene->cameras != (NUGCUTCAMSYS_s *)0x0) {
-      piVar1 = instNuCGutCamSysCreate(cutscene->cameras,buff);
-      icutscene->icameras = piVar1;
+      camsys = instNuCGutCamSysCreate(cutscene->cameras,buff);
+      icutscene->icameras = camsys;
     }
     if (cutscene->rigids != (NUGCUTRIGIDSYS_s *)0x0) {
-      piVar2 = instNuCGutRigidSysCreate(cutscene,gscene,buff);
-      icutscene->irigids = piVar2;
+      rigidsys = instNuCGutRigidSysCreate(cutscene,gscene,buff);
+      icutscene->irigids = rigidsys;
     }
     if (cutscene->chars != (NUGCUTCHARSYS_s *)0x0) {
-      piVar3 = instNuCGutCharSysCreate(cutscene,buff);
-      icutscene->ichars = piVar3;
+      charsys = instNuCGutCharSysCreate(cutscene,buff);
+      icutscene->ichars = charsys;
     }
     if (cutscene->locators != (NUGCUTLOCATORSYS_s *)0x0) {
-      piVar4 = NuCGutLocatorSysCreateInst(cutscene->locators,buff);
-      icutscene->ilocators = piVar4;
+      locsys = NuCGutLocatorSysCreateInst(cutscene->locators,buff);
+      icutscene->ilocators = locsys;
     }
     if ((cutscene->triggersys != (NUGCUTTRIGGERSYS_S *)0x0) &&
        (itriggersys != (instNUTRIGGERSYS_s *)0x0)) {
-      piVar5 = instNuCGutTriggerSysCreate(cutscene,itriggersys,buff);
-      icutscene->itriggersys = piVar5;
+      trigsys = instNuCGutTriggerSysCreate(cutscene,itriggersys,buff);
+      icutscene->itriggersys = trigsys;
     }
     instNuGCutSceneCalculateCentre(icutscene,(numtx_s *)0x0);
     icutscene->rate = 1.0;
@@ -178,7 +178,8 @@ instNuGCutSceneCreate
 void instNuGCutSceneDestroy(instNUGCUTSCENE_s *icutscene)
 
 {
-  if ((*(uint *)&icutscene->field_0x6c & 0x40000000) != 0) {
+  if ((*(uint *)&icutscene->field_0x6c & 0x40000000) != 0) //param_1[0x1b] & 0x40000000U
+  {
     instNuGCutSceneEnd(icutscene);
   }
   if (icutscene->next != (instNUGCUTSCENE_s *)0x0) {
@@ -640,17 +641,16 @@ void instNuGCutCamSysStart(instNUGCUTCAMSYS_s *icamsys,NUGCUTCAMSYS_s *camsys)
   camid = camsys->initial_camid;
   icamsys->next_tgt_ix = '\0';
   icamsys->current_camera = camid;
-  if (camsys->ncutcams == 0) {
+  if (camsys->ncutcams != 0) {
+    do {
+      icutcam = icamsys->icutcams;
+      n = i + 1;
+      icutcam[i].flags = icutcam[i].flags & 0xfd;
+      icutcam[i].tgt_ix = '\0';
+      i = n;
+    } while (n < camsys->ncutcams);
     return;
   }
-  n = 0;
-  do {
-    icutcam = icamsys->icutcams;
-    i = i + 1;
-    icutcam->pad[n + -2] = icutcam->pad[n + -2] & 0xfd;
-    icutcam->pad[n + -1] = '\0';
-    n = n + 4;
-  } while (i < camsys->ncutcams);
   return;
 }
 
@@ -812,10 +812,10 @@ instNUGCUTLOCATORSYS_s * NuCGutLocatorSysCreateInst(NUGCUTLOCATORSYS_s *locators
   ilocsys = (instNUGCUTLOCATORSYS_s *)0x0;
   if (((locators != (NUGCUTLOCATORSYS_s *)0x0) && (locators->nlocators != '\0')) &&
      (buff != (variptr_u *)0x0)) {
-    ilocsys = (instNUGCUTLOCATORSYS_s *)((uint)((int)&buff->vec4->w + 3) & 0xfffffff0);
+    ilocsys = (instNUGCUTLOCATORSYS_s *)(buff->intaddr + 0xf & 0xfffffff0);
     buff->voidptr = ilocsys + 1;
     ilocsys->ilocators = (instNUGCUTLOCATOR_s *)0x0;
-    iLoc = (instNUGCUTLOCATOR_s *)((uint)((int)&buff->vec4->w + 3) & 0xfffffff0);
+    iLoc = (instNUGCUTLOCATOR_s *)(buff->intaddr + 0xf & 0xfffffff0);
     buff->intaddr = (uint)iLoc;
     ilocsys->ilocators = iLoc;
     buff->voidptr = (void *)((int)buff->voidptr + (uint)locators->nlocators * 8);
@@ -837,19 +837,18 @@ void instNuGCutLocatorSysUpdate(instNUGCUTSCENE_s *icutscene,float current_frame
 void instNuGCutLocatorSysStart(instNUGCUTLOCATORSYS_s *ilocatorsys,NUGCUTLOCATORSYS_s *locatorsys )
 
 {
-  instNUGCUTLOCATOR_s *iLoc;
   uint i;
+  uint n;
   
   i = 0;
-  if (locatorsys->nlocators == '\0') {
+  if (locatorsys->nlocators != '\0') {
+    do {
+      n = i + 1;
+      ilocatorsys->ilocators[i].time = 0.0;
+      i = n;
+    } while (n < locatorsys->nlocators);
     return;
   }
-  iLoc = (instNUGCUTLOCATOR_s *)0x0;
-  do {
-    i = i + 1;
-    *(undefined4 *)((int)&iLoc->time + (int)&ilocatorsys->ilocators->time) = 0;
-    iLoc = iLoc + 1;
-  } while (i < locatorsys->nlocators);
   return;
 }
 
@@ -1530,7 +1529,7 @@ instNuCGutTriggerSysCreate(NUGCUTSCENE_s *cutscene,instNUTRIGGERSYS_s *itriggers
   instNUGCUTTRIGGERSYS_s *icuttrigsys;
   
   ncuttrigs = cutscene->triggersys->ntriggers;
-  icuttrigsys = (instNUGCUTTRIGGERSYS_s *)((uint)((int)&buff->vec4->w + 3) & 0xfffffff0);
+  icuttrigsys = (instNUGCUTTRIGGERSYS_s *)(buff->intaddr + 0xf & 0xfffffff0);
   buff->voidptr = icuttrigsys + 1;
   memset(icuttrigsys,0,8);
   icuttrigsys->itriggersys = itriggersys;
@@ -1599,15 +1598,14 @@ void instNuGCutTriggerSysStart(instNUGCUTSCENE_s *icutscene)
   i = 0;
   icuttrigsys = icutscene->itriggersys;
   cuttrigsys = icutscene->cutscene->triggersys;
-  if (cuttrigsys->ntriggers < 1) {
+  if (0 < cuttrigsys->ntriggers) {
+    do {
+      j = i + 1;
+      icuttrigsys->itriggers[i].next_ix = '\0';
+      i = j;
+    } while (j < cuttrigsys->ntriggers);
     return;
   }
-  j = 0;
-  do {
-    i = i + 1;
-    icuttrigsys->itriggers->pad[j + -1] = '\0';
-    j = j + 4;
-  } while (i < cuttrigsys->ntriggers);
   return;
 }
 

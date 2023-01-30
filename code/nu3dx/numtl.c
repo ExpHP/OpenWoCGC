@@ -590,64 +590,88 @@ void NuMtlRenderOT(int begin,int end)
 }
 
 void NuMtlRenderFaceOn() {
+
+  u32 processed_count = 0; // count -> r31
+  struct nufaceonitem_s* cur_list;
+  struct nusysmtl_s* sys_mtl;
+  struct numtx_s var_168;
+  struct NuVec var_178;
+  struct NuVec faceon_point_rotated;
+  struct NuVec faceon_world_pos;
+  struct NuVec* mtx_translation;
+  struct numtx_s faceon_transform;
+  struct NuVec vertex_corner;
+  struct NuVec vertex_transformed;
+  struct nugeomitem_s* list_geomitem;
+  struct NuFaceOnGeom* faceon_geom;
+  struct numtx_s faceon_geom_xf;
+    
   ResetShaders();
   SetVertexShader(0x142);
   GS_LoadWorldMatrixIdentity();
+    
   if (faceonmtl_cnt <= 0) {
     return;
   }
-  u32 processed_count = 0; // count -> r31
   do {
-    struct nufaceonitem_s* cur_list = faceonmtllist[processed_count];
+    cur_list = faceonmtllist[processed_count];
     
-    struct nusysmtl_s* sys_mtl = cur_list->mtl;
+    sys_mtl = cur_list->mtl;
     if (sys_mtl->mtl.L) {
       NuSetTextureSize(0, sys_mtl->mtl.tid);
-      NuMtlSetRenderStates(cur_list->sys_mtl);
-      NuTexSetTextureStates(cur_list->sys_mtl);
-      GS_SetZCompare(1, 0, GX_LEQUAL);
-      GS_SetAlphaCompare(GX_LEQUAL, 0xf7);
+      NuMtlSetRenderStates(cur_list->mtl);
+      NuTexSetTextureStates(cur_list->mtl);
+      GS_SetZCompare(1, 0, 3);
+      GS_SetAlphaCompare(3, 0xf7);
     } else {
       NuSetTextureSize(0, sys_mtl->mtl.tid);
-      NuMtlSetRenderStates(cur_list->sys_mtl);
-      NuTexSetTextureStates(cur_list->sys_mtl);
-      GS_SetAlphaCompare(GX_GREATER, 0);
-      GS_SetZCompare(1, 1, GX_LEQUAL);
+      NuMtlSetRenderStates(cur_list->mtl);
+      NuTexSetTextureStates(cur_list->mtl);
+      GS_SetAlphaCompare(4, 0);
+      GS_SetZCompare(1, 1, 3);
     }
 
     // nufaceonitem_s::hdr is probably a nugeomitem_s* 
     // TODO: remove this cast
-    struct numtx_s var_168 = ((struct nugeomitem_s*)cur_list->hdr)->mtx;
+    var_168 = *((struct nugeomitem_s*)cur_list->hdr)->mtx;
 
     for (; cur_list != NULL; cur_list = cur_list->next) {
-      struct numtx_s faceon_geom_xf = ((struct nugeomitem_s*)cur_list->hdr)->mtx;
-      struct nuvec_s var_178 = {0.0f, 0.0f, 0.0f};
-      struct nugeomitem_s* list_geomitem = (struct nugeomitem_s*)cur_list->hdr;
-      struct nufaceongeom_s* faceon_geom = (struct nufaceongeom_s*)list_geomitem->geom;
+      faceon_geom_xf = *((struct nugeomitem_s*)cur_list->hdr)->mtx;
+        var_178.x = 0.0f;
+        var_178.y = 0.0f;
+        var_178.z = 0.0f;
+      list_geomitem = (struct nugeomitem_s*)cur_list->hdr;
+      faceon_geom = (struct NuFaceOnGeom*)list_geomitem->geom;
 
-      for (; faceon_geom != null; faceon_geom = faceon_geom->next) {
-        int faceon_count = faceon_geom->nfaceons;
-        struct nufaceon_t* faceon_list = faceon_geom->faceons;
+
+      for (; faceon_geom != NULL; faceon_geom = faceon_geom->next) {
+        s32 faceon_count = faceon_geom->nfaceons;
+        struct nufaceon_s* faceon_list = faceon_geom->faceons;
         GS_DrawQuadListBeginBlock(faceon_count * 4);
 
         for (; faceon_count > 0; faceon_count -= 1, faceon_list += 1) {
-          const float right = faceon_list->width * 0.5f; // 30
-          const float top = faceon_list->height * 0.5f; //31
-          const float left = -right;
-          const float bottom = -top;
+          const f32 right = faceon_list->width * 0.5f; // 30
+          const f32 top = faceon_list->height * 0.5f; //31
+          const f32 left = -right;
+          const f32 bottom = -top;
 
-          struct nuvec_s faceon_point_rotated;
+          
           NuVecMtxRotate(&faceon_point_rotated, &faceon_list->point, &faceon_geom_xf);
 
-          struct nuvec_s faceon_world_pos;
-          struct nuvec_s* mtx_translation = (struct nuvec_s*)&cur_list->mtx->_30;
+          //NEED FIX!
+        //mtx_translation = (struct NuVec*)((struct nugeomitem_s*)cur_list)->mtx->_30;
           NuVecAdd(&faceon_world_pos, &faceon_point_rotated, mtx_translation);
 
-          struct numtx_s faceon_transform;
+          
           NuMtxCalcCheapFaceOn(&faceon_transform, &faceon_world_pos);
 
-          struct nuvec_s vertex_corner = {left, top, 0.0f};
-          struct nuvec_s vertex_transformed = {left, top, 0.0f};
+          vertex_corner.x = left;
+          vertex_corner.y = top;
+          vertex_corner.z = 0.0f;
+
+          vertex_transformed.x = left;
+          vertex_transformed.y = top;
+          vertex_transformed.z = 0.0f;
           NuVecMtxTransform(&vertex_transformed, &vertex_corner, &faceon_transform);
 
           // Color is defined ARGB?
@@ -682,7 +706,7 @@ void NuMtlRenderFaceOn() {
     processed_count += 1;
   } while (processed_count < faceonmtl_cnt);
 
-  return;
+return;
 }
 
 void NuMtlRenderGlass(void)
