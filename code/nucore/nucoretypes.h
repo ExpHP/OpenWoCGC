@@ -131,7 +131,7 @@ typedef struct
 	u8 buffer[0x1000];
 	char textBuffer[0x100];
 	char wordBuffer[0x104];
-	s32 line_num;;
+	s32 line_num;
 	u32 linePos;
 	u32 pos;
 	s32 bufferPos;
@@ -154,7 +154,7 @@ typedef struct nufpcomjmp_s nufpcomjmp_s, *Pnufpcomjmp_s;
 
 struct nufpcomjmp_s {
     char * fname;
-    void * func; /* struct */
+    void (*func)(nufpar_s*);
 };
 
 struct nufpar_s {

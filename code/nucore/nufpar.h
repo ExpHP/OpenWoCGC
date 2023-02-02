@@ -10,15 +10,15 @@
 */
 
 // Old line position.
-extern u32 old_line_pos;
+extern s32 old_line_pos;
 
 // Read a char from a text file.
-char NuGetChar(FPar* fPar);
+char NuGetChar(nufpar_s* fPar);
 
 // GetLine.
 
 // Read a word from the text buffer into the word buffer, and return its length.
-u32 NuFParGetWord(FPar* fPar);
+s32 NuFParGetWord(FPar* fPar);
 
 // Get an int from a text file.
 s32 NuFParGetInt(FPar* fPar);

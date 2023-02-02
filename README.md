@@ -11,5 +11,6 @@ Special thanks to:
 
 - NeoKesha, BetaM, Smartkin
 - Gota7, nicolasrmerz, ExpHP, kiwi
+- vyuuui
 
 for the immensive help
