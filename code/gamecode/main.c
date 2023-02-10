@@ -1385,18 +1385,15 @@ void MAHLoadingMessage(void)
 }
 
 
-void LoadLevel(void)		//WIP
+void LoadLevel(void)
 
 {
   int Cdat;
-  float local_18;
-  float local_14;
-  float local_10;
-  float local_c;
+  nucolour4_s local_18;
   
   loadcount = loadcount + 1;
-  load_anim_data = (nuAnimData_s *)0x0;
-  hLoadScreenThread = (void *)0x0;
+  load_anim_data = NULL;
+  hLoadScreenThread = NULL;
   InitXboxEffectSystem(Level);
   NuSoundKillAllAudio();
   XbWaitForAllBuffersToStop();
@@ -1415,8 +1412,8 @@ void LoadLevel(void)		//WIP
     InitClouds(&superbuffer_ptr,&superbuffer_end);
   }
   if ((LDATA->flags & 0x40) != 0) {
-    if (CrateMat == (numtl_s *)0x0) {
-      if (CrateMat2 == (numtl_s *)0x0) {
+    if (CrateMat == NULL) {
+      if (CrateMat2 == NULL) {
         CrateMat = CreateAlphaBlendTexture256128_32("stuff\\box.raw",0,1,0x100,0);
         CrateMat2 = CreateAlphaBlendTexture256128_32("stuff\\boxyellow.raw",0,1,0x100,0);
       }
@@ -1424,20 +1421,20 @@ void LoadLevel(void)		//WIP
   }
   InitLocalSfx(LDATA->pSFX,(int)LDATA->nSFX);
   InitSpecular();
-  wumpa_scene = (nugscn_s *)0x0;
+  wumpa_scene = NULL;
   if ((LDATA->flags & 0x100) != 0) {
     wumpa_scene2 = NuSceneReader(&superbuffer_ptr,&superbuffer_end,"stuff\\wumpa.nus");
-    if (wumpa_scene2 != (nuscene_s *)0x0) {
+    if (wumpa_scene2 != NULL) {
       wumpa_scene = wumpa_scene2->gscene;
     }
   }
-  local_10 = 0.25;
-  local_c = 0.5;
-  local_18 = 0.625;
-  local_14 = 0.75;
-  NuLigthSetPolyHazeMat(DebMat[4],&local_18,&local_10);
+  local_18.b = 0.25;
+  local_18.a = 0.5;
+  local_18.r = 0.625;
+  local_18.g = 0.75;
+  NuLigthSetPolyHazeMat(DebMat[4],&local_18.r,&local_18.b);
   ClearGameObjects();
-  ResetCheckpoint(-1,-1,0.0,(nuvec_s *)0x0);
+  ResetCheckpoint(-1,-1,0.0,NULL);
   InitWorld();
   i_cratetypedata = 0;
   if (((LDATA->flags & 0x40) != 0) && (Cdat = ReadCrateData(), Cdat != 0)) {
