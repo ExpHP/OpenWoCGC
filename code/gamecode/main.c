@@ -137,14 +137,6 @@ int main(int argc,char **argv)
   CamMtx *pCVar13;
   creature_s *plr;
   void *pause;
-  byte in_cr0;
-  byte in_cr1;
-  byte in_cr2;
-  byte in_cr3;
-  byte unaff_cr4;
-  byte in_cr5;
-  byte in_cr6;
-  byte in_cr7;
   CamMtx *GameCam_;
   double dVar14;
   double dVar15;
@@ -152,15 +144,8 @@ int main(int argc,char **argv)
   float LODWORD;
   nuvec_s pos;
   int v155;
-  int local_9c;
-  uint local_98;
-  int local_94;
-  uint local_64;
+  int local_9c [4];
   
-  local_64 = (uint)(in_cr0 & 0xf) << 0x1c | (uint)(in_cr1 & 0xf) << 0x18 |
-             (uint)(in_cr2 & 0xf) << 0x14 | (uint)(in_cr3 & 0xf) << 0x10 |
-             (uint)(unaff_cr4 & 0xf) << 0xc | (uint)(in_cr5 & 0xf) << 8 | (uint)(in_cr6 & 0xf) <<  4
-             | (uint)(in_cr7 & 0xf);
   __main(argc,argv,in_r5);
   v155 = 0;
   DEMOInit((_GXRenderModeObj *)0x0);
@@ -182,7 +167,6 @@ int main(int argc,char **argv)
   MINVPSIZEX = (int)(((float)(_LODWORD - (double)0x4330000080000000) * 390.0) / 640.0);
   _LODWORD = (double)CONCAT44(0x43300000,SHEIGHT ^ 0x80000000);
   MINVPSIZEY = (int)(((float)(_LODWORD - (double)0x4330000080000000) * 244.0) / 480.0);
-  _LODWORD = (double)(longlong)MINVPSIZEY;
   InitCutScenes();
   NuTrigInit();
   NuVpInit();
@@ -362,8 +346,8 @@ LAB_80051ef4:
       NuPs2PadSetMotors(Pad[0],0,0);
     }
     ResetGameSfx();
-    local_98 = 0;
-    local_94 = 0;
+    local_9c[1] = 0;
+    local_9c[2] = 0;
     vtog_time = 0.0;
     vtog_duration = 0.0;
     ResetGameCameras(&GameCam,1);
@@ -372,7 +356,7 @@ LAB_80051ef4:
     NuSoundUpdate();
     fade_rate = -8;
     frameout_count = nuvideo_global_vbcnt;
-    frameout = local_98;
+    frameout = local_9c[1];
     NuInitFrameAdvance();
     dVar16 = 1.0;
     dVar14 = 0.5;
@@ -418,7 +402,7 @@ LAB_80051ef4:
         FRAMES = 1;
       }
       FRAME = 0;
-      bVar2 = local_94 != 0;
+      bVar2 = local_9c[2] != 0;
       if (FRAMES != 0) {
         dVar15 = 5.0;
         do {
@@ -433,7 +417,7 @@ LAB_80051ef4:
           }
           if (mg_wumpatot != 0) {
             mg_wumpatot = mg_wumpatot + -1;
-            plr_wumpas._0_2_ = plr_wumpas._0_2_ + 1;
+            plr_wumpas.count = plr_wumpas.count + 1;
           }
           if (((FRAME == 0) || (FRAMES == 1)) || ((Demo != 0 || (Level == 0x26)))) {
             DoInput();
@@ -600,7 +584,7 @@ LAB_80051ef4:
               NuRndrEndScene();
               GS_Parallax = 0;
               NuRndrClear(10,0,1.0);
-              local_9c = NuRndrBeginScene(1);
+              local_9c[0] = NuRndrBeginScene(1);
               pnVar11 = pNuCam;
               if (Level == 0x18) {
                 (pNuCam->mtx)._32 = (float)PadData.field1_0x4;
@@ -629,14 +613,14 @@ LAB_80051ef4:
                 (pnVar10->mtx)._20 = (pCVar13->m)._20;
                 (pnVar10->mtx)._21 = (pCVar13->m)._21;
                 NuCameraSet(pnVar7);
-                local_9c = NuRndrBeginScene(1);
+                local_9c[0] = NuRndrBeginScene(1);
               }
               if (FRAME == FRAMES + -1) {
                 TBDRAWSTART(0,"Chars");
               }
             }
             bVar1 = FRAME == FRAMES + -1;
-            local_98 = (uint)((plr->obj).dead == '\x02');
+            local_9c[1] = (int)((plr->obj).dead == '\x02');
             uVar5 = ((uint)(byte)(bVar1 << 1) << 0x1c) >> 0x1d;
             if (bVar1) {
               tbslotBegin(app_tbset,0xc);
@@ -651,7 +635,7 @@ LAB_80052b3c:
               if (FRAME == FRAMES + -1) {
                 TBDRAWSTART(1,"Crash");
               }
-              if ((local_98 == 0) &&
+              if ((local_9c[1] == 0) &&
                  (((GLASSPLAYER == 0 || (dVar15 <= (double)plr_invisibility_time)) ||
                   (Level == 0x17)))) {
                 pCam = &GameCam;
@@ -682,7 +666,7 @@ LAB_80052b3c:
       if (screendump != 0) {
         pause = PadData.field2_0x8;
       }
-      if ((pause_rndr_on == 0) && (local_9c != 0)) {
+      if ((pause_rndr_on == 0) && (local_9c[0] != 0)) {
         if (pause == (void *)0x0) {
           fVar3 = 1.0;
         }
@@ -798,7 +782,7 @@ LAB_80052b3c:
       TBDRAWSTART(7,"Panel");
       iVar9 = NuRndrBeginScene(1);
       if (iVar9 != 0) {
-        bVar1 = local_98 == 0;
+        bVar1 = local_9c[1] == 0;
         if ((bVar1) || (PLAYERCOUNT == 0)) {
           if (Cursor.menu == '\"') {
             _LODWORD = (double)CONCAT44(0x43300000,SHEIGHT << 3 ^ 0x80000000);
@@ -806,12 +790,12 @@ LAB_80052b3c:
                                                                                    ) + dVar16) *
                                                           dVar14)) *
                          (float)(_LODWORD - (double)0x4330000080000000));
-            iVar8 = (int)((float)(dVar16 - (double)(float)((double)(float)((double)(POWERTEXTY -
-                                                                                   0.75) + dVar16)  *
-                                                          dVar14)) *
-                         (float)(_LODWORD - (double)0x4330000080000000));
-            _LODWORD = (double)(longlong)iVar8;
-            NuRndrRect2di(0,iVar9,SWIDTH << 4,iVar8 - iVar9,0x18777777,fade_mtl);
+            NuRndrRect2di(0,iVar9,SWIDTH << 4,
+                          (int)((float)(dVar16 - (double)(float)((double)(float)((double)(POWERTEX TY
+                                                                                         - 0.75) +
+                                                                                dVar16) * dVar14))  *
+                               (float)(_LODWORD - (double)0x4330000080000000)) - iVar9,0x18777777,
+                          fade_mtl);
           }
         }
         else {
@@ -821,7 +805,6 @@ LAB_80052b3c:
             fVar6 = fVar3;
           }
           uVar5 = (uint)((fVar6 / fVar3) * 255.0);
-          _LODWORD = (double)(longlong)(int)uVar5;
           NuRndrRect2di(0,0,SWIDTH << 4,SHEIGHT << 3,uVar5 | uVar5 << 8 | uVar5 << 0x10 | 0x800000 00
                         ,fade_mtl);
         }
@@ -857,10 +840,10 @@ LAB_80052b3c:
       }
       if (bVar2) {
         frameout = 0;
-        local_94 = local_94 + -1;
+        local_9c[2] = local_9c[2] + -1;
       }
       if (pause_rndr_on != 0) {
-        local_94 = 2;
+        local_9c[2] = 2;
       }
       DBTimerEnd(3);
       DBTimerEnd(1);
@@ -930,7 +913,6 @@ LAB_80052b3c:
   number_of_times_played = number_of_times_played + 1;
   goto LAB_80051ba4;
 }
-
 
 
 
