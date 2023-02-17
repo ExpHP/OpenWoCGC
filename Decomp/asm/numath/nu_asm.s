@@ -1,0 +1,74 @@
+.include "macros.inc"
+
+.section .text, "ax"  # 0x800032A0 - 0x80104920
+
+.global NuFsqrt
+NuFsqrt:
+/* 800BE774 000BB774  94 21 FF F8 */	stwu r1, -8(r1)
+/* 800BE778 000BB778  7C 08 02 A6 */	mflr r0
+/* 800BE77C 000BB77C  90 01 00 0C */	stw r0, 0xc(r1)
+/* 800BE780 000BB780  48 01 8D 79 */	bl gcc2_compiled__N104
+/* 800BE784 000BB784  FC 20 08 18 */	frsp f1, f1
+/* 800BE788 000BB788  80 01 00 0C */	lwz r0, 0xc(r1)
+/* 800BE78C 000BB78C  7C 08 03 A6 */	mtlr r0
+/* 800BE790 000BB790  38 21 00 08 */	addi r1, r1, 8
+/* 800BE794 000BB794  4E 80 00 20 */	blr 
+
+.global NuFdiv
+NuFdiv:
+/* 800BE798 000BB798  3D 20 80 12 */	lis r9, lbl_8011FBE8@ha
+/* 800BE79C 000BB79C  C0 09 FB E8 */	lfs f0, lbl_8011FBE8@l(r9)
+/* 800BE7A0 000BB7A0  FC 02 00 00 */	fcmpu cr0, f2, f0
+/* 800BE7A4 000BB7A4  41 82 00 0C */	beq lbl_800BE7B0
+/* 800BE7A8 000BB7A8  FC 01 00 00 */	fcmpu cr0, f1, f0
+/* 800BE7AC 000BB7AC  40 82 00 0C */	bne lbl_800BE7B8
+lbl_800BE7B0:
+/* 800BE7B0 000BB7B0  FC 20 00 90 */	fmr f1, f0
+/* 800BE7B4 000BB7B4  4E 80 00 20 */	blr 
+lbl_800BE7B8:
+/* 800BE7B8 000BB7B8  EC 21 10 24 */	fdivs f1, f1, f2
+/* 800BE7BC 000BB7BC  4E 80 00 20 */	blr 
+
+.global NuVec4MtxTransformVU0
+NuVec4MtxTransformVU0:
+/* 800BE7C0 000BB7C0  C0 04 00 04 */	lfs f0, 4(r4)
+/* 800BE7C4 000BB7C4  C1 A5 00 10 */	lfs f13, 0x10(r5)
+/* 800BE7C8 000BB7C8  C1 85 00 14 */	lfs f12, 0x14(r5)
+/* 800BE7CC 000BB7CC  C0 E5 00 18 */	lfs f7, 0x18(r5)
+/* 800BE7D0 000BB7D0  ED A0 03 72 */	fmuls f13, f0, f13
+/* 800BE7D4 000BB7D4  C1 64 00 00 */	lfs f11, 0(r4)
+/* 800BE7D8 000BB7D8  ED 80 03 32 */	fmuls f12, f0, f12
+/* 800BE7DC 000BB7DC  C1 45 00 1C */	lfs f10, 0x1c(r5)
+/* 800BE7E0 000BB7E0  EC E0 01 F2 */	fmuls f7, f0, f7
+/* 800BE7E4 000BB7E4  C1 25 00 00 */	lfs f9, 0(r5)
+/* 800BE7E8 000BB7E8  C1 05 00 04 */	lfs f8, 4(r5)
+/* 800BE7EC 000BB7EC  EC 00 02 B2 */	fmuls f0, f0, f10
+/* 800BE7F0 000BB7F0  C0 C5 00 08 */	lfs f6, 8(r5)
+/* 800BE7F4 000BB7F4  ED 2B 6A 7A */	fmadds f9, f11, f9, f13
+/* 800BE7F8 000BB7F8  C0 85 00 0C */	lfs f4, 0xc(r5)
+/* 800BE7FC 000BB7FC  ED 0B 62 3A */	fmadds f8, f11, f8, f12
+/* 800BE800 000BB800  EC CB 39 BA */	fmadds f6, f11, f6, f7
+/* 800BE804 000BB804  C1 44 00 08 */	lfs f10, 8(r4)
+/* 800BE808 000BB808  ED 6B 01 3A */	fmadds f11, f11, f4, f0
+/* 800BE80C 000BB80C  C0 A5 00 20 */	lfs f5, 0x20(r5)
+/* 800BE810 000BB810  C0 E5 00 24 */	lfs f7, 0x24(r5)
+/* 800BE814 000BB814  C0 85 00 28 */	lfs f4, 0x28(r5)
+/* 800BE818 000BB818  EC AA 49 7A */	fmadds f5, f10, f5, f9
+/* 800BE81C 000BB81C  C0 65 00 2C */	lfs f3, 0x2c(r5)
+/* 800BE820 000BB820  EC EA 41 FA */	fmadds f7, f10, f7, f8
+/* 800BE824 000BB824  EC 8A 31 3A */	fmadds f4, f10, f4, f6
+/* 800BE828 000BB828  C0 04 00 0C */	lfs f0, 0xc(r4)
+/* 800BE82C 000BB82C  ED 4A 58 FA */	fmadds f10, f10, f3, f11
+/* 800BE830 000BB830  C1 A5 00 3C */	lfs f13, 0x3c(r5)
+/* 800BE834 000BB834  C1 85 00 30 */	lfs f12, 0x30(r5)
+/* 800BE838 000BB838  C1 65 00 34 */	lfs f11, 0x34(r5)
+/* 800BE83C 000BB83C  ED A0 53 7A */	fmadds f13, f0, f13, f10
+/* 800BE840 000BB840  C1 25 00 38 */	lfs f9, 0x38(r5)
+/* 800BE844 000BB844  ED 80 2B 3A */	fmadds f12, f0, f12, f5
+/* 800BE848 000BB848  ED 60 3A FA */	fmadds f11, f0, f11, f7
+/* 800BE84C 000BB84C  D1 A3 00 0C */	stfs f13, 0xc(r3)
+/* 800BE850 000BB850  EC 00 22 7A */	fmadds f0, f0, f9, f4
+/* 800BE854 000BB854  D1 83 00 00 */	stfs f12, 0(r3)
+/* 800BE858 000BB858  D1 63 00 04 */	stfs f11, 4(r3)
+/* 800BE85C 000BB85C  D0 03 00 08 */	stfs f0, 8(r3)
+/* 800BE860 000BB860  4E 80 00 20 */	blr 

@@ -33,6 +33,8 @@ extern u32 backbuffer_grabbed_this_frame;
 // Back buffer TID.
 extern u32 backbuffer_tid;
 
+static int g_dwCurrentRT;
+
 // Reset the globals.
 void ResetFwGlobals(); // TODO: IMPLEMENT THIS!!!
 

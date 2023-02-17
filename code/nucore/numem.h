@@ -3,29 +3,32 @@
 
 #include "../types.h"
 #include "nucoretypes.h"
-#include <stdlib.h>
-#include <memory.h>
+//#include <stdlib.h>
+//#include <memory.h>
 
 
-//extern void* memexternal;
-extern void* memext[2];
+extern struct memexternal_s* memexternal;
+struct memexternal_s memext;
 extern s32 highallocaddr;
-extern s32 peakallocaddr;
-extern s32 totalloc;
-extern u32 malloced;
+static s32 peakallocaddr;
+static s32 totalloc;
+extern s32 malloced;
 
+
+
+//void memset(void*, int, int, ...); // the crclr at 24 means memset takes varargs
 
 // Set memory to be external, with a pointer and ending point.
-void NuMemSetExternal(void* ptr, void* end);
+void NuMemSetExternal(union variptr_u* ptr, union variptr_u* end);
 
 // Allocate memory.
-void* NuMemAlloc(size_t size);
+void* NuMemAlloc(s32 size);
 
 // Free memory.
 void NuMemFree(void* data);
 
 // Allocate memory.
-void* malloc_x(size_t size);
+void* malloc_x(s32 size);
 
 // Free memory.
 void free_x(void* data);

@@ -46,4 +46,140 @@
   800b7d44 0001bc 800b7d44  4 NuRndrShadPolys 	Global
 */
 
+numtl_s* nurndr_forced_mtl;
+
+numtl_s** nurndr_forced_mtl_table;
+
+s32 NuRndrShadowCnt;
+
+struct WaterDat NuRndrWaterRipDat[32];
+
+static s32 rndrmtx_cnt;
+
+s32 rndrmtx_cnt_max;
+
+static s32 geomitem_cnt;
+
+s32 padflag;
+
+s32 geomitem_cnt_max;
+
+static s32 rndr_blend_shape_deformer_wt_ptrs_cnt;
+
+static s32 rndr_blend_shape_deformer_wt_cnt;
+
+static float* rndr_blend_shape_deformer_wt_ptrs[2048];
+
+static float rndr_blend_shape_deformer_wts[1024];
+
+static numtx_s rndrmtx[1536];
+
+struct FootData NuRndrFootData[64];
+
+struct NuRndrShadPolDat[128];
+
+int NuRndrFootFree;
+
+int NuRndrShadMaskCount;
+
+static int fadecol;
+
+short indexlist.272[32];
+
+// Size: 0x34
+struct
+{
+    nuvec_s pnts[4];
+    short brightness;
+    char timer;
+    char gfx;
+} FootData; 
+
+// Size: 0x18
+struct
+{
+    nuvec_s pos;
+    float size;
+    short shade;
+    short xrot;
+    short yrot;
+    short zrot;
+} ShadPolDat;
+
+// Size: 0x24
+struct
+{
+    nuvec_s pos;
+    float size;
+    float endsize;
+    float cursize;
+    unsigned int shade;
+    unsigned int curshade;
+    short timer;
+    short otimer;
+} WaterDat;
+
+// Size: 0x20
+struct
+{
+    nuvec_s pos1;
+    nuvec_s pos2;
+    int intensity;
+    int RealIntensity;
+}trail;
+
+
+/*************************NuRndrParticleGroup structs**************************/
+
+/****VAR ARG*********/
+
+// Size: 0xA48
+struct
+{
+    int DmaHeader[4];
+    float grav;
+    float gtime;
+    int DmaBody[4];
+    float u0;
+    float v0;
+    float u1;
+    float v1;
+    float u2;
+    float v2;
+    float u3;
+    float v3;
+    setupDat Data[64];
+}setup_s;
+
+// Size: 0x28
+    struct
+    {
+        struct nuvec_s vt[3];
+        int colour;
+    }setupDat;
+
+/******************/
+
+// Size: 0x410
+ struct
+    {
+        int dmadata[2];
+        int unpackdata[2];
+        // Size: 0x20
+        struct
+        {
+            float x;
+            float y;
+            float z;
+            float time;
+            float mx;
+            float my;
+            float mz;
+            float etime
+        } debris[32];
+    }rdat;
+/************************************************************/
+
+
+
 #endif // !NURNDR_H

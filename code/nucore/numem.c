@@ -2,13 +2,12 @@
 #include "nuerror.h"
 #include "nucoretypes.h";
 
-//void* memexternal = NULL;
-void* memext[2];
+struct memexternal_s memext;
 s32 highallocaddr = 0;
 s32 peakallocaddr = 0;
-u32 totalloc = 0;
-u32 malloced = 0;
-ExternalMemory* memexternal;
+s32 totalloc = 0;
+s32 malloced = 0;
+struct memexternal_s *memexternal;
 
 
 #define NuError(msg)                                                           \
@@ -17,13 +16,13 @@ ExternalMemory* memexternal;
 
 #define ROUND_UP(x, align) (((x) + (align)-1) & (-(align)))
 
-void NuMemSetExternal(void* ptr, void* end)
+void NuMemSetExternal(union variptr_u* ptr, union variptr_u* end)
 {
 	if (ptr != NULL)
 	{
-		memexternal = memext; // Is it the reference to it or not?
-		memext[0] = ptr;
-		memext[1] = end;
+		memexternal = &memext; // Is it the reference to it or not?
+		memext.end = ptr;
+		memext.ptr = end;
 	}
 	else
 	{
@@ -31,23 +30,21 @@ void NuMemSetExternal(void* ptr, void* end)
 	}
 }
 
-//void memset(void*, s32, u32); 						//gcc2_compiled__N128
-//void* malloc(u32);                                    //malloc /* extern */
-
-void* NuMemAlloc(size_t size) {
+void* NuMemAlloc(s32 size) //CHECK
+{
     void* ret;
 	
 	// Alloc from main heap if possible
     if (memexternal != NULL) {
 	
 	
-        *memexternal->start = (void*) ROUND_UP((s32) *memexternal->start, 16);
+        //memexternal->ptr->intaddr = (u32*) ROUND_UP((s32) memexternal->ptr->vec4->w, 16);
 		
-        if (memexternal->end != NULL && (s32)*memexternal->end - (s32)*memexternal->start < size) {
+        if (memexternal->ptr->voidptr != NULL && (s32)&memexternal->ptr->voidptr - (s32)&memexternal->ptr->intaddr < size) {
             return NULL;
         }
-        ret = *memexternal->start;
-        *memexternal->start = ((s8*)*memexternal->start) + size;
+        ret = (void*)&memexternal->ptr;
+        memexternal->ptr->voidptr = (void*) (((s32)&memexternal->ptr) + size);
         return ret;
     } 
 	// Main game heap is NULL, fallback on C malloc?
@@ -66,7 +63,7 @@ void* NuMemAlloc(size_t size) {
         }
 		
 		// Clear buffer
-        memset(ret, 0, size); // gcc2_compiled__N128 
+        memset(ret, 0, size); 
 		
 		// Resize heap?
         end = size + (s32)ret;
@@ -86,7 +83,7 @@ void NuMemFree(void* data)
 	free(data);
 }
 
-void* malloc_x(size_t size)
+void* malloc_x(s32 size)
 {
 	malloced++;
 	return malloc(size);

@@ -6,10 +6,10 @@
 #include "nu3dxtypes.h"
 
 // Texture infos.
-extern NuTex tinfo[0x400];
+extern nusystex_s tinfo[0x400];
 
 // If textures are initialized.
-//u32 initialised;
+//s32 initialised;
 
 // Current texture ID in tinfo list.
 extern s32 tpid;

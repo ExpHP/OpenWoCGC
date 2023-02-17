@@ -3,7 +3,7 @@
 
 #include "../types.h"
 #include "numathtypes.h"
-#include <math.h>
+#include <numath.h>
 
 // Take square root of value.
 f32 NuFsqrt(f32 f);
